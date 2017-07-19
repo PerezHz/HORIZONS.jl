@@ -18,6 +18,13 @@ end
 # Date retrieved: Jul 19, 2017
 # Credit: Jon Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
+
+function vec_tbl(target, output_file)
+    run(`./vec_tbl $target $output_file`)
+end
+
+
+
 vec_tbl_inp = "\# vec_tbl.inp
 \#
 \#------------------------------------------------------------------------------
