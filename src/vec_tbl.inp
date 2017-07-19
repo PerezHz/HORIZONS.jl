@@ -1,0 +1,136 @@
+# vec_tbl.inp
+#
+#------------------------------------------------------------------------------
+# Example input file 
+#
+# Sets controls for Horizons VECTOR table generation driven by Expect script 
+# "vec_tbl". 
+#
+# Edit this file prior to running the script to define the desired output.
+# 
+# See Horizons documentation for explanation of acceptable settings.
+#
+ set   EMAIL_ADDR    " "
+ set   CENTER        "675  "       ;# Body id, 'GEOCENTRIC', or 'COORDINATE'
+ set   REF_PLANE     "ECLIP"       ;# [E]cliptic, frame, body
+ set   START_TIME    "2016-Sep-8"  ;# Times are always in the TDB scale
+ set   STOP_TIME     "2016-Oct-9"  ;# Times are always in the TDB scale
+ set   STEP_SIZE     "1 d"         ;# Table output interval
+#
+# Uncomment variable settings below to change VECTOR table defaults.
+# Brackets (in comment text) indicate default value. 
+#
+# See Horizons documentation for more explanation (or e-mail command-file 
+# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
+#
+# The first two, "COORD_TYPE" and "SITE_COORD" must be defined if CENTER 
+# is set to 'coord' (above), but are unused for other CENTER settings.
+#
+#set   COORD_TYPE    "G"      ;# Type of SITE_COORD; [G]eodetic, Cylindrical
+#set   SITE_COORD    "0,0,0"  ;# Topocentric coordinates wrt CENTER [0,0,0]
+#
+#set   REF_SYSTEM    "J2000"  ;# Reference system; [J]2000 or B1950
+#set   VEC_CORR      "1"      ;# Aberrations; [1], 2, 3 (1=NONE, 2=LT, 3=LT+S)
+#set   OUT_UNITS     "1"      ;# Output units; 1, 2, 3 (1=KM-S, 2=AU-D, 3=KM-D)
+#set   CSV_FORMAT    "NO"     ;# Comma-separated-values; [NO] or YES
+#set   VEC_LABELS    "NO"     ;# Label vector components; [NO] or YES
+#set   VEC_DELTA_T   "NO"     ;# Output time difference TDB - UT; [NO] or YES
+#set   VEC_TABLE     "3"      ;# Output format type; 1,2,[3],4,5,6
+#                                  1 = Position components ONLY
+#                                      (append x, a, r, p symbols for sigmas
+#                                       in XYZ, ACN, RTN, and POS systems.
+#                                       i.e., '1xa' for positions with 
+#                                       XYZ and ACN uncertainties)
+#                                  2 = Position AND velocity components ONLY
+#                                      (append x, a, r, p symbols for sigmas
+#                                       in XYZ, ACN, RTN, and POS systems.
+#                                       i.e., '2xarp' for position and 
+#                                       velocities with XYZ, ACN, RTN, and POS
+#                                       uncertainties)
+#                                  3 = State vector & 1-way light-time & 
+#                                       range & range-rate
+#                                  4 = Position & 1-way light-time & range & 
+#                                       range-rate
+#                                  5 = Velocity components only
+#                                  6 = 1-way light-time & range & range-rate
+#------------------------------------------------------------------------------
+# Explanation of primary settings:
+#
+#   EMAIL_ADDR
+#
+#     User's Internet e-mail contact address.
+#
+#        Example: "joe@your.domain.name"
+#
+#   CENTER
+#
+#     Horizons observer site code. ID numbers provide unique matches while
+#     name strings match on the pattern and sometimes are not unique.
+#
+#     Sites not on the Earth should contain an @ symbol. 
+#
+#     Can be used to begin user input coordinates by setting to 'coord'.
+#     Later settings then specify the type of user-input coordinate triplets:
+#
+#      1. Geodetic coordinate triplets (WGS-84 or ITRF), separated by commas:
+#         East-longitude_degrees, latitude_degrees, height-wrt-ref.-ellipsoid_km
+#
+#      2. Cylindrical coordinate triplet, separated by commas:
+#         East-longitude_degrees,  DXY_km, DZ_km
+#
+#     See Horizons documentation for full details.
+#
+#         Examples: "@5"            (Jupiter system barycenter)
+#                   "@10"           (Sun center)
+#                   "@ssb"          (Solar system barycenter)
+#                   "@499"          (Mars center)
+#                   "@399"          (Earth geocenter)
+#                   "geo"           (Earth geocenter synonym)
+#                   "@-48"          (Hubble Space Telescope)
+#                   "675"           (Palomar observatory)
+#                   "F52"           (Pan-STARRS 2, Haleakala)
+#                   "coord"         (activate input of user coordinates)
+#
+#   REF_PLANE
+#
+#     Specifies the X-Y plane of the coordinate system. Either:
+#
+#       "ECLIPTIC" (IAU76) 
+#       "FRAME"    (equatorial plane of the current planetary ephemeris
+#                   reference frame (DE431, etc. ... essentially ICRF))
+#       "BODY"     (IAU body equator for CENTER)
+#
+#
+#   START_TIME
+#
+#     Date the output ephemeris file is to begin (TDB time-scale)
+#
+#          Examples:  "2003-Aug-28"
+#                     "2003-Aug-28 16:00"
+#
+#     If left blank (" "), the current system day will be used.
+#
+#   STOP_TIME
+#
+#     Date the output ephemeris file is to end (TDB time-scale)
+#
+#          Examples: "2006-Sep-06"
+#                    "2006-Sep-06 12:00"
+#
+#     If left blank (" "), the current system day + 21 days will be used.
+#
+#   STEP_SIZE
+#
+#     Ephemeris table output step in format:  {integer}[units] [mode]
+#     Units and mode specification are optional. See Horizons
+#     documentation for details.
+#
+#          Examples:
+#           "10 m"       10 minute output step
+#            "12h"       12 hour output step
+#             "1d"        1 day output step
+#           "2 mo"        2 calendar month output step
+#            "1 y"        1 calendar year output step
+#            "100"       Output at 100 uniform intervals between start 
+#                         and stop times. Can be used to obtain output 
+#                         at less than one minute intervals.
