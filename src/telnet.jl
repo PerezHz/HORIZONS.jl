@@ -20,10 +20,14 @@ end
 # Jon.D.Giorgini@jpl.nasa.gov
 
 function vec_tbl(target::String)
+    # currently only works from project's src/ directory...
+    # how do we make it work from any directory?
     run(`./vec_tbl $target`)
 end
 
 function vec_tbl(target::String, output_file::String)
+    # currently only works from project's src/ directory...
+    # how do we make it work from any directory?
     run(`./vec_tbl $target $output_file`)
 end
 
