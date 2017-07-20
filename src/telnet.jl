@@ -19,7 +19,11 @@ end
 # Credit: Jon Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
 
-function vec_tbl(target, output_file)
+function vec_tbl(target::String)
+    run(`./vec_tbl $target`)
+end
+
+function vec_tbl(target::String, output_file::String)
     run(`./vec_tbl $target $output_file`)
 end
 
