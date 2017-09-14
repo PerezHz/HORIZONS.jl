@@ -63,7 +63,7 @@ System news updated September 12, 2017
 Horizons>
 ```
 
-`HORIZONS.jl` function `vec_tbl` allowd the user to generate vector tables for 
+`HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for 
 designated objects and save the output into a file:
 
 ```julia
@@ -73,7 +73,7 @@ vec_tbl("Apophis", "Apophis.txt", CENTER="@ssb", REF_PLANE="ECLIP", START_TIME="
 ```
 
 Note that `CENTER`, `REF_PLANE`, etc., are keyword arguments. If they are omitted
-from the `vec_tbl` call, then then will take default values:
+from the `vec_tbl` call, then they will take default values:
 
 ```julia
 # generate tables with default values and save output to Apophis.txt in current directory:
