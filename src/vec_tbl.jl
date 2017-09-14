@@ -52,7 +52,7 @@ The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
 function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
-        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
@@ -121,7 +121,7 @@ The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
 function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
-        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
@@ -149,7 +149,7 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
 end
 
 function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
-        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
