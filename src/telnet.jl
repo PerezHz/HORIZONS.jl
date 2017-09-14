@@ -126,7 +126,7 @@ function vectbl_process(OBJECT_NAME::String; timeout::Int=15,
         DEFAULTS = "$DEFAULTS$OUT_UNITS$CSV_FORMAT$VEC_LABELS$VEC_TABLE"    
     end
 
-    @show DEFAULTS
+    # @show DEFAULTS
 
     # Connect to Horizons 
     proc = ExpectProc(`telnet $horizons_machine 6775`, timeout)
