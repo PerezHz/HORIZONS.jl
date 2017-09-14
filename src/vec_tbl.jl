@@ -43,7 +43,6 @@ The current keyword arguments are:
     + `CSV_FORMAT = "NO"`
     + `VEC_LABELS = "NO"`
     + `VEC_TABLE= "3"`
-    + `tabledefaultopts = true`
 
 More detailed information may be found at the HORIZONS system documentation:
 
@@ -57,23 +56,22 @@ function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
-        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
-        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
-        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
-        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
+        REF_SYSTEM::String="J2000", VEC_CORR::Int=1,
+        VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
+        CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false,
+        VEC_TABLE::Int=3)
 
-    ftp_name = vec_tbl_process(OBJECT_NAME, timeout=timeout,
+    ftp_name = get_vec_tbl(OBJECT_NAME, timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
         VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
-        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE,
-        tabledefaultopts=tabledefaultopts)
+        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE)
 
     # # Retrieve file by anonymous FTP and return output as string
     ftp_init()
-    ftp = FTP(hostname="ssd.jpl.nasa.gov", username="anonymous", password=EMAIL_ADDR)
-    cd(ftp, "pub/ssd")
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    cd(ftp, HORIZONS_FTP_DIR)
     buffer = download(ftp, ftp_name)
     close(ftp)
     ftp_cleanup()
@@ -114,7 +112,6 @@ The current keyword arguments are:
 + `CSV_FORMAT = "NO"`
 + `VEC_LABELS = "NO"`
 + `VEC_TABLE= "3"`
-+ `tabledefaultopts = true`
 
 More detailed information may be found at the HORIZONS system documentation:
 
@@ -128,23 +125,22 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
-        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
-        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
-        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
-        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
+        REF_SYSTEM::String="J2000", VEC_CORR::Int=1,
+        VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
+        CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false,
+        VEC_TABLE::Int=3)
 
-    ftp_name = vec_tbl_process(OBJECT_NAME, timeout=timeout,
+    ftp_name = get_vec_tbl(OBJECT_NAME, timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
         VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
-        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE,
-        tabledefaultopts=tabledefaultopts)
+        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE)
 
     # # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
-    ftp = FTP(hostname="ssd.jpl.nasa.gov", username="anonymous", password=EMAIL_ADDR)
-    cd(ftp, "pub/ssd")
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    cd(ftp, HORIZONS_FTP_DIR)
     file = download(ftp, ftp_name, local_file)
     close(ftp)
     ftp_cleanup()
@@ -152,43 +148,31 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
     nothing
 end
 
-function vec_tbl_process(OBJECT_NAME::String; timeout::Int=15,
+function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
         EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
         COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
-        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
-        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
-        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
-        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
+        REF_SYSTEM::String="J2000", VEC_CORR::Int=1, VEC_DELTA_T::Bool=false,
+        OUT_UNITS::Int=1, CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false,
+        VEC_TABLE::Int=3)
 
     ftp_name = "" # name of file at FTP server
 
     exp_internal = 0 # Diagnostic output: 1= on, 0=off
     
     remove_nulls = 0 # Disable null removal from Horizons output
-    horizons_machine = "ssd.jpl.nasa.gov"
-    horizons_ftp_dir = "pub/ssd/"
     quiet = 0
     start_flag = 0
     
-    DEFAULTS = ""
-
-    tabledefaultopts || begin
-        DEFAULTS = "$DEFAULTS$REF_SYSTEM$VEC_CORR$VEC_DELTA_T"
-        DEFAULTS = "$DEFAULTS$OUT_UNITS$CSV_FORMAT$VEC_LABELS$VEC_TABLE"    
-    end
-
-    # @show DEFAULTS
-
     # Connect to Horizons 
-    proc = ExpectProc(`telnet $horizons_machine 6775`, timeout)
+    proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
     idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
-        throw("This system cannot find $horizons_machine")
+        throw("This system cannot find $HORIZONS_MACHINE")
     elseif idx == 2
         println(proc, "PAGE")
     end
@@ -318,43 +302,36 @@ function vec_tbl_process(OBJECT_NAME::String; timeout::Int=15,
         println(proc, "X")
         throw(println("STEP_SIZE = '$STEP_SIZE' error."))
     elseif idx == 3
-        if length(DEFAULTS) > 0
-            println(proc, "N")
-        else
-            println(proc, "Y")
-        end
+        println(proc, "N") # never accept table defaults
     end
 
-    # Change output table defaults if requested
-    if length(DEFAULTS) > 0
-        while true
-            idx = expect!(proc, [r"(Cannot interpret.*\r)", r".*frame.*].*: $", r".*Corrections.*].*: $", r".*units.*].*: $", r".*CSV.*].*: $", r".*Label.*].*: $", r".*delta-T.*].*: $", r".*table type.*].*: $", r".*Select.*: $", r".*].*: $"])
-            if idx == 1
-                println(proc, "X")
-                throw(println("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
-            elseif idx == 2
-                println(proc, REF_SYSTEM)
-            elseif idx == 3
-                println(proc, VEC_CORR)
-            elseif idx == 4
-                println(proc, OUT_UNITS)
-            elseif idx == 5
-                println(proc, CSV_FORMAT)
-            elseif idx == 6
-                println(proc, VEC_LABELS)
-            elseif idx == 7
-                println(proc, VEC_DELTA_T)
-            elseif idx == 8
-                println(proc, VEC_TABLE)
-            elseif idx == 9
-                break # Done w/default override
-            elseif idx == 10
-                println(proc, "") # Skip unknown (new?) prompt
-            end 
-        end
-    else
-        expect!(proc, r".*Select.*: $")
+    # Change output table defaults
+    while true
+        idx = expect!(proc, [r"(Cannot interpret.*\r)", r".*frame.*].*: $", r".*Corrections.*].*: $", r".*units.*].*: $", r".*CSV.*].*: $", r".*Label.*].*: $", r".*delta-T.*].*: $", r".*table type.*].*: $", r".*Select.*: $", r".*].*: $"])
+        if idx == 1
+            println(proc, "X")
+            throw(println("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
+        elseif idx == 2
+            println(proc, REF_SYSTEM)
+        elseif idx == 3
+            println(proc, "$VEC_CORR")
+        elseif idx == 4
+            println(proc, "$OUT_UNITS")
+        elseif idx == 5
+            println(proc, yesornostring(CSV_FORMAT))
+        elseif idx == 6
+            println(proc, yesornostring(VEC_LABELS))
+        elseif idx == 7
+            println(proc, yesornostring(VEC_DELTA_T))
+        elseif idx == 8
+            println(proc, "$VEC_TABLE")
+        elseif idx == 9
+            break # Done w/default override
+        elseif idx == 10
+            println(proc, "") # Skip unknown (new?) prompt
+        end 
     end
+    # expect!(proc, r".*Select.*: $")
 
     # Osculating element table output has been generated. Now sitting at 
     # post-output prompt. Initiate FTP file transfer.
