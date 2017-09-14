@@ -1,6 +1,6 @@
 module HORIZONS
 
-# package code goes here
+using Expect, FTPClient
 
 export horizons, vec_tbl
 
