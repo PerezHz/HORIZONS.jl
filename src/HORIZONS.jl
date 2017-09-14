@@ -2,7 +2,7 @@ module HORIZONS
 
 using Expect, FTPClient
 
-export horizons, vectbl
+export horizons, vec_tbl
 
 """
 `horizons()`
