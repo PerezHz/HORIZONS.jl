@@ -1,0 +1,63 @@
+# close_approach_tbl_ele.inp
+#
+#------------------------------------------------------------------------------
+# Example input file 
+#
+# Sets controls for Horizons CLOSE APPROACH table generation driven by Expect 
+# script "close_approach_tbl_ele". 
+#
+# Edit this file prior to running the script to define the desired output.
+# 
+# See Horizons documentation for explanation of acceptable settings.
+#
+ set   EMAIL_ADDR    " "
+ set   START_TIME    "2000-Jan-27" ;# Times are always in the TDB scale
+ set   STOP_TIME     "2050-Jan-1 " ;# Times are always in the TDB scale
+#
+# Uncomment variable settings below to change CLOSE APPROACH table defaults.
+# Brackets (in comment text) indicate default value. 
+#
+#set   CA_TABLE_TYPE "STANDARD"    ;# Type of table [STANDARD] or EXTENDED
+#set   TCA3SG_LIMIT  "14400"       ;# Maximum 3-sigma Earth encounter-time  
+#                                  ;#  uncertainty, minutes [14400]
+#set   CALIM_SB      ".05"        ;# Small-body perturber cut-off, [0.05] au
+#set   CALIM_PL      ".1, .1, .1, .1, 1.0, 1.0, 1.0, 1.0, .1, .003"
+#                                  ;# Planet cut-off distance, au, in order
+#                                  ;# Mercury, Venus, Earth, Mars ... with
+#                                  ;# the 10th in the list being Earth's Moon
+#
+# To change only Earth's default cut-off distance to 0.2 au, set 
+#
+#  set CALIM_PL "0.1, 0.1, 0.2"  (i.e., only the objects prior to Earth in the
+#                                 list need be specified)
+#
+# ... the other unspecified values will retain default settings.
+#
+# Nominal planetary encounter distance defaults:
+#  CALIM_PL      ".1, .1, .1, .1, 1.0, 1.0, 1.0, 1.0, .1, .003"
+#
+# See Horizons documentation for more explanation (or e-mail command-file 
+# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
+#
+#------------------------------------------------------------------------------
+# Explanation of primary settings:
+#
+#   EMAIL_ADDR
+#
+#     User's Internet e-mail contact address.
+#
+#        Example: "joe@your.domain.name"
+#
+#   START_TIME
+#
+#     Date the output close-approach file is to begin (TDB time-scale)
+#
+#          Examples:  "1600-Jan-01"
+#                     "1600-Jan-01 12:00"
+#
+#   STOP_TIME
+#
+#     Date the output close-approach file is to end (TDB time-scale)
+#
+#          Examples: "2500-Jan-1"
+#                    "2500-Jan-01 12:00"

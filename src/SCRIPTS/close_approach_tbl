@@ -1,0 +1,493 @@
+#!/usr/local/bin/expect --
+#
+# Change the above pointer as necessary for the Expect installation on the
+# local machine (i.e., to the path output by UNIX/Linux command 'which expect')
+#
+# Define path to script input file. Can be defined by user if needed. 
+#
+  set input_file ./close_approach_tbl.inp
+#
+# Automate the Horizons session required to produce a CLOSE APPROACH table for
+# an asteroid or comet already listed in the Horizons database. 
+#
+# Generally, this script is suited for situations where the same output 
+# format (as defined by the input file) is desired for a list of objects 
+# specified one at a time on the script's command-line.
+#
+# The latest version of this script is available at 
+#
+#   ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/close_approach_tbl
+#
+# A corresponding example input file is at:
+#
+#   ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/close_approach_tbl.inp
+#
+# Version 1.0                                                  (Expect v.5.45)
+#
+# Modification History:
+#
+#  DATE         Who  Change
+#  -----------  ---  ---------------------------------------------------------
+#  2016-Jan 27  JDG  V1.0 
+#  2016-Feb-02  JDG  Changed variable names to correspond w/e-mail interface
+#  2017-Mar-13  JDG  Updated references from "http:" to "https:"
+#
+# Key:
+#  JDG= Jon.D.Giorgini@jpl.nasa.gov
+#
+# BACKGROUND:
+# -----------
+#
+#   This script ("close_approach_tbl") and companion input file 
+# ("close_approach_tbl.inp") allows a user to type one command on a remote
+# workstation and generate/transfer a Horizons encounter file (ASCII plain-text)
+# to that same machine.
+#
+#   The script offers network transparency by connecting to the JPL Horizons
+# ephemeris system, automating the interaction with it, then transferring the 
+# file by FTP back to the user's local machine.
+#
+# COMMAND LINE:
+# -------------
+#
+#   close_approach_tbl [target] {output_file}
+#
+# EXPLANATION:
+# ------------
+#
+#   [target]
+# 
+#      A Horizons command specifying a single target (asteroid or comet ONLY). 
+#
+#      Note that designations or IAU numbers provide unique matches while 
+#      name strings often do not. 
+#
+#      See below for examples and Horizons documentation for details on specifying 
+#      objects.
+#
+#                https://ssd.jpl.nasa.gov/?horizons_doc 
+#
+#        Examples: "DES= 1999 JM8;"     (asteroid with designation 1999 JM8) 
+#                  "4179;"              (numbered asteroid 4179 Toutatis)
+#                  "DES= 3102762;"      (object w/SPK-ID 3102762 (2002 AA29)
+#                  "DES= 1000003; CAP;" (orbit solution for apparition record
+#                    OR                  closest to current date for comet with 
+#                  "DES= 47P; CAP;"      SPK-ID 1000003, also known as 
+#                                        47P/Ashbrook-Jackson.
+#                  "Golevka;"           (named asteroid "Golevka", but 
+#                                        potentially not a unique match)
+#
+#      Look-ups that must include a semi-colon to search the small-body database.
+#
+#      Small-body designation look-ups are SPACE and CASE-SENSITIVE. 
+#      Names are CASE-INSENSITIVE.
+#
+#   {output_file}
+#
+#      Optional name to give the output file on your system. If not
+#      specified, the command-line [target] string is used to assign 
+#      a local file name in the current directory. Default form:
+#               
+#           [target].txt
+# 
+#      For example, 
+#
+#          close_approach_tbl "DES=1950 DA;" 
+#
+#      ... would produce an output file name "DES=1950DA.txt", whereas
+# 
+#          close_approach_tbl "DES=1950 DA;" 1950da_encounters.txt
+#
+#      ... would produce an output file named "1950da_encounters.txt"
+#
+#
+# Command-line arguments need quotes if they contain spaces or a semi-colon,
+# and also quoted braces to pass negative numbers. 
+#
+# In such cases, quotes guarantee the whole argument is passed literally to
+# the script without being improperly parsed into components. Instead of 
+# remembering this, one could also just enclose all command-line arguments 
+# in quotes as routine usage.
+#
+# REQUIREMENTS
+# ------------
+#
+# #1) This script looks for an input set-up file whose pathname is defined
+# above in the variable "input_file". This input file contains minimal control
+# settings to define the Horizons request:
+#
+# Example input file:
+#
+#set   START_TIME    "2015-Sep-25" ;# Times are always in the TDB scale
+#set   STOP_TIME     "2015-Oct-10" ;# Times are always in the TDB scale
+#
+# Note that if START/STOP are changed frequently, or it was desired to increase
+# the level of automation, one could develop a wrapper script in which the 
+# START/STOP times were provided on the command-line, then written out to the 
+# setup file, and then this script called.
+#
+# #2) "close_approach_tbl" is written in the Expect automation language. The 
+# Expect interpretation program must be present on any computer system before 
+# obs_tbl can run.
+#
+#   The Expect language is available for download at the URL:
+#
+#                      http://expect.nist.gov/
+#
+#   Expect is an extension of the Tcl/Tk language, which is also required.
+# The web site above provides appropriate links to both packages. Installation
+# procedures are provided and all packages can typically be installed and 
+# their self-check tests completed in about 45 minutes by following the 
+# directions.
+#
+#   Expect is primarily supported on UNIX/Linux platforms, but versions
+# for other systems do exist. The primary book on the language is 
+# "Exploring Expect" by Don Libes (ISBN 1-56592-090-2)
+# 
+#   Once the Expect language is installed on your machine, you may need to
+# alter the very first line of this script ("#!/usr/local/bin/expect") to
+# point to the installation location on that machine.  The script will then
+# be able to execute.
+#
+#   The user's machine must be able to resolve Internet domain names and
+# support FTP.
+#
+# USAGE
+# -----
+# 
+#   This script will handle typical errors and respond with an indicator 
+# message if any are detected, cancelling the run.
+#
+#  Tips:
+#
+#  1) If the small-body search parameters given on the command-line don't match 
+# anything in the Horizons database, the script will cancel. Similarly, if
+# several objects match, the script will also cancel.
+#
+#   This latter case occurs most often with comets (which are NOT frequently of 
+# interest for close-approach tabulation). The Horizons database typically 
+# stores orbital elements for the same comet at more than one epoch (the 
+# different apparitions) because non-gravitational parameters such as 
+# outgassing may change from apparition to apparition. Thus, while "DES= 1P;" 
+# does specify Halley's comet, it does not indicate which of the several 
+# apparition records to use. Thus, the script will cancel with a 
+# "non-unique match" message.  
+#
+#   Therefore, for comets, one must also specify the solution case of interest 
+# for objects having multiple apparition solutions. 
+# 
+#   This can be done using the "CAP;" specification on the Horizons look-up
+# command. This instructs Horizons to automatically select the most recent 
+# apparition solution (prior to the current date) in the database. 
+#
+#   For example, "DES= 1P; CAP;" will uniquely select the comet Halley 
+# apparition solution closest to the current date. "DES= 1P; CAP < 1800;"
+# will select the last comet Halley apparition solution prior to the 
+# year A.D. 1800.
+#
+#   It may be necessary to manually connect to Horizons and look at the list
+# of solutions it provides so as to narrow your selection.  Object selection 
+# is discussed in detail in the Horizons documentation. This script doesn't 
+# function any differently, but its' deliberately non-interactive approach
+# doesn't provide the same level of feedback. One can check the comments 
+# section of the returned SPK file to verify the object is the one expected.  
+#
+#   Examples of ways to specify asteroids and comets:
+# 
+#      "DES= 1999 JM8;"
+#      "DES= 1982 HG1;"  (select the asteroid named Halley)
+#      "DES= 1P; CAP;"   (select the most recent apparition of comet Halley) 
+#      "DES= 2099942;"   (select asteroid Apophis using its unique SPK ID)
+#      "DES= 2004 MN4;"  (select asteroid Apophis using its unique designation)
+#
+#   For automated systems, the best way to specify an object is by using its 
+# unique designation or unique SPK ID number, since every object has one.
+# An index that relates designations, SPK IDs, and names is maintained here:
+#
+#      ftp://ssd.jpl.nasa.gov/pub/xfr/DASTCOM.IDX
+#
+# The index is updated as necessary, as often as hourly. See Horizons 
+# documentation for additional information.
+#
+#      https://ssd.jpl.nasa.gov/?horizons_doc 
+#
+# Note that objects can have multiple designations. For example, discovery of
+# 2010 BT17 was announced. Later, it was determined to be the previously seen 
+# 2005 MD11. All provisional designations such as 2010 BT17 are retained and 
+# can be used as look-ups, but the primary designation will be returned by 
+# the Horizons look-up. 
+#
+# For example, if you look-up 2010 BT17, it will be found, but the data 
+# returned by Horizons will instead refer to it only by its primary designation,
+# 2005 MD11. Check the index file referenced above if questions arise.
+#
+# #2)  It may take a couple seconds to look up an object, then perhaps several 
+# more seconds to generate and transfer the table, depending on how much 
+# numerical ntegration is required, and the network state. 
+#
+# #3)  The script returns a standard exit status code (0=OK, 1=FAILED) which 
+# can be checked by other calling programs. 
+#
+# #4)  Notable changes/events are posted in the Horizons system news:
+#
+#      https://ssd.jpl.nasa.gov/?horizons_news
+#-------------------------------------------------------------------------------
+# 
+# Establish defaults and turn debugging on or off
+#
+  exp_internal 0      ; # Diagnostic output: 1= on, 0=off
+  set timeout  15     ; # Set timeout to prevent infinite hang if network down
+  remove_nulls 0      ; # Disable null removal from Horizons output
+#
+# Set Horizons server constants
+#
+  set  horizons_machine  ssd.jpl.nasa.gov
+  set  horizons_ftp_dir  pub/ssd/
+#
+# Turn off output (set quiet 0; set quiet 1 to observe process)
+#
+  set quiet 0
+  log_user $quiet
+#
+# Initialize output table default over-rides to null
+#
+ set   CA_TABLE_TYPE ""
+ set   TCA3SG_LIMIT  ""  
+ set   CALIM_SB      ""
+ set   CALIM_PL      ""
+#
+# Load script's run-control settings file
+#
+  if [ file exists $input_file ] {
+   source $input_file
+ } else {
+   puts "Missing input file $input_file"
+   exit 1
+ }
+#
+# Create concatenated string of default over-rides for use as flag
+#
+  set DEFAULTS ""
+  set DEFAULTS "$DEFAULTS$CA_TABLE_TYPE$TCA3SG_LIMIT$CALIM_SB$CALIM_PL"
+#
+# Process script command-line values and check for basic input problems
+#
+  set argc [llength $argv]
+# 
+  if {$argc < 1} {
+    puts "\nMissing argument. Usage:"
+    puts { close_approach_tbl [target] {output_file} }
+    puts " "
+    puts "Example --"
+    puts { close_approach_tbl "DES=1950 DA;" 1950da.txt}
+    puts " "
+    exit 1 
+} elseif {$argc > 2} {
+    puts "\nToo many arguments. May need to use quotes.  Usage:"
+    puts { close_approach_tbl [target] {output_file} }
+    puts " "
+    puts "Example --"
+    puts { close_approach_tbl "DES=1950 DA;" 1950da.txt}
+    puts " "
+    exit 1 
+} elseif {$argc == 1} {
+    set local_file [join [lindex $argv 0] ""]
+    set local_file [string trim $local_file]
+    set local_file [string trimright $local_file ";"].txt
+} elseif {$argc == 2} {
+    set local_file [lindex $argv 1]
+  }
+#
+# Connect to Horizons 
+#
+  spawn telnet $horizons_machine 6775
+#
+# Get main prompt and proceed, turning off paging, specifying I/O model,
+# and sending object look-up from command-line 
+#
+  expect { 
+    timeout        {puts "No response from $horizons_machine"; exit 1} 
+    "unknown host" {puts "This system cannot find $horizons_machine"; exit 1}
+    "Horizons> "   {send PAGE\r} }
+  expect { 
+     timeout       {puts "\r\rHorizons timed out (LEVEL=1). Try later or notify JPL." ; send x\r;  exit 1} 
+    "Horizons> "   {send "##2\r"} }
+  expect { 
+     timeout       {puts "\r\rHorizons timed out (LEVEL=2). Try later or notify JPL." ; send x\r;  exit 1} 
+    "Horizons> "   {send [lindex $argv 0]\r} }
+#
+# Handle object look-up confirmation, request CLOSE APPROACH table 
+#
+  expect {
+   timeout {puts "Horizons timed out (LEVEL=3). Try later or notify JPL." ; send x\r;  exit 1}
+   -re ".*Continue.*: $"   { 
+      send yes\r 
+      expect {
+       -re ".*PK.*: $"   { send A\r  }
+       -re ".*lay.*: $"  { 
+          send x\r 
+          puts "\nCancelled -- unique object not found: [lindex $argv 1]"
+          puts "\nObject not matched to database OR multiple matches found."
+          puts " "
+          exit 1
+         }
+      }
+   }
+   -re ".*such object record.*" {
+      send x/r
+      puts "\nNo such object record found: [lindex $argv 1]"
+      puts " "
+      exit 1 }
+   -re ".*Select.*<cr>: $" { send A\r   }
+  }
+#
+# START date
+#
+  expect {
+    timeout {puts "Horizons timed out (LEVEL=7). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Starting .*: $" {
+        set start_flag 1
+        send $START_TIME\r }
+  }
+#
+# Handle start date error or STOP date
+#
+  expect {
+   timeout {puts "Horizons timed out (LEVEL=8). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Cannot interpret.*: $" {
+       send X\r
+       puts "\nError in $input_file date format: START_TIME= '$START_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*cannot be earlier.*: $" {
+       send X\r
+       puts "\nInput file $input_file START_TIME= '$START_TIME' prior to available ephemeris"
+       puts " "
+       exit 1 }
+    -re ".*try again.*: $" {
+       send X\r
+       puts "\nError in $input_file date format: START_TIME= '$START_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*Stop.*: $" {
+       send $STOP_TIME\r }
+     }
+#
+# Handle stop date error or proceed to defaults
+#
+  expect {
+     timeout {puts "Horizons timed out (LEVEL=9). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Cannot interpret.*" {
+       send X\r
+       puts "\nError in $input_file date format: STOP_TIME= '$STOP_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*cannot be later.*" {
+       send X\r
+       puts "\nInput file $input_file STOP_TIME= '$STOP_TIME' date beyond available ephemeris."
+       puts " "
+       exit 1 }
+    -re ".*try again.*" {
+       send X\r
+       puts "\nError in $input_file date format: STOP_TIME= '$STOP_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*Change.*: $" {
+       if { [string length $DEFAULTS] > 0 } {
+         send Y\r
+        } else {
+         send N\r
+        }
+       }
+   }
+#
+# Change output table defaults if requested 
+#   
+  if { [string length $DEFAULTS] > 0 } {
+   while 1 {
+    expect { 
+     -re "(Cannot interpret.*\r)" {
+        send X\r
+        puts " "
+        puts "Error in $input_file"
+        puts "$expect_out(0,string)"
+        puts "See Horizons documentation for acceptable values."
+        puts " "
+        exit 1 }
+     -re ".*Table format.*].*: $"        { send $CA_TABLE_TYPE\r }
+     -re ".*Max approach-time.*].*: $"   { send $TCA3SG_LIMIT\r  }
+     -re ".*Small-body.*trigger.*].*: $" { send $CALIM_SB\r      }
+     -re ".*Current planetary.*>.* $"    { send $CALIM_PL\r      }
+     -re ".*Select.*: $"               break                    ;# Done w/default override
+     -re ".*].*: $"                      { send \r            } ;# Skip unknown (new?) prompt
+    }
+   }
+ } else {
+    expect {
+     -re ".*Select.*: $"
+   }
+  }
+#
+# Table output has been generated. Now sitting at post-output prompt. 
+# Initiate FTP file transfer.
+#
+  send F\r
+# 
+# Pick out ftp file name
+#
+  expect {
+  timeout {puts "Horizons timed out (LEVEL=11). Try later or notify JPL." ; send x\r;  exit 1}
+   -re "File name   : (.*)\r\r\n   File type" {
+       set ftp_name $expect_out(1,string) }
+       send "X\r"
+   }
+#
+# Retrieve file by anonymous FTP
+#
+  set timeout 30
+  spawn ftp $horizons_machine
+  expect {
+     timeout {puts "Cancelled -- FTP server not responding."; exit 1 }
+     -re "Name.*: $"
+   } 
+  send "anonymous\r"
+  expect "Password:"
+#
+# Next bit is HP-UNIX work-around
+#
+  set oldpw $EMAIL_ADDR
+  if [regsub @ $oldpw '\134@' pw] {
+    set newpw $pw
+  } else {
+    set newpw $oldpw
+  }
+  send $newpw\r
+#
+  expect {
+    "Login failed." { 
+       send "quit\r" 
+       puts "\nFTP login failed -- must use full Internet e-mail address."
+       puts "Example:  'joe@your.domain.name'"
+       puts " "
+       exit 1 }
+    "ftp> " { send ascii\r    } 
+   }
+  expect "ftp> " { send "cd pub/ssd\r" }
+#
+  set timeout -1
+  expect "ftp> " { send "get $ftp_name $local_file\r" }
+  expect {
+     -re ".*No such.*" {
+       puts "\nError -- cannot find $ftp_name on server."
+       puts " "
+       exit 1 }
+     "ftp> " { send "quit\r" }
+   }
+#
+# Finished, set status code 
+#
+  exit 0

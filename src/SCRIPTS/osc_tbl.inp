@@ -1,0 +1,82 @@
+# osc_tbl.inp
+#
+#------------------------------------------------------------------------------
+# Example input file 
+#
+# Sets controls for Horizons osculating element table generation driven by 
+# Expect script "osc_tbl". 
+#
+# Edit this file prior to running the script to define the desired output.
+# 
+# See Horizons documentation for explanation of acceptable settings.
+#
+ set   EMAIL_ADDR     " "
+ set   CENTER         "@Sun"
+ set   REF_PLANE      "ECLIP"
+ set   START_TIME     "2015-Sep-25"
+ set   STOP_TIME      "2015-Oct-10"
+ set   STEP_SIZE      "1 d"
+#
+# Uncomment variable settings below to change element table defaults.
+# Brackets (in comment text) indicate default value. 
+#
+# See Horizons documentation for more explanation (or e-mail command-file 
+# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
+#
+#set   REF_SYSTEM      "J2000"       ;# Reference frame; [J2000] pr B1950
+#set   OUT_UNITS       "KM-S"        ;# Output units; [KM-S] AU-D, or KM-D
+#set   CSV_FORMAT      "NO"          ;# Comma-separated-values; [NO] or YES
+#set   ELM_LABELS      "YES"         ;# Label elements; [YES] or NO
+#set   TP_TYPE         "ABSOLUTE"    ;# Periapsis time; [ABSOLUTE] or RELATIVE
+#
+#------------------------------------------------------------------------------
+# Explanation of primary settings:
+#
+#   EMAIL_ADDR
+#
+#     User's Internet e-mail contact address.
+#
+#        Example: "joe@your.domain.name"
+#
+#   CENTER
+#
+#     Horizons observer site code. ID numbers provide unique matches while
+#     name strings match on the pattern and sometimes are not unique.
+#
+#     Sites not on the Earth should contain an @ symbol. See Horizons
+#     documentation for full details.
+#
+#         Examples: "@5"            (Jupiter system barycenter)
+#                   "@10"           (Sun center)
+#                   "@ssb"          (Solar system barycenter)
+#                   "@399"          (Earth geocenter)
+#
+#   START_TIME
+#
+#     Date the output ephemeris file is to begin (TDB time-scale)
+#
+#          Examples:  "2003-Aug-28"
+#                     "2003-Aug-28 16:00"
+#
+#   STOP_TIME
+#
+#     Date the output ephemeris file is to end (TDB time-scale)
+#
+#          Examples: "2006-Sep-06"
+#                    "2006-Sep-06 12:00"
+#
+#   STEP_SIZE
+#
+#     Ephemeris table output step in format:  {integer}[units] [mode]
+#     Units and mode specification are optional. See Horizons
+#     documentation for details.
+#
+#          Examples:
+#           "10 m"       10 minute output step
+#            "12h"       12 hour output step
+#             "1d"        1 day output step
+#           "2 mo"        2 calendar month output step
+#            "1 y"        1 calendar year output step
+#            "100"       Output at 100 uniform intervals between start 
+#                         and stop times. Can be used to obtain output at 
+#                         less than one minute intervals.

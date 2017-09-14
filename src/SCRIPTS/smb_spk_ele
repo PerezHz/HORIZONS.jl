@@ -1,0 +1,510 @@
+#!/usr/local/bin/expect --
+#
+# (Change the above pointer as necessary to match the Expect installation on 
+# the local machine ... the path output by UNIX/Linux command 'which expect')
+#
+# Automates the Horizons session required to produce a small-body SPK file.
+# given user-input heliocentric J2000 ecliptic osculating elements. The latest
+# version of this script is available at:
+#
+#           ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/smb_spk_ele
+#
+# Version 2.0                                              (Expect v5.45)
+#
+# Modification History:
+#
+#  DATE         Who  Change
+#  -----------  ---  ----------------------------------------------------------
+#  2004-Aug-05  JDG  Version 1.0. Based on V1.3 of 'smb_spk' script
+#  2015-Sep-22  JDG  Version 2.0. Updated to match current 'smb_spk'
+#  2017-Mae-13  JDG  Updated "http" references to "https:"
+#
+# Key:
+#  JDG= Jon.D.Giorgini@jpl.nasa.gov
+#
+# BACKGROUND:
+# -----------
+#
+#   This script ("smb_spk_ele") allows a user to type a single command on a 
+# workstation to cause the creation of a binary OR text transfer format SPK 
+# file for a comet or asteroid on that same machine. Planet and satellite SPK 
+# files are NOT generated or available this way, but are available separately.
+#
+#   This script offers network transparency by connecting to the JPL Horizons
+# ephemeris system, automating the interaction with it, then transferring the 
+# file by FTP back to the user's local machine.
+#
+# COMMAND LINE:
+# -------------
+#
+#   smb_spk_ele [-t|-b|-1|-2] [object_name] [start] [stop] [elements] [e-mail] {file_name}
+#
+# EXPLANATION:
+# ------------
+#
+#   [-b|-t|-1|-2] 
+#
+#          A singular flag, either "-b", "-t", "-1", or "-2". REQUIRED.
+#
+#           -b create file in default binary format. RECOMMENDED. 
+#               SPICE Toolkit versions N0052 and later have platform
+#               independent reader subroutines which can read files 
+#               regardless of the "little-endian" or "big-endian" 
+#               byte-order of the platform they were created on. 
+#
+#           -t create file in ASCII text TRANSFER format. OBSOLETE. 
+#               Users must later convert the file to a usable binary SPK 
+#               form using utilities "tobin" or "spacit" on the local 
+#               platform. This option is now unnecessary and obsolete, 
+#               but retained for compatibility. The '-b' option is 
+#               recommended for use instead.
+#
+#           -1 create Type 1 binary SPK format. For legacy users whose
+#               applications are not linked against a version of the 
+#               SPICE Toolkit subroutine library N0065 or later. Use only
+#               if your software can't read the newer Type 21 format. 
+#
+#           -2 create Type 21 binary SPK format. This new format will
+#               become the default Nov 1, 2015 (what will be returned by 
+#               the '-b' flag). In some situations, mostly planetary
+#               encounters and over long periods of time, it can provide
+#               a more accuracy, but requires linking against SPICE
+#               Toolkit library N0065 or later, to access the new reader.
+#
+#   [object_name] 
+# 
+#           Name of object. REQUIRED (but not used other than in file comments)
+#
+#   [start]
+# 
+#           Date the SPK file is to begin, within span 1900-2100. REQUIRED.
+#           Examples:  2021-Feb-1 
+#                     "2021-Feb-1 16:00"
+#
+#   [stop]
+# 
+#           Date the SPK file is to end, within span 1900-2100. REQUIRED.
+#           Must be more than 32 days later than [start]. 
+#             Examples:  2025-Jan-27
+#                       "2025-Jan-27 12:00"
+#
+#   [elements]
+#
+#           A single, quoted string containing the object J2000 heliocentric
+#           osculating element assignments. REQUIRED.
+#
+#           Refer to the Horizons documentation for an explanation of which
+#           osculating elements are acceptable, and how they are defined and 
+#           assigned: https://ssd.jpl.nasa.gov/?horizons_doc#user-specified
+#
+#           Example: 
+# "EPOCH=2449526.5 EC=.6570220840219289 QR=.5559654280797371 TP=2449448.890787227 OM=78.10766874391773 W=77.40198125423228 IN=24.4225258251465"
+#
+#   [e-mail]
+#
+#           User's Internet e-mail contact address. REQUIRED.
+#
+#              Example: joe@your.domain.name
+#
+#           This might be used for critical/urgent follow-up situations,
+#           but otherwise not.
+#
+#   {file name}
+#
+#           Optional name to give the file on your system. If not
+#           specified, it uses the SPK ID to assign a local file 
+#           name in the current directory. Default form:
+#               
+#                 #######.bsp  (binary SPK          ... -b argument)
+#                 #######.xsp  (transfer format SPK ... -t argument)
+# 
+#           ... where "#######" is the SPICE ID integer. For example,
+#           "1000003.bsp" for 47P/Ashbrook-Jackson.
+#
+# EXAMPLE:
+# --------
+#
+#   smb_spk_ele -b "1990 MU" 2021-Jan-1 2022-Jan-1 "EPOCH=2449526.5 EC=.6570220840219289 QR=.5559654280797371 TP=2449448.890787227 OM=78.10766874391773 W=77.40198125423228 IN=24.4225258251465" joe@your.domain.name 1990mu.bsp
+#
+#    The above numerically integrates and creates a binary format file called 
+# "1990mu.bsp" for the object over the specified time span. 
+#
+#    Command-line arguments require quotes if they contain spaces or certain
+# symbols like semi-colons. In such a case, the quotes again insure the whole 
+# argument is passed literally to the script without being improperly parsed 
+# into components by the computer's operating system.
+#
+#    For example, the date 2000-Jan-1 does NOT need quotes on the command
+# line, but "2000-Jan-1 10:00" does, since the argument contains a space
+# delimiter. Instead of remembering this, one could also just enclose all
+# command-line arguments in quotes.
+#
+#    Once the SPK file is generated and retrieved, one could then type the 
+# following commands to summarize and verify the file contains the desired
+# trajectory:
+#
+#       commnt -r 1990mu.bsp   (display internal Horizons file summary)
+#       brief 1990mu.bsp       (display file time-span)
+#
+# REQUIREMENTS
+# ------------
+#
+#   'smb_spk_ele' is written in the Expect automation language. The Expect
+# interpretation program must be present on any computer system before 
+# 'smb_spk_ele' can run.
+#
+#   The Expect language is available for free download at the URL:
+#
+#                      http://expect.nist.gov/
+#
+#   Expect is an extension of the Tcl/Tk language, which is also required.
+# The web site above provides appropriate links to both packages. Installation
+# procedures are provided and all packages can typically be installed and 
+# their self-check tests completed in about 45 minutes by following the 
+# directions.
+#
+#   Expect is primarily supported on UNIX/Linux platforms, but versions
+# for other systems do exist. The primary book on the language is 
+# "Exploring Expect" by Don Libes (ISBN 1-56592-090-2)
+# 
+#   Once the Expect language is installed on your machine, you may need to
+# alter the very first line of this script ("#!/usr/bin/expect") to
+# point to the installation location on that machine. The script will then
+# be able to execute.
+#
+#   The user's machine must be able to resolve Internet domain names and
+# support FTP.
+#
+#   It is assumed users of this script, and the SPK files it returns, are
+# familiar with the SPICE Toolkit and programmatic usage of SPK files.
+#
+# USAGE
+# -----
+# 
+#   The script will handle typical errors and respond with an indicator 
+# message if any are detected, cancelling the run. 
+#
+#   If the script appears to hang, you might change the value of 'quiet' 
+# to 1 so as to observer the process and determine if/where it is stopping: 
+# "set quiet 1". If additional diagnostic information is needed, change 
+# exp_internal to 1 ("exp_internal 1") to observe the decisions the script 
+# is making.
+#
+#   Tips:
+#
+#  1) It may take a minute or two to generate and transfer the SPK, depending
+# on how lengthy the numerical integration is, network state, and server load.
+# Typically, however, it should take only "seconds".
+#
+#  2) For user input objects, a SPK ID number is RANDOMLY assigned in the 
+# 9000000 range. This is an unofficial number needed to construct the file,
+# NOT guaranteed unique and NOT permanent; the next time the same elements 
+# are submitted, the file will be built using a different SPK ID number. 
+# Utilities exist that allow this ID to be changed after the fact, within 
+# a file. Contact JPL for more information.
+#
+#  3) The script returns a standard exit status code (0=OK, 1=FAILED) which 
+# can be checked by other calling programs. 
+#
+#  4)  The Horizons small-body SPK file returned contains the trajectory of
+# the target object with respect to the Sun (object #10) only. The SPK file is 
+# intended to be combined with other SPK files (i.e. loaded into a kernel pool)
+# containing the Earth, Moon, and other planets to derive any required data 
+# beyond target heliocentric states. 
+#
+# The DE430 planetary ephemeris SPK can be retrieved here:
+#
+#      ftp://ssd.jpl.nasa.gov/pub/eph/planets/bsp/de430.bsp 
+#
+# If such a planetary ephemeris is loaded into the kernel pool along with the
+# heliocentric small-body SPK file generated by Horizons, it will be possible
+# to generate positions of the target relative to bodies other than the Sun.
+#
+# 5) Notable changes/events are posted in the Horizons system news:
+#
+#      https://ssd.jpl.nasa.gov/?horizons_news
+#
+#-----------------------------------------------------------------------------
+#
+# Establish defaults, turn debugging on or off
+#
+  set spk_ID_override ""
+  exp_internal 0       ; # Diagnostic output: 1= on, 0=off
+  set timeout  60      ; # Set timeout to prevent infinite hang if network down
+  remove_nulls 0       ; # Disable null removal from Horizons output
+#
+# Set Horizons constants
+#
+  set horizons_machine ssd.jpl.nasa.gov
+  set horizons_ftp_dir pub/ssd/
+#
+# Turn off output (set quiet 0; set quiet 1 to observe process)
+#
+  set quiet 0
+  log_user $quiet
+#
+# Command line values; check for input problems
+#
+  set argc [llength $argv]
+  set flag [string tolower [lindex $argv 0]]
+#
+# Retrieve possible SPK ID override value
+#
+  scan $flag "%2s%s" file_flag spk_ID_override
+  set spkidlen [string length $spk_ID_override]
+  if { $spkidlen != 0 } {
+   if { [string match "\[1-9]\[0-9]*" $spk_ID_override] == 0 } {
+     puts "\SPK ID must be positive integer."
+     puts " "
+     exit 1
+}  elseif { $spk_ID_override < 1000000 || $spk_ID_override > 9999999 } {
+     puts "\SPK ID must be between 1000000 and 10000000!"
+     exit 1
+}  else {
+     set spk_ID_override ",$spk_ID_override"
+    }
+}
+#
+# Process script command-line values and check for basic input problems
+#
+  if {$argc < 5} {
+    puts "\nMissing arguments. Usage:"
+    puts { smb_spk_ele [-b|-t|-1|-2] [small-body] [start] [stop] [elements] [e-mail] {file_name}}
+    puts " "
+    exit 1 
+} elseif {$argc > 7} {
+    puts "\nToo many arguments. May need to use quotes.  Usage:"
+    puts { smb_spk_ele [-b|-t|-1|-2] [small-body] [start] [stop] [e-mail] {file_name}}
+    puts "Example --"
+    puts { smb_spk_ele -b "1999 JM8" "1999-JAN-2 10:00" "2015-JAN-1" "EPOCH=... EC=..." "joe@your.domain.name" 1999jm8.bsp}
+    puts " "
+    exit 1 
+} elseif { [string first "@" [lindex $argv 5] ] < 1 } {
+    puts "\nNot Internet e-mail syntax: [lindex $argv 5] " 
+    puts " "
+    exit 1
+} elseif { $file_flag == "-t" } {
+    set file_type YES 
+    set ftp_type ascii
+    set ftp_sufx .xsp
+} elseif { $file_flag == "-b" } {
+    set file_type NO
+    set ftp_type binary
+    set ftp_sufx .bsp
+} elseif { $file_flag == "-1" } {
+    set file_type "1"
+    set ftp_type binary
+    set ftp_sufx .bsp
+} elseif { $file_flag == "-2" } {
+    set file_type "21"
+    set ftp_type binary
+    set ftp_sufx .bsp
+} else { 
+    puts "Unknown file type: [lindex $argv 0]"
+    puts { smb_spk_ele [-b|-t|-1|-2] [small-body] [start] [stop] [elements] [e-mail] {file_name}}
+    puts " "
+    exit 1
+  }
+#
+  set local_file [lindex $argv 6]
+#
+# Connect to Horizons server
+#
+  spawn telnet $horizons_machine 6775
+#
+# Wait for main Horizons prompt, set up, proceed
+#
+  expect { 
+    timeout        {puts "No response from $horizons_machine"; exit 1} 
+    "unknown host" {puts "This system cannot find $horizons_machine"; exit 1}
+    "Horizons> "   {send PAGE\r} }
+  set timeout 15
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=1A). Try later or notify JPL."; send x\r; exit 1} 
+    "Horizons> "   {send "##2\r"} }
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=1B). Try later or notify JPL."; send x\r; exit 1} 
+    "Horizons> "   {send ";\r"} }
+#
+# Wait for element input prompt and send elements
+#
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=2). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*: $"    {send [lindex $argv 4]\r\r }
+   }
+#
+# Process any errors from element input and specify frame
+#
+  expect {
+    timeout        {puts "Horizons timed out (LEVEL=3). Try later or notify JPL."; send x\r; exit 1} 
+    -re "INPUT ERROR.*\r" {
+      puts "Horizons encountered an input error and halted --"
+      puts " "
+      puts $expect_out(0,string)
+      send q\r
+      exit 1}
+    -re "Error.*\r" {
+      puts "Horizons encountered an input error and halted -- "
+      puts " "
+      puts $expect_out(0,string)
+      send q\r
+      exit 1}
+    -re ".*Ecliptic frame of input.*: $" { send J2000\r }
+   }
+#
+# Wait for input prompt and send name of object
+#
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=4). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*Optional name of object.*: $" {send [lindex $argv 1]\r }
+   }
+#
+# Request SPK
+#
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=5). Try later or notify JPL."; send x\r; exit 1} 
+   -re ".*Select.*<cr>: $" { send S\r   }
+   }
+#
+# Pick out SPK ID sent by Horizons
+#
+  if { $argc < 7 } {
+    expect { 
+     timeout        {puts "Horizons timed out (LEVEL=6). Try later or notify JPL."; send x\r; exit 1} 
+     -re " Assigned SPK object ID: (.*)\r\r\n \r\r\n Enter your" {
+         scan $expect_out(1,string) "%i" spkid
+         set local_file $spkid$ftp_sufx }
+      } 
+  }
+#
+# Process prompt for email address
+#
+  expect {
+    timeout        {puts "Horizons timed out (LEVEL=7). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*address.*: $" {
+        send [lindex $argv 5]\r }
+     }
+#
+# Process email confirmation
+#
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=8). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*yes.*: $"  {
+       send yes\r }
+     }
+#
+# Process file type
+#
+  expect {
+    timeout        {puts "Horizons timed out (LEVEL=9). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*SPK file format.*: $"  {
+       send $file_type\r }
+    -re ".*YES.*: $"  {
+       send $file_type\r }
+     } 
+#
+# Set start date 
+#
+  expect {
+    timeout        {puts "Horizons timed out (LEVEL=10). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*START.*: $"  {
+       send [lindex $argv 2]\r }
+     } 
+#
+# Handle start date error or STOP date
+#
+  expect {
+    timeout        {puts "Horizons timed out (LEVEL=11). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*try.*: $" {
+       send x\r
+       puts "\nError in START date: [lindex $argv 2]"
+       puts "Must be in 1900 to 2100 time span. Example: '2018-JAN-1'"
+       puts " "
+       exit 1 }
+    -re ".*STOP.*: $" {
+       send [lindex $argv 3]\r }
+     }
+#
+# Handle stop date error
+#
+  set timeout -1
+  expect {
+    -re ".*large.*" {
+       send x\r
+       puts "\nError in STOP date: [lindex $argv 3]"
+       puts "Stop date must not be more than 200 years after start."
+       puts " "
+       exit 1 }
+    -re ".*try.*" {
+       send x\r
+       puts "\nError in STOP date: [lindex $argv 3]"
+       puts "Must be in 1900 to 2100 time span. Example: '2017-JAN-1'"
+       puts " "
+       exit 1 }
+    -re ".*time-span too small.*" {
+       send x\r
+       puts "\nError in requested length: [lindex $argv 2] to [lindex $argv 3]"
+       puts "Time span of file must be >= 32 days."
+       puts " "
+       exit 1 }
+    -re ".*YES.*" {
+       send NO\r }
+   }
+#
+# Pick out ftp file name
+#
+  expect { 
+   -re "File name   : (.*)\r\r\n   File type" {
+       set ftp_name $expect_out(1,string) }
+       send "x\r"
+    } 
+#
+# Retrieve file by anonymous FTP
+#
+  set timeout 30
+  spawn ftp $horizons_machine
+  expect {
+     timeout {puts "Cancelled -- FTP server not responding."; exit 1 }
+     -re "Name.*: $"
+   } 
+  send "anonymous\r"
+  expect "Password:"
+#
+# Next bit is HP-UNIX work-around
+#
+  set oldpw [lindex $argv 5]
+  if [regsub @ $oldpw '\134@' pw] {
+    set newpw $pw
+  } else {
+    set newpw $oldpw
+  }
+  send $newpw\r
+#
+  expect {
+    "Login failed." { 
+       send "quit\r" 
+       puts "\nFTP login failed -- must use full Internet e-mail address."
+       puts "Example:  'joe@your.domain.name'"
+       puts " "
+       exit 1 }
+    "ftp> " { send $ftp_type\r    } 
+   }
+  expect "ftp> " { send "cd pub/ssd\r" }
+#
+  set timeout -1
+  expect "ftp> " { send "get $ftp_name $local_file\r" }
+  expect {
+     -re ".*No such.*" {
+       puts "\nError -- cannot find $ftp_name on server."
+       puts " "
+       exit 1 }
+     -re ".*425 Can't build data connection.*" {
+       expect "ftp> " { send passive\r }
+       expect "ftp> " { send "get $ftp_name $local_file\r" }
+       exit 0 }
+     "ftp> " { send "quit\r" }
+   }
+#
+# Finished, set status code 
+#
+  exit 0

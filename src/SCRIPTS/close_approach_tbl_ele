@@ -1,0 +1,520 @@
+#!/usr/local/bin/expect --
+#
+# Change the above pointer as necessary for the Expect installation on the
+# local machine (i.e., path output by UNIX/Linux command 'which expect')
+#
+# Define path to script input file. Can be altered by user as needed. 
+#
+  set input_file ./close_approach_tbl_ele.inp
+#
+# Automate the Horizons session required to produce a CLOSE APPROACH table for
+# an asteroid or comet using user-supplied heliocentric J2000 ecliptic IAU76
+# osculating orbital elements.
+#
+# Generally, this script is suitable for situations where the same output 
+# format (as defined by the input file) is desired for objects specified one 
+# at a time on the script's command-line.
+#
+# The latest version of this script is available at 
+#
+#   ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/close_approach_tbl_ele
+#
+# A corresponding example input file is at:
+#
+#   ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/close_approach_tbl_ele.inp
+#
+# Version 1.0                                                  (Expect v.5.45)
+#
+# Modification History:
+#
+#  DATE         Who  Change
+#  -----------  ---  ---------------------------------------------------------
+#  2016-Jan 27  JDG  V1.0 
+#  2017-Mar-13  JDG  Updated "http:" references to "https:"
+#
+# Key:
+#  JDG= Jon.D.Giorgini@jpl.nasa.gov
+#
+# BACKGROUND:
+# -----------
+#
+#   This script ("close_approach_tbl_ele") and companion input file 
+# ("close_approach_tbl_ele.inp") allows a user to type one command on a remote
+# workstation and generate/transfer a Horizons encounter file (ASCII plain-text)
+# to that same machine.
+#
+#   The script offers network transparency by connecting to the JPL Horizons
+# ephemeris system, automating the interaction with it, then transferring the 
+# file by FTP back to the user's local machine.
+#
+# COMMAND LINE:
+# -------------
+#
+#   close_approach_tbl_ele [object_name] [elements] {output_file}
+#
+# EXPLANATION:
+# ------------
+#
+#   [object_name]
+#
+#     Name of object. REQUIRED. Not used other than to store in file comments.
+#
+#   [elements]
+#
+#     A single quoted string containing Horizons format heliocentric 
+#     J2000 ecliptic osculating orbital elements. REQUIRED. 
+#
+#     Example (see below for detailed discussion):
+#       "EPOCH=2449526.5 EC=.6570220840219289 QR=.5559654280797371 TP=2449448.890787227 OM=78.10766874391773 W=77.40198125423228 IN=24.4225258251465"
+#
+#   {output_file}
+#
+#     OPTIONAL name to give the output file on your system. If not
+#     specified, the command-line [object_name] string is used to assign 
+#     a local file name in the current directory using the template:
+#               
+#     [object_name].txt
+# 
+# Command-line arguments require quotes if they contain spaces or a semi-colon. 
+# The quotes guarantee the whole argument is passed literally to the script 
+# without being improperly parsed into components. Instead of remembering this, 
+# one could also just enclose all command-line arguments in quotes as routine 
+# practice.
+#
+# Example command-line:
+#
+# close_approach_tbl_ele "Test" "EPOCH=2449526.5 EC=.6570220840219289 QR=.5559654280797371 TP= 2449448.890787227 OM=78.10766874391773 W=77.40198125423228 IN=24.4225258251465 H=21.3 G=0.13" "test_out.txt"
+#
+# Here is an example with a covariance specified so as to return statistical
+# quantities:
+#
+# close_approach_tbl_ele "Test" "EPOCH=  2456796. EC= .6297817750414029 QR= .9380014314839538 TP= 2456247.0836998005 OM= 124.3571083478571 W=  278.7585667479194 IN= .447116018800692 SRC= -1.410203116881974E-12 1.157879550728209E-10 -2.783982928930769E-10 1.756709800375733E-11 -2.868399139041235E-11 -5.074355930143413E-8 -4.96543005081552E-11 1.259283939178151E-10 -8.000354636464071E-8 -1.272596631235532E-9 1.288213552745384E-10 -3.378788598318076E-10 -5.666156854934002E-8 3.6411572854726E-8 -3.808407822430856E-8 7.613987111361449E-10 -1.866907594236773E-9 -5.035338000825347E-8 -6.035300846665562E-7 5.999911020468367E-7 -3.297354028373163E-9" "test_out.txt"
+#
+# As far as the small-body OSCULATING HELIOCENTRIC ECLIPTIC elements and other 
+# parameters that can be specified ... specification string format is:   
+# 
+#          LABEL= VALUE LABEL= VALUE ...
+#
+# ... where acceptable label strings are defined as follows:
+#
+#       EPOCH ....  Julian Day Number (TDB) of osculating elements
+#       EC .......  Eccentricity
+#       QR .......  Perihelion distance in (au)
+#       TP .......  Perihelion Julian date
+#       OM .......  Longitude of ascending node (degrees) wrt ecliptic
+#       W ........  Argument of perihelion (degrees) wrt ecliptic
+#       IN .......  Inclination (degrees) wrt ecliptic
+#
+# Instead of {TP, QR}, {MA, A} or {MA,N} may be specified (not both):
+#       MA .......  Mean anomaly (degrees)
+#       A ........  Semi-major axis (au)
+#       N ........  Mean motion (deg/day)
+#
+# Note that if you specify elements using MA, {TP, QR} will be derived from
+# them; the program always uses TP and QR internally.
+#
+# OPTIONAL INPUTS
+#
+#       RAD ......  Object radius (km)
+#       PENAM ....  Planetary ephemeris of input orbital elements. Can be 
+#                    'DE405' or 'DE431'. If not specified, DE431 is assumed.
+#       SRC ......  JPL square root covariance vector. Vector-stored upper-
+#                     triangular matrix with order {EC,QR,TP,OM,W,IN,{ESTL}}
+#
+#  Non-gravitational models (allowed for comets OR asteroids)
+#       A1 ........ Radial non-grav accel (comet), au/d^2
+#       A2 ........ Transverse non-grav accel (comet),  au/d^2
+#       A3 ........ Normal non-grav accel (comet), au/d^2
+#       R0 ........ Non-grav. model constant, normalizing distance, au  [2.808]
+#       ALN ....... Non-grav. model constant, normalizing factor [0.1112620426]
+#       NM ........ Non-grav. model constant, exponent m                 [2.15]
+#       NN ........ Non-grav. model constant, exponent n                [5.093]
+#       NK ........ Non-grav. model constant, exponent k               [4.6142]
+#       DT ........ Non-grav lag/delay parameter (comets only), days
+#
+#       AMRAT ..... Solar pressure model, area/mass ratio, m^2/kg
+#
+# Check current Horizons system documentation for any future changes in the
+# above list:  https://ssd.jpl.nasa.gov/?horizons_doc#user-specified
+#
+# If the SRC is not provided, no statistical uncertainty related quantities 
+# will be output; minimal encounter distance, time, and relative velocity only.
+# Consistent SRC can be obtained from Horizons display or the downloadable 
+# DASTCOM database. Be certain it is for the same orbit solution provided
+# to the script as osculating elements. To obtain the DASTCOM database:
+#
+#    ftp://ssd.jpl.nasa.gov/pub/xfr/dastcom5.zip
+#    unzip -ao dastcom5.zip
+#
+#  The file is updated as often as hourly (between 30-32 minutes after the
+#  hour) to capture database changes.
+#      
+#  Unzipping will create a sub-directory with a file called
+#
+#    "./dastcom5/doc/README.txt" 
+#
+#  ... explaining database usage. 
+# 
+# If {R0,ALN,NM,NN,NK} are not specified, but the non-gravitational model is 
+# activated with a non-zero A1, A2, or A3, the default bracketed values shown 
+# above are assumed, as described in "Cometary Orbit Determination and 
+# Nongravitational Forces", in Comets II, University of Arizona Press (2004),
+# pp. 137-151.  If the case uses a non-standard non-grav model, the alternate
+# parameter values will be shown in the Horizons display (or in the DASTCOM 
+# database). Parameters must match those for the solution input as osculating
+# orbital elements.
+#
+# For the AMRAT solar pressure model, total absorption is assumed. Scale the
+# value to account for reflectivity. For example, if 15% of light is reflected, 
+# specify a value for AMRAT for which the actual value is multiplied by 1.15.
+#
+# When "J2000" heliocentric ecliptic elements are supplied, an obliquity angle 
+# (epsilon) of 84381.448 arcsec (IAU76) is used to transform to the equatorial 
+# system of the planetary ephemeris (PENAM) and obtain the initial state for 
+# numerical integration. 
+#
+# There are slightly different values of epsilon in different sets of 
+# constants, but this value is used by Horizons. Convert your input elements 
+# as necessary to match the ecliptic definition expected by Horizons to avoid 
+# loss of accuracy.
+#
+# For PENAMs of at least DE430 and later, 1 au is taken to be 149597870.70 km,
+# by IAU standard.
+#
+# REQUIREMENTS
+# ------------
+#
+# #1) This script looks for an input set-up file whose pathname is defined
+# above in the variable "input_file". This input file contains minimal control
+# settings to define the Horizons request:
+#
+# Example input file:
+#
+#set   START_TIME    "2015-Sep-25" ;# Times are always in the TDB scale
+#set   STOP_TIME     "2015-Oct-10" ;# Times are always in the TDB scale
+#
+# Note that if START/STOP are changed frequently, or it was desired to increase
+# the level of automation, one could develop a wrapper script in which the 
+# START/STOP times were provided on the command-line, then written out to the 
+# setup file, and then this script called.
+#
+# #2) "close_approach_tbl_ele" is written in the Expect automation language. 
+# The Expect interpretation program must be present on any computer system 
+# before "close_approach_tbl_ele" can run.
+#
+#   The Expect language is available for download at the URL:
+#
+#                      http://expect.nist.gov/
+#
+#   Expect is an extension of the Tcl/Tk language, which is also required.
+# The web site above provides appropriate links to both packages. Installation
+# procedures are provided and all packages can typically be installed and 
+# their self-check tests completed in about 45 minutes by following the 
+# directions.
+#
+#   Expect is primarily supported on UNIX/Linux platforms, but versions
+# for other systems do exist. The primary book on the language is 
+# "Exploring Expect" by Don Libes (ISBN 1-56592-090-2)
+# 
+#   Once the Expect language is installed on your machine, you may need to
+# alter the very first line of this script ("#!/usr/local/bin/expect") to
+# point to the installation location on that machine.  The script will then
+# be able to execute.
+#
+#   The user's machine must be able to resolve Internet domain names and
+# support FTP.
+#
+# USAGE
+# -----
+#
+# This script will handle typical errors and respond with an indicator 
+# message, but is not necessarily bullet-proof, being intended mostly as 
+# a functional example users can customize.
+#
+# See Horizons documentations for additional information on that program's
+# operation.
+#
+# It could take a few seconds or longer to generate and transfer the table, 
+# depending on how much numerical integration is required and the network 
+# state. 
+#
+# The script returns a standard exit status code (0=OK, 1=FAILED) which 
+# can be checked by calling programs. 
+#
+# Notable system changes/events are posted in the Horizons system news:
+#
+#      https://ssd.jpl.nasa.gov/?horizons_news
+#-------------------------------------------------------------------------------
+# 
+# Establish defaults and turn debugging on or off
+#
+  exp_internal 0      ; # Diagnostic output: 1= on, 0=off
+  set timeout  15     ; # Set timeout to prevent infinite hang if network down
+  remove_nulls 0      ; # Disable null removal from Horizons output
+#
+# Set Horizons server constants
+#
+  set  horizons_machine  ssd.jpl.nasa.gov
+  set  horizons_ftp_dir  pub/ssd/
+#
+# Turn off output (set quiet 0; set quiet 1 to observe process)
+#
+  set quiet 0
+  log_user $quiet
+#
+# Process script command-line values and check for basic input problems
+#
+  set argc [llength $argv]
+# 
+  if {$argc < 2} {
+   puts "\nMissing argument. Usage:"
+   puts { close_approach_tbl_ele [object_name] [elements] {output_file} }
+   puts " "
+   puts "Example --"
+   puts { close_approach_tbl_ele "test" "EPOCH=... EC=..." test_out.txt}
+   puts " "
+   exit 1 
+} elseif {$argc > 3} {
+   puts "\nToo many arguments. May need to use quotes.  Usage:"
+   puts { close_approach_tbl_ele [object_name] [elements] {output_file} }
+   puts " "
+   puts "Example --"
+   puts { close_approach_tbl_ele "test" "EPOCH=... EC=..." test_out.txt}
+   puts " "
+   exit 1 
+} elseif {$argc == 2} {
+   set local_file [join [lindex $argv 0] ""]
+   set local_file [string trim $local_file]
+   set local_file [string trimright $local_file ";"].txt
+} elseif {$argc == 3} {
+   set local_file [lindex $argv 2]
+  }
+#
+# Initialize output table default over-rides to null
+#
+ set   CA_TABLE_TYPE ""
+ set   TCA3SG_LIMIT  ""  
+ set   CALIM_SB      ""
+ set   CALIM_PL      ""
+#
+# Load script's run-control settings file
+#
+  if [ file exists $input_file ] {
+   source $input_file
+ } else {
+   puts "Missing input file $input_file"
+   exit 1
+ }
+#
+# Create concatenated string of default over-rides for use as flag
+#
+  set DEFAULTS ""
+  set DEFAULTS "$DEFAULTS$CA_TABLE_TYPE$TCA3SG_LIMIT$CALIM_SB$CALIM_PL"
+#
+# Connect to Horizons 
+#
+  spawn telnet $horizons_machine 6775
+#
+# Get main Horizons prompt and proceed 
+#
+  expect { 
+   timeout        {puts "No response from $horizons_server"; exit 1} 
+   "unknown host" {puts "This system cannot find $horizons_server"; exit 1}
+   "Horizons> "   {send PAGE\r} }
+  expect { 
+     timeout      {puts "\r\rHorizons timed out (LEVEL=1). Try later or notify JPL." ; send x\r;  exit 1} 
+    "Horizons> "  {send "##2\r"} }
+  expect { 
+   timeout        {puts "Horizons timed out (LEVEL=2). Try later or notify JPL."; send x\r; exit 1} 
+   "Horizons> "   {send ";\r"} }
+#
+# Wait for element input prompt, send elements
+#
+  expect { 
+    timeout       {puts "Horizons timed out (LEVEL=3). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*: $"   {send [lindex $argv 1]\r\r }
+   }
+#
+# Process any errors from element input and specify reference frame
+#
+  expect {
+    timeout       {puts "Horizons timed out (LEVEL=4). Try later or notify JPL."; send x\r; exit 1} 
+    -re "INPUT ERROR.*\r" {
+      puts "Horizons encountered an input error and halted --"
+      puts " "
+      puts $expect_out(0,string)
+      send q\r
+      exit 1}
+    -re "Error.*\r" {
+      puts "Horizons encountered an input error and halted -- "
+      puts " "
+      puts $expect_out(0,string)
+      send q\r
+      exit 1}
+    -re ".*Ecliptic frame of input.*: $" { send J2000\r }
+   }
+#
+# Wait for input prompt, send object_name
+#
+  expect { 
+    timeout        {puts "Horizons timed out (LEVEL=5). Try later or notify JPL."; send x\r; exit 1} 
+    -re ".*Optional name of object.*: $" {send [lindex $argv 0]\r }
+   }
+#
+# Request close approach table
+#
+  expect { 
+   -re ".*Select.*: $" {
+        send A\r }
+     } 
+#
+# START date
+#
+  expect {
+    timeout {puts "Horizons timed out (LEVEL=6). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Starting .*: $" {
+        set start_flag 1
+        send $START_TIME\r }
+  }
+#
+# Handle start date error or STOP date
+#
+  expect {
+   timeout {puts "Horizons timed out (LEVEL=7). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Cannot interpret.*: $" {
+       send X\r
+       puts "\nError in $input_file date format: START_TIME= '$START_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*cannot be earlier.*: $" {
+       send X\r
+       puts "\nInput file $input_file START_TIME= '$START_TIME' prior to available ephemeris"
+       puts " "
+       exit 1 }
+    -re ".*try again.*: $" {
+       send X\r
+       puts "\nError in $input_file date format: START_TIME= '$START_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*Stop.*: $" {
+       send $STOP_TIME\r }
+     }
+#
+# Handle stop date error or proceed to defaults
+#
+  expect {
+     timeout {puts "Horizons timed out (LEVEL=8). Try later or notify JPL." ; send x\r;  exit 1}
+    -re ".*Cannot interpret.*" {
+       send X\r
+       puts "\nError in $input_file date format: STOP_TIME= '$STOP_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*cannot be later.*" {
+       send X\r
+       puts "\nInput file $input_file STOP_TIME= '$STOP_TIME' date beyond available ephemeris."
+       puts " "
+       exit 1 }
+    -re ".*try again.*" {
+       send X\r
+       puts "\nError in $input_file date format: STOP_TIME= '$STOP_TIME'"
+       puts "See Horizons documentation for accepted formats."
+       puts " "
+       exit 1 }
+    -re ".*Change.*: $" {
+       if { [string length $DEFAULTS] > 0 } {
+         send Y\r
+        } else {
+         send N\r
+        }
+       }
+   }
+#
+# Change output table defaults if requested 
+#   
+  if { [string length $DEFAULTS] > 0 } {
+   while 1 {
+    expect { 
+     -re "(Cannot interpret.*\r)" {
+        send X\r
+        puts " "
+        puts "Error in $input_file"
+        puts "$expect_out(0,string)"
+        puts "See Horizons documentation for acceptable values."
+        puts " "
+        exit 1 }
+     -re ".*Table format.*].*: $"        { send $CA_TABLE_TYPE\r }
+     -re ".*Max approach-time.*].*: $"   { send $TCA3SG_LIMIT\r  }
+     -re ".*Small-body.*trigger.*].*: $" { send $CALIM_SB\r      }
+     -re ".*Current planetary.*>.* $"    { send $CALIM_PL\r      }
+     -re ".*Select.*: $"               break                    ;# Done w/default override
+     -re ".*].*: $"                      { send \r            } ;# Skip unknown (new?) prompt
+    }
+   }
+ } else {
+    expect {
+     -re ".*Select.*: $"
+   }
+  }
+#
+# Table output has been generated. Now sitting at post-output prompt. 
+# Initiate FTP file transfer.
+#
+  send F\r
+# 
+# Pick out ftp file name
+#
+  expect {
+  timeout {puts "Horizons timed out (LEVEL=9). Try later or notify JPL." ; send x\r;  exit 1}
+   -re "File name   : (.*)\r\r\n   File type" {
+       set ftp_name $expect_out(1,string) }
+       send "X\r"
+   }
+#
+# Retrieve file by anonymous FTP
+#
+  set timeout 30
+  spawn ftp $horizons_machine
+  expect {
+     timeout {puts "Cancelled -- FTP server not responding."; exit 1 }
+     -re "Name.*: $"
+   } 
+  send "anonymous\r"
+  expect "Password:"
+#
+# Next bit is HP-UNIX work-around
+#
+  set oldpw $EMAIL_ADDR
+  if [regsub @ $oldpw '\134@' pw] {
+    set newpw $pw
+  } else {
+    set newpw $oldpw
+  }
+  send $newpw\r
+#
+  expect {
+    "Login failed." { 
+       send "quit\r" 
+       puts "\nFTP login failed -- must use full Internet e-mail address."
+       puts "Example:  'joe@your.domain.name'"
+       puts " "
+       exit 1 }
+    "ftp> " { send ascii\r    } 
+   }
+  expect "ftp> " { send "cd pub/ssd\r" }
+#
+  set timeout -1
+  expect "ftp> " { send "get $ftp_name $local_file\r" }
+  expect {
+     -re ".*No such.*" {
+       puts "\nError -- cannot find $ftp_name on server."
+       puts " "
+       exit 1 }
+     "ftp> " { send "quit\r" }
+   }
+#
+# Finished, set status code 
+#
+  exit 0

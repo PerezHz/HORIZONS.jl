@@ -1,0 +1,144 @@
+# obs_tbl.inp
+#
+#------------------------------------------------------------------------------
+# Example input file 
+#
+# Sets controls for Horizons observer-table generation driven by Expect script
+# "obs_tbl" (user-specified object). 
+#
+# Edit this file prior to running the script to define desired output.
+# 
+# See Horizons documentation for explanation of acceptable settings.
+#
+ set   EMAIL_ADDR           " "
+ set   CENTER               "568"
+ set   START_TIME           "2021-Mar-04 03:00"
+ set   STOP_TIME            "2021-Mar-08 19:45" 
+ set   STEP_SIZE            "20m"
+ set   QUANTITIES           "1,4,9,8,25,23,43"
+#
+# Uncomment variable settings below to change observer table defaults.
+# Brackets (in comment text) indicate default value. 
+#
+# See Horizons documentation for more explanation (or e-mail command-file 
+# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
+#
+#set  REF_SYSTEM           "J2000"   ;# [J2000] or B1950
+#set  TIME_ZONE            "+00:00"  ;# Local time offset from UTC, [00:00]=UTC
+#set  CAL_FORMAT           "CAL"     ;# [CAL], JD, or BOTH 
+#set  TIME_DIGITS          "MIN"     ;# [MINUTES], SECONDS, or FRACSEC
+#set  ANG_FORMAT           "HMS"     ;# [HMS] or DEG
+#set  EXTRA_PREC           "NO"      ;# [NO] or YES
+#set  APPARENT             "AIRLESS" ;# [AIRLESS] or REFRACTED
+#set  RANGE_UNITS          "AU"      ;# [au] or km
+#set  SUPPRESS_RANGE_RATE  "NO"      ;# [NO] or YES
+#set  ELEV_CUT             "-90"     ;# Elevation cut-off angle; [-90]=off
+#set  AIRMASS              "38.0"    ;# Airmass limit; [38]=off
+#set  R_T_S_ONLY           "NO"      ;# [NO], TVH, GEO, RAD (rise/trn/set only)
+#set  SKIP_DAYLT           "NO"      ;# Skip output during day; [NO] or YES
+#set  SOLAR_ELONG          "0,180"   ;# Solar elongation limit; [0,180]=off
+#set  LHA_CUTOFF           "0.0"     ;# Local hour-angle cut-off; [0]=off
+#set  ANG_RATE_CUTOFF      "0.0"     ;# Maximum angular rate cut-off; [0=off]
+#set  CSV_FORMAT           "NO "     ;# Comma-separated-value output; [NO], YES
+#
+#------------------------------------------------------------------------------
+# Explanation of primary settings:
+#
+#   EMAIL_ADDR
+#
+#     User's Internet e-mail contact address.
+#
+#        Example: "joe@your.domain.name"
+#
+#   CENTER
+#
+#     Horizons observer site code. ID numbers provide unique matches while
+#     name strings match on the pattern and sometimes are not unique.
+#     Sites not on the Earth should contain an @ symbol. See Horizons
+#     documentation for full details.
+#
+#         Examples: "Pan-STARRS 1"  (Unique match for Earth-based site F51)
+#                   "673"           (Table Mountain)
+#                   "568"           (Mauna Kea)
+#                   "-1"            (Arecibo radar)
+#                   "-14"           (Goldstone DSS-14 radar)
+#                   "@Spitzer"      (Spitzer Space Telescope)
+#                   "@10"           (Sun center)
+#                   "@399"          (Earth geocenter)
+#                   "Apollo 11@301" (Apollo 11 landing site on Earth's Moon)
+#
+#   START_TIME
+#
+#     Date the output ephemeris file is to begin.
+#
+#          Examples:  "2003-Aug-28"
+#                     "2003-Aug-28 16:00"
+#
+#   STOP_TIME
+#
+#     Date the output ephemeris file is to end. 
+#
+#          Examples: "2006-Sep-06"
+#                    "2006-Sep-06 12:00"
+#
+#   STEP_SIZE
+#
+#     Ephemeris table output step in format:  {integer}[units] [mode]
+#     Units and mode specification are optional. See Horizons
+#     documentation for details.
+#
+#          Examples:
+#            "10m"       10 minute output step
+#            "12h"       12 hour output step
+#             "1d"        1 day output step
+#           "2 mo"        2 calendar month output step
+#            "1 y"        1 calendar year output step
+#            "100"       Output at 100 uniforma intervals between start and 
+#                         stop times. Can be used to obtain output at less 
+#                         than 1 minute intervals.
+#         "5m TVH"       Check for rise-transit-set with respect to the
+#                         true visual horizon at 5 minute intervals.
+#                         Print only those events.
+#         "var 60"       Output only when the object has moved about
+#                         60 arcseconds from prior position.
+#
+#   QUANTITIES
+#
+#     Horizons output "quantity code" as in list below. Specifies what
+#     should be computed and output in the table.
+#
+#-------------------------------------------------------------------------------
+#  Select output quantities using the codes below, SEPARATED BY COMMAS:
+#
+# 1. Astrometric RA & DEC  16. Sub Sun Pos. Ang & Dis *31. Obs eclip. lon & lat
+#*2. Apparent RA & DEC     17. N. Pole Pos. Ang & Dis  32. North pole RA & DEC
+# 3.   Rates; RA & DEC     18. Helio eclip. lon & lat  33. Galactic latitude
+#*4. Apparent AZ & EL      19. Helio range & rng rate  34. Local app. SOLAR time
+# 5.   Rates; AZ & EL      20. Obsrv range & rng rate  35. Earth -> site lt-time
+# 6. Sat. X & Y, pos. ang  21. One-Way Light-Time     >36. RA & DEC uncertainty
+# 7. Local app. sid. time  22. Speed wrt Sun & obsrvr >37. POS error ellipse   
+# 8. Airmass               23. Sun-Obs-Targ ELONG ang >38. POS uncertainty (RSS)
+# 9. Vis mag. & surf brt.  24. Sun-Targ-Obs PHASE ang >39. Range & rng-rate sig.
+#10. Illuminated fraction  25. Targ-Obsrv-Moon/Illum% >40. Doppler/delay sigmas
+#11. Defect of illumin.    26. Obs-Primary-Targ angle  41. True anomaly angle
+#12. Sat. angle separ/vis  27. Radial & -vel posn.ang *42. Local app. hour angle
+#14. Obs sub-lon & sub-lat 29. Constellation name      43. PHASE angle & bisect
+#15. Sun sub-lon & sub-lat 30. Delta-T (TDB - UT)   
+#
+# A = All quantities      B = Geocentric only        C = Small-body geocentric
+# D = Small-body topo.    E = Spacecraft geocentric  F = Spacecraft topocentric
+#-------------------------------------------------------------------------------
+#
+#  Example specification for QUANTITIES:
+#
+#     "1, 4, 9, 8, 25, 23, 43"
+#
+#   The above list will return a table containing astrometric ICRF/J2000 RA/DEC
+#   (catalog positions), azimuth & elevation, magnitude, airmass, magnitude 
+#   extinction, lunar elongation and illumination, solar elongation and phase 
+#   angles data. 
+#
+#   Statistical quantities (marked with a '>' in the list above) are not
+#   available for user-specified orbital element input unless an SRC is 
+#   provided along with the elements.
+#

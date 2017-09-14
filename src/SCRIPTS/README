@@ -1,0 +1,89 @@
+Scripts for automating Horizons functions are listed below. They are available 
+from this directory:
+  
+              ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS
+
+Scripts will be updated there if necessary to track changes in Horizons 
+functions.
+
+The scripts are in the Expect/Tcl automation language. Comments in the scripts 
+explain usage and how to install Expect & Tcl language interpreters if they are
+not already on your system.
+
+Expect/Tcl languages, and the scripts below, nominally assume UNIX/LINUX 
+command-line operations (which includes the Mac OSX terminal window), but 
+Expect/Tcl have been implemented for other systems. See the Expect website
+for current information.
+
+ Modification History:
+
+  DATE         Who  Change
+  -----------  ---  -----------------------------------------------------------
+  2016-Jan-27  JDG  Initial directory
+  2016-Feb-04  JDG  Added variant "close_approach_tbl_ele" to support close
+                     approach tables from user-specified orbital elements
+  2016-Sep-08  JDG  Updated "vec_tbl" and "vec_tbl.inp" to use new VEC_DELTA_T
+                     control and document the new statistical outputs available
+                     for vector table types 1 and 2
+  2017-Mar-13  JDG  Updated comment references from "http:" to "https:" 
+                     No functional changes.
+  2017-May-31  JDG  obs_tbl* (scripts and example input files) were updated to 
+                     support the new ANG_RATE_CUTOFF control
+
+ Key:
+  JDG= Jon.D.Giorgini@jpl.nasa.gov
+
+===================================================================================
+
+   Name                        Purpose
+   --------------------------  ----------------------------------------------------
+1. obs_tbl                     Automate the Horizons session required to produce 
+                                OBSERVER TABLES given a specified target object 
+                                already in the database and an input file (below)
+   obs_tbl.inp                 Example input file for 'obs_tbl_ele' script (above)
+
+   --------------------------  ----------------------------------------------------
+2. obs_tbl_ele                 Automate the Horizons session required to produce 
+                                OBSERVER TABLES given user-specified heliocentric
+                                ecliptic osculating elements and an input file 
+                                (below)
+   obs_tbl_ele.inp             Example input file for 'obs_tbl_ele' script (above)
+
+   --------------------------  ----------------------------------------------------
+3. vec_tbl                     Automate the Horizons session required to produce 
+                                VECTOR TABLES given a specified target object and 
+                                an input file (below)
+   vec_tbl.inp                 Example input file for 'vec_tbl' script (above)
+
+   --------------------------  ----------------------------------------------------
+4. osc_tbl                     Automate the Horizons session required to produce
+                                OSCULATING ORBITAL ELEMENT TABLES given a specified
+                                target object and an input file (below)
+   osc_tbl.inp                 Example input file for 'osc_tbl' script (above)
+
+   --------------------------  ----------------------------------------------------
+5. smb_spk                     Automate the Horizons session required to produce 
+                                small-body (asteroid or comet) SPK files, given a 
+                                specified target already in the database
+
+   --------------------------  ----------------------------------------------------
+6. smb_spk_ele                 Automate the Horizons session required to produce 
+                                small-body (asteroid or comet) SPK files given
+                                user-specified J2000 heliocentric IAU76 ecliptic 
+                                osculating elements. 
+
+   --------------------------  ----------------------------------------------------
+7. close_approach_tbl          Automate the Horizons session required to produce 
+                                small-body (asteroid or comet) CLOSE APPROACH 
+                                TABLES given a specified target already in the 
+                                database and an input file (below)
+   close_approach_tbl.inp      Example input file for 'close_approach_tbl' script 
+                                (above)
+
+   --------------------------  ----------------------------------------------------
+8. close_approach_tbl_ele      Automate the Horizons session required to produce
+                                small-body (asteroid or comet) CLOSE APPROACH
+                                TABLES given user-specified heliocentric ecliptic
+                                orbital elements and an input file (below)
+   close_approach_tbl_ele.inp  Example input file for 'close_approach_tbl_ele' 
+                                script (above)
