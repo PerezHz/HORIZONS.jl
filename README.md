@@ -1,5 +1,9 @@
 # HORIZONS.jl
 
+[![Build Status](https://travis-ci.org/PerezHz/HORIZONS.jl.svg?branch=master)](https://travis-ci.org/PerezHz/HORIZONS.jl)
+
+[![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg)](https://coveralls.io/github/PerezHz/HORIZONS.jl)
+
 An interface to NASA-JPL's [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system in
 [Julia](http://julialang.org).
 
