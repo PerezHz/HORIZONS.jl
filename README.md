@@ -3,13 +3,6 @@
 An interface to NASA-JPL's [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system in
 [Julia](http://julialang.org).
 
-## Acknowledgments
-
-This work is based on the scripts authored by Jon D. Giorgini for automated
-generation of tables, which may be
-found at the JPL's Solar System Dynamics group ftp server
-`ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
-
 ## Author
 
 - [Jorge A. Pérez](https://www.linkedin.com/in/perezhz),
@@ -24,7 +17,7 @@ from the Julia REPL via [`Pkg.clone`](https://docs.julialang.org/en/release-0.4/
 
 ## Usage examples
 
-The `horizons()` function is a shorcut to HORIZONS telnet interface:
+The `horizons()` function is a shortcut to HORIZONS `telnet` interface:
 
 ```julia
 julia> using HORIZONS
@@ -70,8 +63,22 @@ Horizons>
 designated objects and save the output into a file:
 
 ```julia
+# generate tables and save output to Apophis.txt in current directory:
+
 vec_tbl("Apophis", "Apophis.txt", CENTER="@ssb", REF_PLANE="ECLIP", START_TIME="2000-Jan-1 00:00"; STOP_TIME="2000-Jan-1 01:00", STEP_SIZE="1000", OUT_UNITS=2, CSV_FORMAT=true, VEC_TABLE=2)
 ```
+
+Note that `CENTER`, `REF_PLANE`, etc., are keyword arguments. If they are omitted
+from the `vec_tbl` call, then then will take default values:
+
+```julia
+# generate tables with default values and save output to Apophis.txt in current directory:
+
+vec_tbl("Apophis", "Apophis.txt")
+```
+
+More details about default values of keyword arguments are available in the 
+`vec_tbl` docstrings.
 
 If the output file is not specified, then `vec_tbl` returns the output as a
 string, which may be then used for further processing within Julia:
@@ -82,9 +89,55 @@ apophisvt = vec_tbl("Apophis", CENTER="@ssb", REF_PLANE="ECLIP", START_TIME="200
 # do stuff with `apophisvt`...
 ```
 
+Julia's broadcasting allows the user to get many vector tables at once:
+
+```julia
+julia> using HORIZONS
+
+julia> IDs = string.([99942, 900033])
+2-element Array{String,1}:
+ "99942" 
+ "900033"
+
+julia> local_files = string.(IDs,".txt")
+2-element Array{String,1}:
+ "99942.txt" 
+ "900033.txt"
+
+julia> vec_tbl.(IDs, local_files) #save output to local files 99942.txt and 900033.txt in current folder
+2-element Array{Void,1}:
+ nothing
+ nothing
+
+julia>
+```
+
 ## License
 
 `HORIZONS.jl` is licensed under the [MIT "Expat" license](./LICENSE.md).
+
+## Acknowledgments
+
+`HORIZONS.jl` is based on the scripts authored by Jon D. Giorgini for automated
+generation of tables, which may be
+found at the JPL's Solar System Dynamics group ftp server
+`ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
+
+The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several people at JPL:
+
+* Design/implementation :
+  - Jon Giorgini
+  - Don Yeomans
+* Cognizant Eng.:
+  - Jon Giorgini
+* Major body ephemerides:
+  - William Folkner (Planetary ephemerides)
+  - Bob Jacobson    (Satellites)
+  - Marina Brozovic (Satellites)
+* Contributors:
+  - Alan Chamberlin (web interface, database)
+  - Paul Chodas     (some subroutines)
+  - The NAIF group  (SPICELIB) (esp. Chuck Acton, Bill Taber, Nat Bachman)
 
 ## References
 

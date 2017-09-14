@@ -11,7 +11,7 @@
 # Jon.D.Giorgini@jpl.nasa.gov
 
 """
-    vec_tbl(OBJECT_NAME; keyword...)
+    vec_tbl(OBJECT_NAME; kwargs...)
 
 Automate the Horizons session required to produce a VECTOR table for an
 object already listed in the Horizons database: a planet, natural satellite,
@@ -80,7 +80,7 @@ function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
 end
 
 """
-vec_tbl(OBJECT_NAME, local_file; keyword...)
+    vec_tbl(OBJECT_NAME, local_file; kwargs...)
 
 Automate the Horizons session required to produce a VECTOR table for an
 object already listed in the Horizons database: a planet, natural satellite,
