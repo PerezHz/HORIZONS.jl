@@ -13,17 +13,17 @@
 """
     vec_tbl(OBJECT_NAME; kwargs...)
 
+    vec_tbl(OBJECT_NAME, local_file; kwargs...)
+
 Automate the Horizons session required to produce a VECTOR table for an
 object already listed in the Horizons database: a planet, natural satellite,
-asteroid, comet, spacecraft, or dynamical point. Output is returned as a Julia 
-string.
+asteroid, comet, spacecraft, or dynamical point. If the file name `local_file`
+is specified, then output is saved to that file in current folder. Otherwise,
+then output is returned as a Julia string.
 
 Generally, this script is suited for situations where the same output
 format (as defined by the input file) is desired for a list of objects
 specified one at a time on the script's command-line.
-
-`vec_tbl` will handle typical errors and respond with an indicator
-message if any are detected, cancelling the run.
 
 The current keyword arguments are:
 
@@ -48,7 +48,7 @@ More detailed information may be found at the HORIZONS system documentation:
 
 https://ssd.jpl.nasa.gov/?horizons_doc
 
-The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
+The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
 function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
@@ -79,47 +79,6 @@ function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
     return readstring(buffer)
 end
 
-"""
-    vec_tbl(OBJECT_NAME, local_file; kwargs...)
-
-Automate the Horizons session required to produce a VECTOR table for an
-object already listed in the Horizons database: a planet, natural satellite,
-asteroid, comet, spacecraft, or dynamical point. Output is saved to a file
-`local_file`.
-
-Generally, this script is suited for situations where the same output
-format (as defined by the input file) is desired for a list of objects
-specified one at a time on the script's command-line.
-
-`vec_tbl` will handle typical errors and respond with an indicator
-message if any are detected, cancelling the run.
-
-The current keyword arguments are:
-
-+ `timeout=15`
-+ `EMAIL_ADDR = "your@domain.name"`
-+ `CENTER = "@ssb"`
-+ `REF_PLANE = "ECLIP"`
-+ `START_TIME = "2000-Jan-1"`
-+ `STOP_TIME = "2000-Jan-2"`
-+ `STEP_SIZE = "1 d"`
-+ `COORD_TYPE = "G"`
-+ `SITE_COORD = "0,0,0"`
-+ `REF_SYSTEM = "J2000"`
-+ `VEC_CORR = "1"`
-+ `VEC_DELTA_T = "NO"`
-+ `OUT_UNITS = "1"`
-+ `CSV_FORMAT = "NO"`
-+ `VEC_LABELS = "NO"`
-+ `VEC_TABLE= "3"`
-
-More detailed information may be found at the HORIZONS system documentation:
-
-https://ssd.jpl.nasa.gov/?horizons_doc
-
-The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
-
-"""
 function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
