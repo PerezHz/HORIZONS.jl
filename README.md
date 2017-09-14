@@ -145,8 +145,6 @@ The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of 
 
 ## References
 
-References for the Horizons system:
-
 * [HORIZONS documentation (HTML)](https://ssd.jpl.nasa.gov/?horizons_doc)
 * Giorgini, J.D., Yeomans, D.K., Chamberlin, A.B., Chodas, P.W.,
     Jacobson, R.A., Keesey, M.S., Lieske, J.H., Ostro, S.J.,
