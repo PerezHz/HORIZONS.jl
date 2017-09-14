@@ -2,7 +2,7 @@ module HORIZONS
 
 using Expect, FTPClient
 
-export horizons, vec_tbl
+export horizons, vectbl
 
 include("telnet.jl")
 

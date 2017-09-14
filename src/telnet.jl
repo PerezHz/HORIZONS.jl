@@ -1,3 +1,6 @@
+# The HORIZONS.jl package is licensed under the MIT "Expat" License:
+# Copyright (c) 2017: Jorge Perez.
+
 #The following methods implement some functionality from JPL's Horizons telnet interface
 #For more detailed info about JPL HORIZONS system, visit http://ssd.jpl.nasa.gov/?horizons
 
@@ -13,55 +16,100 @@ function horizons()
     run(ignorestatus(`telnet horizons.jpl.nasa.gov 6775`))
 end
 
-# The following code is based on the vec_tbl script, as was taken from:
+# The following code is based on the vec_tbl script, as was retrieved from:
 # ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/vec_tbl.inp
 # Date retrieved: Jul 19, 2017
 # Credit: Jon D. Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
 
-function vec_tbl(OBJECT_NAME::String; timeout::Int=15, param::Int=0)
-    vec_tbl(OBJECT_NAME, OBJECT_NAME*".txt", timeout=timeout, param=param)
+function vectbl(OBJECT_NAME::String; timeout::Int=15,
+        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
+        STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
+        COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
+        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
+        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
+        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
+        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
+
+    ftp_name = vectbl_process(OBJECT_NAME, timeout=timeout,
+        EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
+        START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
+        COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
+        VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
+        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE,
+        tabledefaultopts=tabledefaultopts)
+
+    # # Retrieve file by anonymous FTP and return output as string
+    ftp_init()
+    ftp = FTP(hostname="ssd.jpl.nasa.gov", username="anonymous", password=EMAIL_ADDR)
+    cd(ftp, "pub/ssd")
+    buffer = download(ftp, ftp_name)
+    close(ftp)
+    ftp_cleanup()
+
+    return readstring(buffer)
 end
 
-function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15)
+function vectbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
+        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
+        STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
+        COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
+        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
+        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
+        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
+        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
 
-    ftp_name = ""
-    EMAIL_ADDR = "your@domain.name"
-    CENTER = "675"
-    REF_PLANE = "ECLIP"
-    START_TIME = "2016-Sep-8"
-    STOP_TIME = "2016-Oct-9"
-    STEP_SIZE = "1 d"
+    ftp_name = vectbl_process(OBJECT_NAME, timeout=timeout,
+        EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
+        START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
+        COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
+        VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
+        CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE,
+        tabledefaultopts=tabledefaultopts)
 
-    # Initialize output table default over-rides to null
-    COORD_TYPE  = ""
-    SITE_COORD  = ""
-    REF_SYSTEM  = ""
-    VEC_CORR    = ""
-    OUT_UNITS   = ""
-    CSV_FORMAT  = ""
-    VEC_LABELS  = ""
-    VEC_DELTA_T = ""
-    VEC_TABLE   = ""
+    # # Retrieve file by anonymous FTP and save to file `local_file`
+    ftp_init()
+    ftp = FTP(hostname="ssd.jpl.nasa.gov", username="anonymous", password=EMAIL_ADDR)
+    cd(ftp, "pub/ssd")
+    file = download(ftp, ftp_name, local_file)
+    close(ftp)
+    ftp_cleanup()
 
-    # Uncomment variable settings below to change VECTOR table defaults.
-    # Brackets (in comment text) indicate default value. 
-    #
-    # See Horizons documentation for more explanation (or e-mail command-file 
-    # example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
-    #
-    # The first two, "COORD_TYPE" and "SITE_COORD" must be defined if CENTER 
-    # is set to 'coord' (above), but are unused for other CENTER settings.
-    COORD_TYPE = "G" # Type of SITE_COORD; [G]eodetic, Cylindrical
-    SITE_COORD = "0,0,0" # Topocentric coordinates wrt CENTER [0,0,0]
+    nothing
+end
 
-    REF_SYSTEM = "J2000" # Reference system; [J]2000 or B1950
-    VEC_CORR = "1" # Aberrations; [1], 2, 3 (1=NONE, 2=LT, 3=LT+S)
-    VEC_DELTA_T = "NO" # Output time difference TDB - UT; [NO] or YES
-    OUT_UNITS = "1" # Output units; 1, 2, 3 (1=KM-S, 2=AU-D, 3=KM-D)
-    CSV_FORMAT = "NO" # Comma-separated-values; [NO] or YES
-    VEC_LABELS = "NO" # Label vector components; [NO] or YES
-    VEC_TABLE = "3" # Output format type; 1,2,[3],4,5,6
+# Uncomment variable settings below to change VECTOR table defaults.
+# Brackets (in comment text) indicate default value. 
+#
+# See Horizons documentation for more explanation (or e-mail command-file 
+# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
+#
+# The first two, "COORD_TYPE" and "SITE_COORD" must be defined if CENTER 
+# is set to 'coord' (above), but are unused for other CENTER settings.
+# 
+# COORD_TYPE = "G" # Type of SITE_COORD; [G]eodetic, Cylindrical
+# SITE_COORD = "0,0,0" # Topocentric coordinates wrt CENTER [0,0,0]
+# REF_SYSTEM = "J2000" # Reference system; [J]2000 or B1950
+# VEC_CORR = "1" # Aberrations; [1], 2, 3 (1=NONE, 2=LT, 3=LT+S)
+# VEC_DELTA_T = "NO" # Output time difference TDB - UT; [NO] or YES
+# OUT_UNITS = "1" # Output units; 1, 2, 3 (1=KM-S, 2=AU-D, 3=KM-D)
+# CSV_FORMAT = "NO" # Comma-separated-values; [NO] or YES
+# VEC_LABELS = "NO" # Label vector components; [NO] or YES
+# VEC_TABLE = "3" # Output format type; 1,2,[3],4,5,6
+# 
+function vectbl_process(OBJECT_NAME::String; timeout::Int=15,
+        EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
+        REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
+        STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
+        COORD_TYPE::String="G", SITE_COORD::String="0,0,0",
+        REF_SYSTEM::String="J2000", VEC_CORR::String="1",
+        VEC_DELTA_T::String="NO", OUT_UNITS::String="1",
+        CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
+        VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
+
+    ftp_name = "" # name of file at FTP server
 
     exp_internal = 0 # Diagnostic output: 1= on, 0=off
     
@@ -72,8 +120,13 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15)
     start_flag = 0
     
     DEFAULTS = ""
-    DEFAULTS = "$DEFAULTS$REF_SYSTEM$VEC_CORR$VEC_DELTA_T"
-    DEFAULTS = "$DEFAULTS$OUT_UNITS$CSV_FORMAT$VEC_LABELS$VEC_TABLE"
+
+    tabledefaultopts || begin
+        DEFAULTS = "$DEFAULTS$REF_SYSTEM$VEC_CORR$VEC_DELTA_T"
+        DEFAULTS = "$DEFAULTS$OUT_UNITS$CSV_FORMAT$VEC_LABELS$VEC_TABLE"    
+    end
+
+    @show DEFAULTS
 
     # Connect to Horizons 
     proc = ExpectProc(`telnet $horizons_machine 6775`, timeout)
@@ -213,10 +266,8 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15)
         throw(println("STEP_SIZE = '$STEP_SIZE' error."))
     elseif idx == 3
         if length(DEFAULTS) > 0
-            @show "myN"
             println(proc, "N")
         else
-            @show "myY"
             println(proc, "Y")
         end
     end
@@ -243,14 +294,12 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15)
             elseif idx == 8
                 println(proc, VEC_TABLE)
             elseif idx == 9
-                println("BREAKING!!!!")
                 break # Done w/default override
             elseif idx == 10
                 println(proc, "") # Skip unknown (new?) prompt
             end 
         end
     else
-        println("SELECTED DEFAULTS")
         expect!(proc, r".*Select.*: $")
     end
 
@@ -263,78 +312,5 @@ function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15)
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
     ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
 
-    @show ftp_name
-    @show result
-    @show proc_match
-
-    println(proc.match)
-    println(proc.before)
-
-    # # Retrieve file by anonymous FTP
-    # timeout = 30
-    # ftpproc = ExpectProc(`ftp $horizons_machine`, timeout)
-    # expect!(ftpproc, r"Name.*: $")
-    # println(ftpproc, "anonymous")
-    # expect!(ftpproc, "Password:")
-    # println(ftpproc, EMAIL_ADDR)
-
-    # # Next bit is HP-UNIX work-around
-
-    # # IS THIS NECESSARY FROM THE ORIGINAL SCRIPT? Only travis will tell!
-    # #  set oldpw $EMAIL_ADDR
-    # #  if [regsub @ $oldpw '\134@' pw] {
-    # #    set newpw $pw
-    # #  } else {
-    # #    set newpw $oldpw
-    # #  }
-    # #  send $newpw\r
-
-    # # # If it is indeed necessary, then we'd have to do something along the lines of:
-    # # oldpw = "$EMAIL_ADDR"
-    # # pw = replace(oldpw, r"@", "\134@")
-
-    # # Handle login fail
-    # idx = expect!(ftpproc, ["Login failed.","ftp> "])
-    # if idx == 1
-    #     println(ftpproc, "quit")
-    #     throw(println("FTP login failed -- must use full Internet e-mail address.\nExample:  'joe@your.domain.name'"))
-    # elseif idx == 2
-    #     println(ftpproc, "ascii")
-    # end
-
-    # # Change directory to pub/ssd
-    # idx = expect!(ftpproc, ["ftp> "])
-    # if idx == 1
-    #     println(ftpproc, "cd pub/ssd")
-    # end
-
-    # # Send file
-    # # # TODO: fix timeout Inf
-    # ftpproc.timeout = 100
-    # idx = expect!(ftpproc, ["ftp> "])
-    # if idx == 1
-    #     println(ftpproc, "get $ftp_name $local_file")
-    # end
-    # idx = expect!(ftpproc, [r".*No such.*", "ftp> "])
-    # if idx == 1
-    #     throw(println("Error -- cannot find $ftp_name on server."))
-    # elseif idx == 2
-    #     println(ftpproc, "quit")
-    # end
-
-    # Alternative to FTP downloading using FTPClient
-    ftp_init()
-    ftp = FTP(hostname="ssd.jpl.nasa.gov", username="anonymous", password=EMAIL_ADDR)
-    # dir_list = readdir(ftp)
-    cd(ftp, "pub/ssd")
-    # pwd(ftp)
-    file = download(ftp, ftp_name, local_file)
-    close(ftp)
-    ftp_cleanup()
-
-    nothing
-
+    return ftp_name
 end
-
-
-
