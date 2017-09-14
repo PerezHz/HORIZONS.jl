@@ -4,25 +4,55 @@
 #The following methods implement some functionality from JPL's Horizons telnet interface
 #For more detailed info about JPL HORIZONS system, visit http://ssd.jpl.nasa.gov/?horizons
 
-"""
-    `horizons()`
-
-Connect to JPL HORIZONS telnet interface
-
-`telnet horizons.jpl.nasa.gov 6775`
-
-"""
-function horizons()
-    run(ignorestatus(`telnet horizons.jpl.nasa.gov 6775`))
-end
-
 # The following code is based on the vec_tbl script, as was retrieved from:
 # ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/vec_tbl.inp
 # Date retrieved: Jul 19, 2017
 # Credit: Jon D. Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
 
-function vectbl(OBJECT_NAME::String; timeout::Int=15,
+"""
+    vec_tbl(OBJECT_NAME; keyword...)
+
+Automate the Horizons session required to produce a VECTOR table for an
+object already listed in the Horizons database: a planet, natural satellite,
+asteroid, comet, spacecraft, or dynamical point. Output is returned as a Julia 
+string.
+
+Generally, this script is suited for situations where the same output
+format (as defined by the input file) is desired for a list of objects
+specified one at a time on the script's command-line.
+
+`vec_tbl` will handle typical errors and respond with an indicator
+message if any are detected, cancelling the run.
+
+The current keyword arguments are:
+
+    + `timeout=15`
+    + `EMAIL_ADDR = "your@domain.name"`
+    + `CENTER = "@ssb"`
+    + `REF_PLANE = "ECLIP"`
+    + `START_TIME = "2000-Jan-1"`
+    + `STOP_TIME = "2000-Jan-2"`
+    + `STEP_SIZE = "1 d"`
+    + `COORD_TYPE = "G"`
+    + `SITE_COORD = "0,0,0"`
+    + `REF_SYSTEM = "J2000"`
+    + `VEC_CORR = "1"`
+    + `VEC_DELTA_T = "NO"`
+    + `OUT_UNITS = "1"`
+    + `CSV_FORMAT = "NO"`
+    + `VEC_LABELS = "NO"`
+    + `VEC_TABLE= "3"`
+    + `tabledefaultopts = true`
+
+More detailed information may be found at the HORIZONS system documentation:
+
+https://ssd.jpl.nasa.gov/?horizons_doc
+
+The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
+
+"""
+function vec_tbl(OBJECT_NAME::String; timeout::Int=15,
         EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
@@ -32,7 +62,7 @@ function vectbl(OBJECT_NAME::String; timeout::Int=15,
         CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
         VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
 
-    ftp_name = vectbl_process(OBJECT_NAME, timeout=timeout,
+    ftp_name = vec_tbl_process(OBJECT_NAME, timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
@@ -51,7 +81,49 @@ function vectbl(OBJECT_NAME::String; timeout::Int=15,
     return readstring(buffer)
 end
 
-function vectbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
+"""
+vec_tbl(OBJECT_NAME, local_file; keyword...)
+
+Automate the Horizons session required to produce a VECTOR table for an
+object already listed in the Horizons database: a planet, natural satellite,
+asteroid, comet, spacecraft, or dynamical point. Output is saved to a file
+`local_file`.
+
+Generally, this script is suited for situations where the same output
+format (as defined by the input file) is desired for a list of objects
+specified one at a time on the script's command-line.
+
+`vec_tbl` will handle typical errors and respond with an indicator
+message if any are detected, cancelling the run.
+
+The current keyword arguments are:
+
++ `timeout=15`
++ `EMAIL_ADDR = "your@domain.name"`
++ `CENTER = "@ssb"`
++ `REF_PLANE = "ECLIP"`
++ `START_TIME = "2000-Jan-1"`
++ `STOP_TIME = "2000-Jan-2"`
++ `STEP_SIZE = "1 d"`
++ `COORD_TYPE = "G"`
++ `SITE_COORD = "0,0,0"`
++ `REF_SYSTEM = "J2000"`
++ `VEC_CORR = "1"`
++ `VEC_DELTA_T = "NO"`
++ `OUT_UNITS = "1"`
++ `CSV_FORMAT = "NO"`
++ `VEC_LABELS = "NO"`
++ `VEC_TABLE= "3"`
++ `tabledefaultopts = true`
+
+More detailed information may be found at the HORIZONS system documentation:
+
+https://ssd.jpl.nasa.gov/?horizons_doc
+
+The original script, written by Jon D. Giorgini, may be found at src/SCRIPTS
+
+"""
+function vec_tbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
         EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
@@ -61,7 +133,7 @@ function vectbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
         CSV_FORMAT::String="NO", VEC_LABELS::String="NO",
         VEC_TABLE::String= "3", tabledefaultopts::Bool=true)
 
-    ftp_name = vectbl_process(OBJECT_NAME, timeout=timeout,
+    ftp_name = vec_tbl_process(OBJECT_NAME, timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         START_TIME=START_TIME, STOP_TIME=STOP_TIME, STEP_SIZE=STEP_SIZE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
@@ -80,26 +152,7 @@ function vectbl(OBJECT_NAME::String, local_file::String; timeout::Int=15,
     nothing
 end
 
-# Uncomment variable settings below to change VECTOR table defaults.
-# Brackets (in comment text) indicate default value. 
-#
-# See Horizons documentation for more explanation (or e-mail command-file 
-# example: ftp://ssd.jpl.nasa.gov/pub/ssd/horizons_batch_example.long )
-#
-# The first two, "COORD_TYPE" and "SITE_COORD" must be defined if CENTER 
-# is set to 'coord' (above), but are unused for other CENTER settings.
-# 
-# COORD_TYPE = "G" # Type of SITE_COORD; [G]eodetic, Cylindrical
-# SITE_COORD = "0,0,0" # Topocentric coordinates wrt CENTER [0,0,0]
-# REF_SYSTEM = "J2000" # Reference system; [J]2000 or B1950
-# VEC_CORR = "1" # Aberrations; [1], 2, 3 (1=NONE, 2=LT, 3=LT+S)
-# VEC_DELTA_T = "NO" # Output time difference TDB - UT; [NO] or YES
-# OUT_UNITS = "1" # Output units; 1, 2, 3 (1=KM-S, 2=AU-D, 3=KM-D)
-# CSV_FORMAT = "NO" # Comma-separated-values; [NO] or YES
-# VEC_LABELS = "NO" # Label vector components; [NO] or YES
-# VEC_TABLE = "3" # Output format type; 1,2,[3],4,5,6
-# 
-function vectbl_process(OBJECT_NAME::String; timeout::Int=15,
+function vec_tbl_process(OBJECT_NAME::String; timeout::Int=15,
         EMAIL_ADDR::String="your@domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", START_TIME::String="2000-Jan-1",
         STOP_TIME::String="2000-Jan-2", STEP_SIZE::String="1 d",
