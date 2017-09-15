@@ -2,9 +2,10 @@ using HORIZONS, Expect
 using Base.Test
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
-    # @show `telnet $(HORIZONS.HORIZONS_MACHINE) 6775`
-    proc = ExpectProc(`telnet $(HORIZONS.HORIZONS_MACHINE) 6775`, 15)
-
+    port = 6775
+    horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+    @show horizons_telnet_cmd
+    proc = ExpectProc(horizons_telnet_cmd, 15)
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
     idx = expect!(proc, ["unknown host", "Horizons> "])

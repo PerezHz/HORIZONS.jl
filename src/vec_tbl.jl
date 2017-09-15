@@ -181,13 +181,13 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
 
     if idx == 1
         println(proc, "X")
-        throw(println("Cannot find CENTER = '$CENTER'"))
+        throw(println("Cannot find CENTER = $CENTER"))
     elseif idx == 2
         println(proc, "X")
-        throw(println("Non-unique CENTER = '$CENTER' (multiple matches)"))
+        throw(println("Non-unique CENTER = $CENTER (multiple matches)"))
     elseif idx == 3
         println(proc, "X")
-        throw(println("Non-unique CENTER = '$CENTER' (multiple matches)"))    
+        throw(println("Non-unique CENTER = $CENTER (multiple matches)"))    
     elseif idx == 4
         println(proc, "Y")
         idx = expect!(proc, [r".*Reference plane.*: $"])
@@ -199,17 +199,17 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
         idx = expect!(proc, [r".*Unknown.*: $", r".*Enter c or g.*: $", r".*Specify.*: $"])
         if idx == 1
             println(proc, "X")
-            throw(println("Unrecognized user-input coordinate: COORD_TYPE = '$COORD_TYPE'"))
+            throw(println("Unrecognized user-input coordinate: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 2
-            throw(println("Undefined or bad coordinate type: COORD_TYPE = '$COORD_TYPE'"))
+            throw(println("Undefined or bad coordinate type: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 3
             println(proc, SITE_COORD)
             idx = expect!(proc, [r".*Cannot read.*: $", r".*Specify.*: $", r".*Reference plane.*: $"])
             if idx == 1
                 println(proc, "X")
-                throw(println("Unrecognized site coordinate-triplet: SITE_COORD='$SITE_COORD'"))
+                throw(println("Unrecognized site coordinate-triplet: SITE_COORD=$SITE_COORD"))
             elseif idx == 2
-                throw(println("Undefined site coordinate triplet: SITE_COORD = '$SITE_COORD'"))
+                throw(println("Undefined site coordinate triplet: SITE_COORD = $SITE_COORD"))
             elseif idx == 3
                 println(proc, REF_PLANE)
             end
@@ -222,7 +222,7 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
     idx = expect!(proc, [r".*Enter.*abbreviation.*: $", r".*Starting .*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in specification: REF_PLANE = '$REF_PLANE'\nSee Horizons documentation for available options."))
+        throw(println("Error in specification: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
     elseif idx == 2
         start_flag = 1
         println(proc, START_TIME)
@@ -232,10 +232,10 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
     idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $", r".*Ending.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: START_TIME = '$START_TIME'\nSee Horizons documentation for accepted formats."))
+        throw(println("Error in date format: START_TIME = $START_TIME\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("START_TIME = '$START_TIME' prior to available ephemeris"))
+        throw(println("START_TIME = $START_TIME prior to available ephemeris"))
     elseif idx == 3
         println(proc, STOP_TIME)
     end
@@ -244,10 +244,10 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
     idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*", r".*Output interval.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: STOP_TIME = '$STOP_TIME'\nSee Horizons documentation for accepted formats."))
+        throw(println("Error in date format: STOP_TIME = $STOP_TIME\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STOP_TIME = '$STOP_TIME' date beyond available ephemeris."))
+        throw(println("STOP_TIME = $STOP_TIME date beyond available ephemeris."))
     elseif idx == 3
         println(proc, STEP_SIZE)
     end
@@ -256,10 +256,10 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
     idx = expect!(proc, [r".*Unknown.*: $", r".*Cannot use.*: $", r".*Accept default.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("STEP_SIZE = '$STEP_SIZE' error."))
+        throw(println("STEP_SIZE = $STEP_SIZE error."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STEP_SIZE = '$STEP_SIZE' error."))
+        throw(println("STEP_SIZE = $STEP_SIZE error."))
     elseif idx == 3
         println(proc, "N") # never accept table defaults
     end
