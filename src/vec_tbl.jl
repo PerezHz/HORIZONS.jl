@@ -138,7 +138,7 @@ function get_vec_tbl(OBJECT_NAME::String; timeout::Int=15,
 
     idx = expect!(proc, ["Horizons> "])
     if idx == 1
-        println(proc, "\#\#2")
+        println(proc, "##2")
     end
 
     idx = expect!(proc, ["Horizons> "])
