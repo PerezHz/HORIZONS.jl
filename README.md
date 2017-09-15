@@ -143,6 +143,9 @@ The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of 
   - Paul Chodas     (some subroutines)
   - The NAIF group  (SPICELIB) (esp. Chuck Acton, Bill Taber, Nat Bachman)
 
+Translation from the original `expect` scripts to Julia was done using the
+[Expect.jl](https://github.com/wavexx/Expect.jl) package.
+
 ## References
 
 * [HORIZONS documentation (HTML)](https://ssd.jpl.nasa.gov/?horizons_doc)
