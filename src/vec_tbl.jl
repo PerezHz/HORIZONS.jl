@@ -48,18 +48,20 @@ https://ssd.jpl.nasa.gov/?horizons_doc
 The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
-function vec_tbl(OBJECT_NAME::String, START_TIME::String, STOP_TIME::String,
-        STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
+function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, START_TIME::T, STOP_TIME::S,
+        STEP_SIZE::String; kwargs...)
 
-    horizons_vec_tbl_output, ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
-    return horizons_vec_tbl_output
+    return output_str
+
+    #TODO: turn output_str into a data table; possibly even a struct which saves object info + ephemeris
 end
 
-function vec_tbl(OBJECT_NAME::String, local_file::String, START_TIME::String, STOP_TIME::String,
+function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, local_file::String, START_TIME::T, STOP_TIME::S,
         STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
-    horizons_vec_tbl_output, ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
@@ -72,26 +74,26 @@ function vec_tbl(OBJECT_NAME::String, local_file::String, START_TIME::String, ST
     nothing
 end
 
-function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
-        STOP_TIME::String, STEP_SIZE::String; timeout::Int=15,
+function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
+        STOP_TIME::Dates.DateTime, STEP_SIZE::String; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::Int=3)
 
-    exp_internal = 0 # Diagnostic output: 1= on, 0=off
-    
-    remove_nulls = 0 # Disable null removal from Horizons output
-    quiet = 0
-    start_flag = 0
+    # Convert start and stop time from `Dates.DateTime`s to `String`s
+    const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
+    const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
+
+    const start_flag = 0
     
     # Connect to Horizons 
-    proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
+    const proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
-    idx = expect!(proc, ["unknown host", "Horizons> "])
+    const idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         throw("This system cannot find $HORIZONS_MACHINE")
     elseif idx == 2
@@ -187,29 +189,29 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
         throw(println("Error in specification: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
     elseif idx == 2
         start_flag = 1
-        println(proc, START_TIME)
+        println(proc, START_TIME_str)
     end
 
     # Handle start date error or STOP date
     idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $", r".*Ending.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: START_TIME = $START_TIME\nSee Horizons documentation for accepted formats."))
+        throw(println("Error in date format: START_TIME_str = $START_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("START_TIME = $START_TIME prior to available ephemeris"))
+        throw(println("START_TIME_str = $START_TIME_str prior to available ephemeris"))
     elseif idx == 3
-        println(proc, STOP_TIME)
+        println(proc, STOP_TIME_str)
     end
 
     # Handle stop date error or get step size
     idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*", r".*Output interval.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: STOP_TIME = $STOP_TIME\nSee Horizons documentation for accepted formats."))
+        throw(println("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STOP_TIME = $STOP_TIME date beyond available ephemeris."))
+        throw(println("STOP_TIME_str = $STOP_TIME_str date beyond available ephemeris."))
     elseif idx == 3
         println(proc, STEP_SIZE)
     end
@@ -256,7 +258,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
 
     # println(proc.before)
     # @show typeof(proc.before)
-    const horizons_vec_tbl_output = proc.before
+    const output_str = proc.before
 
     # Osculating element table output has been generated. Now sitting at 
     # post-output prompt. Initiate FTP file transfer.
@@ -272,5 +274,5 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
     # println(proc, "exit")
     close(proc)
 
-    return horizons_vec_tbl_output, ftp_name
+    return output_str, ftp_name
 end
