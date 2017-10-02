@@ -71,7 +71,7 @@ designated objects and save the output into a file:
 t_start = Dates.DateTime(2029,4,13)
 t_stop = Dates.Date(2029,4,14)
 
-# step size (allowed types: Dates.Period, Int,String)
+# step size (allowed types: Dates.Period, Int, String)
 δt = Dates.Hour(1) # 1 hour step size
 
 # generate tables and save output to Apophis.txt in current directory:
