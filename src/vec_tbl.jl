@@ -51,23 +51,15 @@ The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCR
 function vec_tbl(OBJECT_NAME::String, START_TIME::String, STOP_TIME::String,
         STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
-    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
+    horizons_vec_tbl_output, ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
-    # Retrieve file by anonymous FTP and return output as string
-    ftp_init()
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
-    cd(ftp, HORIZONS_FTP_DIR)
-    buffer = download(ftp, ftp_name)
-    close(ftp)
-    ftp_cleanup()
-
-    return readstring(buffer)
+    return horizons_vec_tbl_output
 end
 
 function vec_tbl(OBJECT_NAME::String, local_file::String, START_TIME::String, STOP_TIME::String,
         STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
-    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
+    horizons_vec_tbl_output, ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
@@ -262,6 +254,10 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
     end
     # expect!(proc, r".*Select.*: $")
 
+    # println(proc.before)
+    # @show typeof(proc.before)
+    const horizons_vec_tbl_output = proc.before
+
     # Osculating element table output has been generated. Now sitting at 
     # post-output prompt. Initiate FTP file transfer.
     println(proc, "F")
@@ -276,5 +272,5 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
     # println(proc, "exit")
     close(proc)
 
-    return ftp_name
+    return horizons_vec_tbl_output, ftp_name
 end
