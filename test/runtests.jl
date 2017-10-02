@@ -16,14 +16,14 @@ using Base.Test
 end
 
 @testset "Test output formatting" begin
-    apophisvt = vec_tbl("Apophis", CSV_FORMAT=true);
+    apophisvt = vec_tbl("Apophis", "2000-Jan-1", "2000-Jan-2", "1 d", CSV_FORMAT=true);
     @test isa(apophisvt, String)
     @test contains(apophisvt, "\$\$SOE")
     @test contains(apophisvt, "\$\$EOE")
     @test ismatch(r"\$\$SOE", apophisvt)
     @test ismatch(r"\$\$EOE", apophisvt)
     mSOE = match(r"\$\$SOE", apophisvt)
-    mEOE = match(r"\$\$EOE", apophisvt);
+    mEOE = match(r"\$\$EOE", apophisvt)
     @test mSOE.offsets == Int64[]
     @test mEOE.offsets == Int64[]
 end
