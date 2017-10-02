@@ -1,4 +1,5 @@
-# The HORIZONS.jl package is licensed under the MIT "Expat" License:
+# This file is part of the HORIZONS.jl package
+# The HORIZONS.jl package is licensed under the MIT "Expat" License
 # Copyright (c) 2017: Jorge Perez.
 
 #The following methods implement some functionality from JPL's Horizons telnet interface

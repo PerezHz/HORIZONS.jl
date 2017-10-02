@@ -1,3 +1,7 @@
+# This file is part of the HORIZONS.jl package
+# The HORIZONS.jl package is licensed under the MIT "Expat" License
+# Copyright (c) 2017: Jorge Perez.
+
 using HORIZONS, Expect
 using Base.Test
 
