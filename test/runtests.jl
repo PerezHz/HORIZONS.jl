@@ -22,7 +22,8 @@ end
 @testset "Test output formatting" begin
     dt0 = Dates.DateTime(2029,4,13)
     dtmax = Dates.Date(2029,4,14)
-    apophisvt = vec_tbl("Apophis", dt0, dtmax, "100", CSV_FORMAT=true);
+    δt = Dates.Hour(1)
+    apophisvt = vec_tbl("Apophis", dt0, dtmax, δt, CSV_FORMAT=true);
     @test isa(apophisvt, String)
     @test contains(apophisvt, "\$\$SOE")
     @test contains(apophisvt, "\$\$EOE")

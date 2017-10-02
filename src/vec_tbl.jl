@@ -50,7 +50,7 @@ The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCR
 
 """
 function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, START_TIME::T, STOP_TIME::S,
-        STEP_SIZE::String; kwargs...)
+        STEP_SIZE::StepSizeType; kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -60,7 +60,7 @@ function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, START
 end
 
 function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, local_file::String, START_TIME::T, STOP_TIME::S,
-        STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
+        STEP_SIZE::StepSizeType; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -76,7 +76,7 @@ function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, local
 end
 
 function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
-        STOP_TIME::Dates.DateTime, STEP_SIZE::String; timeout::Int=15,
+        STOP_TIME::Dates.DateTime, STEP_SIZE::StepSizeType; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
@@ -86,6 +86,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     # Convert start and stop time from `Dates.DateTime`s to `String`s
     const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
     const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
+    const STEP_SIZE_str = string(STEP_SIZE)
 
     const start_flag = 0
     
@@ -214,17 +215,17 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
         println(proc, "X")
         throw(println("STOP_TIME_str = $STOP_TIME_str date beyond available ephemeris."))
     elseif idx == 3
-        println(proc, STEP_SIZE)
+        println(proc, STEP_SIZE_str)
     end
 
     # Handle step-size error or proceed to defaults
     idx = expect!(proc, [r".*Unknown.*: $", r".*Cannot use.*: $", r".*Accept default.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("STEP_SIZE = $STEP_SIZE error."))
+        throw(println("STEP_SIZE_str = $STEP_SIZE_str error."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STEP_SIZE = $STEP_SIZE error."))
+        throw(println("STEP_SIZE_str = $STEP_SIZE_str error."))
     elseif idx == 3
         println(proc, "N") # never accept table defaults
     end

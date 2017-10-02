@@ -67,21 +67,26 @@ Horizons>
 designated objects and save the output into a file:
 
 ```julia
-#Date variables for start and stop times
+# date variables for start and stop times
 t_start = Dates.DateTime(2029,4,13)
 t_stop = Dates.Date(2029,4,14)
 
+# step size (allowed types: Dates.Period, Int,String)
+δt = Dates.Hour(1) # 1 hour step size
+
 # generate tables and save output to Apophis.txt in current directory:
-vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, "5"; CENTER="@ssb", REF_PLANE="FRAME", OUT_UNITS=2, CSV_FORMAT=true, VEC_TABLE=2)
+vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, δt; CENTER="@ssb", REF_PLANE="FRAME", OUT_UNITS=2, CSV_FORMAT=true, VEC_TABLE=2)
 ```
 
 Note that `CENTER`, `REF_PLANE`, etc., are keyword arguments. If they are omitted
 from the `vec_tbl` call, then they will take default values:
 
 ```julia
+δt = 1 #return only one step
+
 # generate tables with default values and save output to Apophis.txt in current directory:
 
-vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, "5")
+vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, δt)
 ```
 
 More details about default values of keyword arguments are available in the 
@@ -91,8 +96,10 @@ If the output file is not specified, then `vec_tbl` returns the output as a
 string, which may be then used for further processing within Julia:
 
 ```julia
+δt = "2 hours" # 2 hour step size
+
 # save into `apophisvt::String` the output from HORIZONS
-apophisvt = vec_tbl("Apophis", t_start, t_stop, "5")
+apophisvt = vec_tbl("Apophis", t_start, t_stop, δt)
 
 # do stuff with `apophisvt` inside julia...
 ```
@@ -112,7 +119,7 @@ julia> local_files = string.(IDs,".txt")
  "99942.txt" 
  "900033.txt"
 
-julia> vec_tbl.(IDs, local_files, t_start, t_stop, "5") #save output to local files 99942.txt and 900033.txt in current folder
+julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local files 99942.txt and 900033.txt in current folder
 2-element Array{Void,1}:
  nothing
  nothing

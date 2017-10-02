@@ -11,6 +11,7 @@ const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
 const HORIZONS_FTP_DIR = "pub/ssd"
 const HORIZONS_DATE_FORMAT = "yyyy-u-dd HH:MM:SS.sss"
 const DateOrDateTime = Union{Dates.DateTime, Dates.Date}
+const StepSizeType = Union{Dates.Period,Int,String}
 
 """
 `horizons()`
