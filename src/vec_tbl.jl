@@ -13,7 +13,7 @@
 """
     vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
-    vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE, local_file; kwargs...)
+    vec_tbl(OBJECT_NAME, local_file, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
 Automate the Horizons session required to produce a VECTOR table for an
 object already listed in the Horizons database: a planet, natural satellite,
@@ -49,21 +49,11 @@ The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCR
 
 """
 function vec_tbl(OBJECT_NAME::String, START_TIME::String, STOP_TIME::String,
-        STEP_SIZE::String; timeout::Int=15,
-        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
-        REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
-        SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000", VEC_CORR::Int=1,
-        VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1, CSV_FORMAT::Bool=false,
-        VEC_LABELS::Bool=false, VEC_TABLE::Int=3)
+        STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
-    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE,
-        timeout=timeout, EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER,
-        REF_PLANE=REF_PLANE, COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD,
-        REF_SYSTEM=REF_SYSTEM, VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T,
-        OUT_UNITS=OUT_UNITS, CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS,
-        VEC_TABLE=VEC_TABLE)
+    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
-    # # Retrieve file by anonymous FTP and return output as string
+    # Retrieve file by anonymous FTP and return output as string
     ftp_init()
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
     cd(ftp, HORIZONS_FTP_DIR)
@@ -74,22 +64,12 @@ function vec_tbl(OBJECT_NAME::String, START_TIME::String, STOP_TIME::String,
     return readstring(buffer)
 end
 
-function vec_tbl(OBJECT_NAME::String, START_TIME::String, STOP_TIME::String,
-        STEP_SIZE::String, local_file::String; timeout::Int=15,
-        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
-        REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
-        SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000", VEC_CORR::Int=1,
-        VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1, CSV_FORMAT::Bool=false,
-        VEC_LABELS::Bool=false, VEC_TABLE::Int=3)
+function vec_tbl(OBJECT_NAME::String, local_file::String, START_TIME::String, STOP_TIME::String,
+        STEP_SIZE::String; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
 
-    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE,
-        timeout=timeout, EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER,
-        REF_PLANE=REF_PLANE, COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD,
-        REF_SYSTEM=REF_SYSTEM, VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T,
-        OUT_UNITS=OUT_UNITS, CSV_FORMAT=CSV_FORMAT, VEC_LABELS=VEC_LABELS,
-        VEC_TABLE=VEC_TABLE)
+    ftp_name = get_vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE; kwargs...)
 
-    # # Retrieve file by anonymous FTP and save to file `local_file`
+    # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
     cd(ftp, HORIZONS_FTP_DIR)
@@ -291,6 +271,10 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::String,
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
     # ftp_name of name of file at FTP server
     const ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
+
+    # Close telnet connection
+    # println(proc, "exit")
+    close(proc)
 
     return ftp_name
 end
