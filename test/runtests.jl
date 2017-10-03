@@ -19,7 +19,7 @@ using Base.Test
     @test idx == 2
 end
 
-@testset "Test output formatting" begin
+@testset "Vector table generation" begin
     dt0 = Dates.DateTime(2029,4,13)
     dtmax = Dates.Date(2029,4,14)
     δt = Dates.Hour(1)
@@ -34,10 +34,22 @@ end
     @test mSOE.offsets == Int64[]
     @test mEOE.offsets == Int64[]
 
-    apophisste = apophisraw[mSOE.offset+7:mEOE.offset-3] #from SOE to EOE
-    iob = IOBuffer(apophisste)
-    apophisarr = readcsv(iob)[:,1:end-1]
+    # get everything within SOE and EOE
+    apophisste = apophisraw[mSOE.offset+7:mEOE.offset-3]
+    # turn into 2-dim array
+    apophisarr = readcsv(IOBuffer(apophisste))[:,1:end-1]
 
+    @test typeof(apophisarr) == Array{Any,2}
     @test size(apophisarr) == (25, 11)
+
+    # get table labels
+    apophishdr = convert(Array{String,2}, strip.(    readcsv(  IOBuffer( match(r"JDTDB.*,\r\n", apophisraw).match )  )[:,1:end-1]    ));
+    @test typeof(apophishdr) == Array{String,2}
+    @test size(apophishdr) == (1,11)
+    # vcat into common 2-dim array
+    apophistable = vcat(apophishdr, apophisarr)
+
+    @test typeof(apophistable) == Array{Any,2}
+    @test size(apophistable) == (26, 11)
 
 end
