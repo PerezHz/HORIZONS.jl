@@ -23,14 +23,21 @@ end
     dt0 = Dates.DateTime(2029,4,13)
     dtmax = Dates.Date(2029,4,14)
     δt = Dates.Hour(1)
-    apophisvt = vec_tbl("Apophis", dt0, dtmax, δt, CSV_FORMAT=true);
-    @test isa(apophisvt, String)
-    @test contains(apophisvt, "\$\$SOE")
-    @test contains(apophisvt, "\$\$EOE")
-    @test ismatch(r"\$\$SOE", apophisvt)
-    @test ismatch(r"\$\$EOE", apophisvt)
-    mSOE = match(r"\$\$SOE", apophisvt)
-    mEOE = match(r"\$\$EOE", apophisvt)
+    apophisraw = vec_tbl("Apophis", dt0, dtmax, δt, CSV_FORMAT=true);
+    @test isa(apophisraw, String)
+    @test contains(apophisraw, "\$\$SOE")
+    @test contains(apophisraw, "\$\$EOE")
+    @test ismatch(r"\$\$SOE", apophisraw)
+    @test ismatch(r"\$\$EOE", apophisraw)
+    mSOE = match(r"\$\$SOE", apophisraw)
+    mEOE = match(r"\$\$EOE", apophisraw)
     @test mSOE.offsets == Int64[]
     @test mEOE.offsets == Int64[]
+
+    apophisste = apophisraw[mSOE.offset+7:mEOE.offset-3] #from SOE to EOE
+    iob = IOBuffer(apophisste)
+    apophisarr = readcsv(iob)[:,1:end-1]
+
+    @test size(apophisarr) == (25, 11)
+
 end
