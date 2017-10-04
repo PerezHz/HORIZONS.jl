@@ -3,7 +3,12 @@
 # Copyright (c) 2017: Jorge Perez.
 
 using HORIZONS, Expect
-using Base.Test
+
+if VERSION < v"0.7.0-DEV.2010"
+    using Base.Test
+else
+    using Test
+end
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     port = 6775
