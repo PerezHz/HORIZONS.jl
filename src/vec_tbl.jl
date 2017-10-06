@@ -282,9 +282,19 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
 end
 
 function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
-        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType)
+        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType; timeout::Int=15,
+        EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
+        REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
+        SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
+        VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
+        VEC_LABELS::Bool=false, VEC_TABLE::Int=3)
 
-    output_str = vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE, CSV_FORMAT=true);
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME),
+        Dates.DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
+        EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
+        COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
+        VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
+        CSV_FORMAT=true, VEC_LABELS=VEC_LABELS, VEC_TABLE=VEC_TABLE)
 
     # get $$SOE, $$EOE offsets
     mSOE = match(r"\$\$SOE", output_str)
