@@ -278,3 +278,25 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
 
     return output_str, ftp_name
 end
+
+function vec_tbl_csv(OBJECT_NAME::String, 
+        START_TIME::DateOrDateTime, STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType)
+
+    output_str = vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE, CSV_FORMAT=true);
+
+    # get $$SOE, $$EOE offsets
+    mSOE = match(r"\$\$SOE", output_str)
+    mEOE = match(r"\$\$EOE", output_str)
+
+    # get everything within SOE and EOE
+    ste = output_str[mSOE.offset+7:mEOE.offset-3]
+    # turn into 2-dim array
+    arr = readcsv(IOBuffer(ste))[:,1:end-1]
+
+    # get table labels
+    hdr = convert(Array{String,2}, strip.( readcsv( IOBuffer( match(r"JDTDB.*,\r\n", output_str).match ) )[:,1:end-1] ));
+    # vcat into common 2-dim array
+    table = vcat(hdr, arr)
+
+    return table
+end
