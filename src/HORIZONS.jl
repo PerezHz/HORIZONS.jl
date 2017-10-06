@@ -5,7 +5,7 @@ module HORIZONS
 
 using Expect, FTPClient
 
-export horizons, vec_tbl
+export horizons, vec_tbl, vec_tbl_csv
 
 const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
 const HORIZONS_FTP_DIR = "pub/ssd"

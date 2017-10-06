@@ -49,8 +49,8 @@ https://ssd.jpl.nasa.gov/?horizons_doc
 The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
-function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, START_TIME::T, STOP_TIME::S,
-        STEP_SIZE::StepSizeType; kwargs...)
+function vec_tbl(OBJECT_NAME::String, START_TIME::DateOrDateTime,
+        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType; kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -59,8 +59,10 @@ function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, START
     #TODO: turn output_str into a data table; possibly even a struct which saves object info + ephemeris
 end
 
-function vec_tbl{T<:DateOrDateTime,S<:DateOrDateTime}(OBJECT_NAME::String, local_file::String, START_TIME::T, STOP_TIME::S,
-        STEP_SIZE::StepSizeType; EMAIL_ADDR::String="joe@your.domain.name", kwargs...)
+function vec_tbl(OBJECT_NAME::String, local_file::String,
+        START_TIME::DateOrDateTime, STOP_TIME::DateOrDateTime,
+        STEP_SIZE::StepSizeType; EMAIL_ADDR::String="joe@your.domain.name",
+        kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -279,8 +281,8 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     return output_str, ftp_name
 end
 
-function vec_tbl_csv(OBJECT_NAME::String, 
-        START_TIME::DateOrDateTime, STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType)
+function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
+        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType)
 
     output_str = vec_tbl(OBJECT_NAME, START_TIME, STOP_TIME, STEP_SIZE, CSV_FORMAT=true);
 
