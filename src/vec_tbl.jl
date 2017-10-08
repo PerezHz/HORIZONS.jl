@@ -304,6 +304,7 @@ function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
     ste = output_str[mSOE.offset+7:mEOE.offset-3]
     # turn into 2-dim array
     arr = readcsv(IOBuffer(ste))[:,1:end-1]
+    arr[:,2] = strip.( arr[:,2] )
 
     # get table labels
     hdr = convert(Array{String,2}, strip.( readcsv( IOBuffer( match(r"JDTDB.*,\r\n", output_str).match ) )[:,1:end-1] ));
