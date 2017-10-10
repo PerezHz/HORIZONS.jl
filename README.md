@@ -21,7 +21,7 @@ from the Julia REPL via [`Pkg.clone`](https://docs.julialang.org/en/release-0.4/
 
 ## Usage examples
 
-The `horizons()` function is a shortcut to HORIZONS `telnet` interface:
+The `horizons()` function is a shortcut to call the HORIZONS `telnet` interface from the Julia REPL:
 
 ```julia
 julia> using HORIZONS
@@ -63,8 +63,7 @@ System news updated September 29, 2017
 Horizons>
 ```
 
-`HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for 
-designated objects and save the output into a file:
+`HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for designated objects and save the output into a file:
 
 ```julia
 # date variables for start and stop times
@@ -127,7 +126,7 @@ julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local fi
 julia>
 ```
 
-Currently, `HORIZONS.jl` only supports the `vec_tbl` script, which is useful to generate ephemeris for a given object in terms of its position and/or its velocity. In the future, other scripts such as `smb_spk`, `osc_tbl`, `obs_tbl_ele`, will be supported (work in progress).
+Currently, `HORIZONS.jl` only supports the `vec_tbl` script. There is work in progress in order to support other HORIZONS scripts such as `smb_spk`, `osc_tbl`, `obs_tbl_ele`, etc.
 
 ## License
 
