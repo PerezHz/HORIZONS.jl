@@ -26,7 +26,7 @@ The `horizons()` function is a shortcut to HORIZONS `telnet` interface:
 ```julia
 julia> using HORIZONS
 
-julia> horizons()
+julia> horizons() # get Horizons prompt within Julia
 Trying 128.149.23.134...
 Connected to ssd.jpl.nasa.gov.
 Escape character is '^]'.
@@ -48,18 +48,18 @@ Escape character is '^]'.
   ======================================================================
 
      ___    _____     ___
-    /_ /|  /____/ \  /_ /|       Horizons On-line Ephemeris System v4.08
+    /_ /|  /____/ \  /_ /|       Horizons On-line Ephemeris System v4.10
     | | | |  __ \ /| | | |       Solar System Dynamics Group
  ___| | | | |__) |/  | | |__     Jet Propulsion Laboratory
 /___| | | |  ___/    | |/__ /|   Pasadena, CA, USA
 |_____|/  |_|/       |_____|/
+ 
+ Establishing connection, stand-by ...
 
-Establishing connection, stand-by ...
-
-JPL Horizons, version 4.08
+JPL Horizons, version 4.10
 Type `?' for brief intro, `?!' for more details
-System news updated September 12, 2017
-
+System news updated September 29, 2017
+ 
 Horizons>
 ```
 
@@ -126,6 +126,8 @@ julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local fi
 
 julia>
 ```
+
+Currently, `HORIZONS.jl` only supports the `vec_tbl` script, which is useful to generate ephemeris for a given object in terms of its position and/or its velocity. In the future, other scripts such as `smb_spk`, `osc_tbl`, `obs_tbl_ele`, will be supported (work in progress).
 
 ## License
 
