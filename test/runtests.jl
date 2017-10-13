@@ -58,10 +58,24 @@ end
     @test size(apophistable) == (26, 11)
 end
 
+@testset "Vector table generation and save to file" begin
+    dt0 = Dates.Date(1835,08,21)
+    dtmax = Dates.Date(1994,01,11)
+    δt = Dates.Year(5)
+    # 900033 corresponds to last Halley's apparition
+    file_name = vec_tbl("900033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
+    @test isfile(file_name)
+    @test isfile("Halley.txt")
+    @test file_name == "Halley.txt"
+    file_name = vec_tbl("900033", "", dt0, dtmax, δt; CSV_FORMAT=true);
+    @test isfile(file_name)
+end
+
 @testset "Vector table generation with CSV format: vec_tbl_csv" begin
     dt0 = Dates.Date(1950,1,1)
     dtmax = Dates.DateTime(1959, 12, 31, 11, 59, 59, 999)
     δt = Dates.Year(1)
+    # 399 corresponds to Earth
     earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (11, 8)

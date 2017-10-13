@@ -70,11 +70,16 @@ function vec_tbl(OBJECT_NAME::String, local_file::String,
     ftp_init()
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
     cd(ftp, HORIZONS_FTP_DIR)
-    file = download(ftp, ftp_name, local_file)
-    close(ftp)
-    ftp_cleanup()
-
-    nothing
+    if local_file == ""
+        file = download(ftp, ftp_name, ftp_name)
+        close(ftp)
+        ftp_cleanup()
+        return ftp_name
+    else
+        file = download(ftp, ftp_name, local_file)
+        close(ftp)
+        return local_file
+    end
 end
 
 function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
