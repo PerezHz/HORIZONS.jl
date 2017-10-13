@@ -28,6 +28,8 @@ install:
 # Make sure telnet client is enabled
   - ps: Import-Module servermanager
   - ps: Add-WindowsFeature telnet-client
+  - ps: get-command telnet
+  - ps: echo $env:PATH
 # If there's a newer build queued for the same PR, cancel this one
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
         https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
