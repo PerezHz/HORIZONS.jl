@@ -59,8 +59,8 @@ end
 end
 
 @testset "Vector table generation and save to file" begin
-    dt0 = Dates.Date(1835,08,21)
-    dtmax = Dates.Date(1994,01,11)
+    dt0 = Dates.Date(1836)
+    dtmax = Dates.Date(1994)
     δt = Dates.Year(5)
     # 900033 corresponds to last Halley's apparition
     file_name = vec_tbl("900033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
@@ -83,6 +83,22 @@ end
     earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (12, 8)
+    earth_tbl2, earth_csv_str2 = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = "2")
+    @test typeof(earth_tbl2) == Array{Any,2}
+    @test size(earth_tbl2) == (12, 8)
+    @test earth_tbl == earth_tbl2
+    @test earth_csv_str == earth_csv_str2
+    # generate table with uncertainties for asteroid 1950 DA
+    dt0 = Dates.Date(2000)
+    dtmax = Dates.Date(2015)
+    δt = Dates.Year(1)
+    _1950da_tbl, _1950da_csv_str = vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa");
+    @test typeof(_1950da_tbl) == Array{Any,2}
+    @test size(_1950da_tbl) == (17, 20)
+    labels_2xa = ["JDTDB" "Calendar_Date_TDB" "X" "Y" "Z" "VX" "VY" "VZ" "X_s" "Y_s" "Z_s" "VX_s" "VY_s" "VZ_s" "A_s" "C_s" "N_s" "VA_s" "VC_s" "VN_s"]
+    for i in eachindex(labels_2xa)
+        _1950da_tbl[1, i] = labels_2xa[i]
+    end
     #NOTE: the second object returned by vec_tbl_csv may be used to produce a DataFrame!
     # e.g.:
     # using DataFrames
