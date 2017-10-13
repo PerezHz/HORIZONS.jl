@@ -1,6 +1,6 @@
 # HORIZONS.jl
 
-[![Build Status](https://travis-ci.org/PerezHz/HORIZONS.jl.svg?branch=master)](https://travis-ci.org/PerezHz/HORIZONS.jl)
+[![Build Status](https://travis-ci.org/PerezHz/HORIZONS.jl.svg?branch=master)](https://travis-ci.org/PerezHz/HORIZONS.jl) [![Build status](https://ci.appveyor.com/api/projects/status/55ys9iv798rk204l/branch/fix-telnet-windows?svg=true)](https://ci.appveyor.com/project/PerezHz/horizons-jl/branch/fix-telnet-windows)
 
 [![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg)](https://coveralls.io/github/PerezHz/HORIZONS.jl)
 
