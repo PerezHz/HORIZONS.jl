@@ -303,14 +303,14 @@ function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
     # get everything within SOE and EOE
     ste = output_str[mSOE.offset+7:mEOE.offset-3]
     # turn into 2-dim array
-    arr = readdlm(IOBuffer(ste), ',')
+    arr_all = readdlm(IOBuffer(ste), ',')
+    arr = view(arr_all, :, 1:(indices(arr_all)[2].stop-1))
     arr[:,2] = strip.( arr[:,2] )
 
     # get table labels
     hdr = convert(Array{String,2}, strip.( readdlm( IOBuffer( match(r"JDTDB.*,\r\n", output_str).match ), ',' )[:,1:end-1] ));
     # vcat into common 2-dim array
-    # table = vcat(hdr, view(arr, :, 1:end-1))
-    table = vcat(hdr, view(arr, :, 1:(indices(arr)[2].stop-1)))
+    table = vcat(hdr, arr)
 
     return table
 end
