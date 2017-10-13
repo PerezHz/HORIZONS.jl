@@ -301,9 +301,8 @@ function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
     mEOE = match(r"\$\$EOE", output_str)
 
     # get everything within SOE and EOE
-    ste = output_str[mSOE.offset+7:mEOE.offset-3]
+    ste = output_str[mSOE.offset+7:mEOE.offset-1]
     ste = replace(ste, ",\r\n", "\r\n") #get rid of comma at end of line
-    ste = ste[1:end-1] #get rid of comma at end of string
 
     # get and process table labels
     hdr_raw = match(r"JDTDB.*,\r\n", output_str).match
