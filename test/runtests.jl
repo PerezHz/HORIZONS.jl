@@ -24,6 +24,12 @@ end
     @test idx == 2
 end
 
+@testset "Test for erroneous arguments" begin
+    @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Dates.Year(1))
+    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Dates.Year(1); CENTER="nomatch")
+    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Dates.Year(1); VEC_TABLE = 1, CENTER="mars")
+end
+
 @testset "Vector table generation: vec_tbl" begin
     dt0 = Dates.DateTime(2029,4,13)
     dtmax = Dates.Date(2029,4,14)

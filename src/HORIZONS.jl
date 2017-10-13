@@ -12,6 +12,7 @@ export horizons, vec_tbl, vec_tbl_csv
 const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
 const HORIZONS_FTP_DIR = "pub/ssd"
 const HORIZONS_DATE_FORMAT = "yyyy-u-dd HH:MM:SS.sss"
+const ObjectName = Union{Int, String}
 const StartStopTime = Union{Dates.DateTime, Dates.Date, String}
 const StepSize = Union{Dates.Period, Int, String}
 const VecTable = Union{Int, String}

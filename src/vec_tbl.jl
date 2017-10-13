@@ -49,7 +49,7 @@ https://ssd.jpl.nasa.gov/?horizons_doc
 The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
-function vec_tbl(OBJECT_NAME::String, START_TIME::StartStopTime,
+function vec_tbl(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         STOP_TIME::StartStopTime, STEP_SIZE::StepSize; kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
@@ -59,7 +59,7 @@ function vec_tbl(OBJECT_NAME::String, START_TIME::StartStopTime,
     #TODO: turn output_str into a data table; possibly even a struct which saves object info + ephemeris
 end
 
-function vec_tbl(OBJECT_NAME::String, local_file::String,
+function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
         STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
         kwargs...)
@@ -82,7 +82,7 @@ function vec_tbl(OBJECT_NAME::String, local_file::String,
     end
 end
 
-function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
+function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         STOP_TIME::Dates.DateTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
@@ -91,6 +91,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
 
     # Convert start and stop time from `Dates.DateTime`s to `String`s
+    const OBJECT_NAME_str = string(OBJECT_NAME)
     const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
     const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
     const STEP_SIZE_str = string(STEP_SIZE)
@@ -116,7 +117,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
 
     idx = expect!(proc, ["Horizons> "])
     if idx == 1
-        println(proc, OBJECT_NAME)
+        println(proc, OBJECT_NAME_str)
     end
 
     # Handle object look-up confirmation 
@@ -128,11 +129,11 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
             println(proc, "E")
         elseif idx == 2
             println(proc, "x")
-            throw(println("Cancelled -- unique object not found: $OBJECT_NAME\nObject not matched to database OR multiple matches found."))
+            throw(ArgumentError("Cancelled -- unique object not found: $OBJECT_NAME\nObject not matched to database OR multiple matches found."))
         end
     elseif idx == 2
         println(proc, "x")
-        throw(println("No such object record found: $OBJECT_NAME"))
+        throw(ArgumentError("No such object record found: $OBJECT_NAME"))
     elseif idx == 3
         println(proc, "E")
     end
@@ -150,17 +151,17 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     end
 
     # Handle coordinate center error or confirmation
-    idx = expect!(proc, [r".*Cannot find central body.*: $", r".*Select.*<cr>: $", r".*Coordinate center.*<cr>: $", r".*Confirm selected.* $", r".*Cylindrical.*: $", r".*Reference plane.*: $"])
+    idx = expect!(proc, [r".*No site matches.*: $"s, r".*Select.*<cr>: $", r".*Coordinate center.*: $"s, r".*Confirm selected.* $", r".*Cylindrical.*: $", r".*Reference plane.*: $"])
 
     if idx == 1
         println(proc, "X")
-        throw(println("Cannot find CENTER = $CENTER"))
+        throw(ArgumentError("Cannot find CENTER = $CENTER"))
     elseif idx == 2
         println(proc, "X")
-        throw(println("Non-unique CENTER = $CENTER (multiple matches)"))
+        throw(ArgumentError("Non-unique CENTER = $CENTER (multiple matches); idx == $idx"))
     elseif idx == 3
         println(proc, "X")
-        throw(println("Non-unique CENTER = $CENTER (multiple matches)"))    
+        throw(ArgumentError("Non-unique CENTER = $CENTER (multiple matches); idx == $idx"))
     elseif idx == 4
         println(proc, "Y")
         idx = expect!(proc, [r".*Reference plane.*: $"])
@@ -172,17 +173,17 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
         idx = expect!(proc, [r".*Unknown.*: $", r".*Enter c or g.*: $", r".*Specify.*: $"])
         if idx == 1
             println(proc, "X")
-            throw(println("Unrecognized user-input coordinate: COORD_TYPE = $COORD_TYPE"))
+            throw(ArgumentError("Unrecognized user-input coordinate: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 2
-            throw(println("Undefined or bad coordinate type: COORD_TYPE = $COORD_TYPE"))
+            throw(ArgumentError("Undefined or bad coordinate type: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 3
             println(proc, SITE_COORD)
             idx = expect!(proc, [r".*Cannot read.*: $", r".*Specify.*: $", r".*Reference plane.*: $"])
             if idx == 1
                 println(proc, "X")
-                throw(println("Unrecognized site coordinate-triplet: SITE_COORD=$SITE_COORD"))
+                throw(ArgumentError("Unrecognized site coordinate-triplet: SITE_COORD=$SITE_COORD"))
             elseif idx == 2
-                throw(println("Undefined site coordinate triplet: SITE_COORD = $SITE_COORD"))
+                throw(ArgumentError("Undefined site coordinate triplet: SITE_COORD = $SITE_COORD"))
             elseif idx == 3
                 println(proc, REF_PLANE)
             end
@@ -195,7 +196,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     idx = expect!(proc, [r".*Enter.*abbreviation.*: $", r".*Starting .*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in specification: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
+        throw(ArgumentError("Error in specification: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
     elseif idx == 2
         start_flag = 1
         println(proc, START_TIME_str)
@@ -205,10 +206,10 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $", r".*Ending.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: START_TIME_str = $START_TIME_str\nSee Horizons documentation for accepted formats."))
+        throw(ArgumentError("Error in date format: START_TIME_str = $START_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("START_TIME_str = $START_TIME_str prior to available ephemeris"))
+        throw(ArgumentError("START_TIME_str = $START_TIME_str prior to available ephemeris"))
     elseif idx == 3
         println(proc, STOP_TIME_str)
     end
@@ -217,10 +218,10 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*", r".*Output interval.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
+        throw(ArgumentError("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STOP_TIME_str = $STOP_TIME_str date beyond available ephemeris."))
+        throw(ArgumentError("STOP_TIME_str = $STOP_TIME_str date beyond available ephemeris."))
     elseif idx == 3
         println(proc, STEP_SIZE_str)
     end
@@ -229,10 +230,10 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     idx = expect!(proc, [r".*Unknown.*: $", r".*Cannot use.*: $", r".*Accept default.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(println("STEP_SIZE_str = $STEP_SIZE_str error."))
+        throw(ArgumentError("STEP_SIZE_str = $STEP_SIZE_str error."))
     elseif idx == 2
         println(proc, "X")
-        throw(println("STEP_SIZE_str = $STEP_SIZE_str error."))
+        throw(ArgumentError("STEP_SIZE_str = $STEP_SIZE_str error."))
     elseif idx == 3
         println(proc, "N") # never accept table defaults
     end
@@ -242,7 +243,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
         idx = expect!(proc, [r"(Cannot interpret.*\r)", r".*frame.*].*: $", r".*Corrections.*].*: $", r".*units.*].*: $", r".*CSV.*].*: $", r".*Label.*].*: $", r".*delta-T.*].*: $", r".*table type.*].*: $", r".*Select.*: $", r".*].*: $"])
         if idx == 1
             println(proc, "X")
-            throw(println("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
+            throw(ArgumentError("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
         elseif idx == 2
             println(proc, REF_SYSTEM)
         elseif idx == 3
@@ -286,7 +287,7 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     return output_str, ftp_name
 end
 
-function vec_tbl_csv(OBJECT_NAME::String, START_TIME::StartStopTime,
+function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         STOP_TIME::StartStopTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
