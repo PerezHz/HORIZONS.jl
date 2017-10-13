@@ -24,7 +24,7 @@ notifications:
     on_build_status_changed: false
 
 install:
-  - ps: "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12"
+  # - ps: "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12"
 # Make sure telnet client is enabled
   - ps: Import-Module servermanager
   - ps: Add-WindowsFeature telnet-client
