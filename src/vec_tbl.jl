@@ -196,10 +196,10 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     end
 
     # Handle reference plane error or START date
-    idx = expect!(proc, [r".*Enter.*abbreviation.*: $", r".*Starting .*: $"])
+    idx = expect!(proc, [r".*Enter.*abbreviation.*: $"s, r".*Starting .*: $"])
     if idx == 1
         println(proc, "X")
-        throw(ArgumentError("Error in specification: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
+        throw(ArgumentError("Enter \"ecliptic\", \"frame\" or \"body equator\" or abbreviation: REF_PLANE = $REF_PLANE\nSee Horizons documentation for available options."))
     elseif idx == 2
         start_flag = 1
         println(proc, START_TIME_str)

@@ -35,11 +35,12 @@ end
     @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Dates.Year(1); CENTER="nomatch")
     @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Dates.Year(1); VEC_TABLE = 1, CENTER="mars")
     dt0 = Dates.Date(2000); dtmax = Dates.Date(2015); δt = Dates.Year(1)
-    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
-    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
-    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
-    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
-    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; REF_PLANE="T", VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="10,1,1")
 end
 
 @testset "Vector table generation: vec_tbl" begin
