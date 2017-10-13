@@ -69,5 +69,8 @@ end
     earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (12, 8)
-    #NOTE: the second object returned by vec_tbl_csv may be used to produce a DataFrame
+    #NOTE: the second object returned by vec_tbl_csv may be used to produce a DataFrame!
+    # e.g.:
+    # using DataFrames
+    # mydataframe = readtable(IOBuffer(ea_csv_str))
 end
