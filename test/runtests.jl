@@ -12,6 +12,7 @@ end
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     port = 6775
+<<<<<<< HEAD
     if is_windows()
         horizons_telnet_cmd_win = `cmd /c telnet $(HORIZONS.HORIZONS_MACHINE) $port`
         @show horizons_telnet_cmd_win
@@ -19,6 +20,15 @@ end
     else
         horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
         @show horizons_telnet_cmd
+=======
+    horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+    @show horizons_telnet_cmd
+    horizons_telnet_cmd_win = `cmd /c telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+    @show horizons_telnet_cmd_win
+    if is_windows()
+        proc = ExpectProc(horizons_telnet_cmd_win, 15)
+    else
+>>>>>>> Try cmd /c [travis skip]
         proc = ExpectProc(horizons_telnet_cmd, 15)
     end
     # Get main prompt and proceed, turning off paging, specifying I/O model,
