@@ -42,13 +42,13 @@ end
     # get everything within SOE and EOE
     apophisste = apophisraw[mSOE.offset+7:mEOE.offset-3]
     # turn into 2-dim array
-    apophisarr = readcsv(IOBuffer(apophisste))[:,1:end-1]
+    apophisarr = readdlm(IOBuffer(apophisste), ',')[:,1:end-1]
 
     @test typeof(apophisarr) == Array{Any,2}
     @test size(apophisarr) == (25, 11)
 
     # get table labels
-    apophishdr = convert(Array{String,2}, strip.(    readcsv(  IOBuffer( match(r"JDTDB.*,\r\n", apophisraw).match )  )[:,1:end-1]    ));
+    apophishdr = convert(Array{String,2}, strip.(    readdlm(  IOBuffer( match(r"JDTDB.*,\r\n", apophisraw).match ), ','  )[:,1:end-1]    ));
     @test typeof(apophishdr) == Array{String,2}
     @test size(apophishdr) == (1,11)
     # vcat into common 2-dim array
@@ -56,5 +56,17 @@ end
 
     @test typeof(apophistable) == Array{Any,2}
     @test size(apophistable) == (26, 11)
+end
 
+@testset "Vector table generation: csv to Array{Any,2}" begin
+    dt0 = Dates.Date(1950,1,1)
+    dtmax = Dates.DateTime(1959, 12, 31, 11, 59, 59, 999)
+    δt = Dates.Year(1)
+    earth_tbl = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
+    @test typeof(earth_tbl) == Array{Any,2}
+    @test size(earth_tbl) == (11, 8)
+    dtmax = Dates.DateTime(1960, 1, 1, 0, 0, 0, 1)
+    earth_tbl = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
+    @test typeof(earth_tbl) == Array{Any,2}
+    @test size(earth_tbl) == (12, 8)
 end
