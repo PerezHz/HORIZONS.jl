@@ -35,12 +35,12 @@ The current keyword arguments are:
     + `COORD_TYPE = "G"`
     + `SITE_COORD = "0,0,0"`
     + `REF_SYSTEM = "J2000"`
-    + `VEC_CORR = "1"`
-    + `VEC_DELTA_T = "NO"`
-    + `OUT_UNITS = "1"`
-    + `CSV_FORMAT = "NO"`
-    + `VEC_LABELS = "NO"`
-    + `VEC_TABLE= "3"`
+    + `VEC_CORR = 1`
+    + `VEC_DELTA_T = false`
+    + `OUT_UNITS = 1`
+    + `CSV_FORMAT = false`
+    + `VEC_LABELS = false`
+    + `VEC_TABLE= 3`
 
 More detailed information may be found at the HORIZONS system documentation:
 
@@ -49,8 +49,8 @@ https://ssd.jpl.nasa.gov/?horizons_doc
 The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCRIPTS
 
 """
-function vec_tbl(OBJECT_NAME::String, START_TIME::DateOrDateTime,
-        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType; kwargs...)
+function vec_tbl(OBJECT_NAME::String, START_TIME::StartStopTime,
+        STOP_TIME::StartStopTime, STEP_SIZE::StepSize; kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -60,8 +60,8 @@ function vec_tbl(OBJECT_NAME::String, START_TIME::DateOrDateTime,
 end
 
 function vec_tbl(OBJECT_NAME::String, local_file::String,
-        START_TIME::DateOrDateTime, STOP_TIME::DateOrDateTime,
-        STEP_SIZE::StepSizeType; EMAIL_ADDR::String="joe@your.domain.name",
+        START_TIME::StartStopTime, STOP_TIME::StartStopTime,
+        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
         kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
@@ -78,12 +78,12 @@ function vec_tbl(OBJECT_NAME::String, local_file::String,
 end
 
 function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
-        STOP_TIME::Dates.DateTime, STEP_SIZE::StepSizeType; timeout::Int=15,
+        STOP_TIME::Dates.DateTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
-        CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::Int=3)
+        CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
 
     # Convert start and stop time from `Dates.DateTime`s to `String`s
     const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
@@ -281,13 +281,13 @@ function get_vec_tbl(OBJECT_NAME::String, START_TIME::Dates.DateTime,
     return output_str, ftp_name
 end
 
-function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
-        STOP_TIME::DateOrDateTime, STEP_SIZE::StepSizeType; timeout::Int=15,
+function vec_tbl_csv(OBJECT_NAME::String, START_TIME::StartStopTime,
+        STOP_TIME::StartStopTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
-        VEC_TABLE::Int=3)
+        VEC_TABLE::VecTable=3)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME),
         Dates.DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
