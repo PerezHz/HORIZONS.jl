@@ -41,6 +41,12 @@ end
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; REF_PLANE="T", VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="10,1,1")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", "1400-1-1", dtmax, δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", "bad-start-time", dtmax, δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "3500-2-1", δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "bad-stop-time", δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "1 w")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "bad-step_size")
 end
 
 @testset "Vector table generation: vec_tbl" begin

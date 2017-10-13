@@ -206,37 +206,37 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     end
 
     # Handle start date error or STOP date
-    idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $", r".*Ending.*: $"])
+    idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $"s, r".*Ending.*: $"])
     if idx == 1
         println(proc, "X")
-        throw(ArgumentError("Error in date format: START_TIME_str = $START_TIME_str\nSee Horizons documentation for accepted formats."))
+        throw(ArgumentError("Error in date format: START_TIME = $START_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(ArgumentError("START_TIME_str = $START_TIME_str prior to available ephemeris"))
+        throw(ArgumentError("START_TIME = $START_TIME_str prior to available ephemeris"))
     elseif idx == 3
         println(proc, STOP_TIME_str)
     end
 
     # Handle stop date error or get step size
-    idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*", r".*Output interval.*: $"])
+    idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*"s, r".*Output interval.*: $"])
     if idx == 1
         println(proc, "X")
         throw(ArgumentError("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
-        throw(ArgumentError("STOP_TIME_str = $STOP_TIME_str date beyond available ephemeris."))
+        throw(ArgumentError("STOP_TIME = $STOP_TIME_str date beyond available ephemeris."))
     elseif idx == 3
         println(proc, STEP_SIZE_str)
     end
 
     # Handle step-size error or proceed to defaults
-    idx = expect!(proc, [r".*Unknown.*: $", r".*Cannot use.*: $", r".*Accept default.*: $"])
+    idx = expect!(proc, [r".*Unknown.*: $"s, r".*Cannot use.*: $"s, r".*Accept default.*: $"s])
     if idx == 1
         println(proc, "X")
-        throw(ArgumentError("STEP_SIZE_str = $STEP_SIZE_str error."))
+        throw(ArgumentError("STEP_SIZE = $STEP_SIZE_str error."))
     elseif idx == 2
         println(proc, "X")
-        throw(ArgumentError("STEP_SIZE_str = $STEP_SIZE_str error."))
+        throw(ArgumentError("STEP_SIZE = $STEP_SIZE_str error."))
     elseif idx == 3
         println(proc, "N") # never accept table defaults
     end
