@@ -12,9 +12,15 @@ end
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     port = 6775
-    horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
-    @show horizons_telnet_cmd
-    proc = ExpectProc(horizons_telnet_cmd, 15)
+    if is_windows()
+        horizons_telnet_cmd_win = `cmd /c telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+        @show horizons_telnet_cmd_win
+        proc = ExpectProc(horizons_telnet_cmd_win, 15)
+    else
+        horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+        @show horizons_telnet_cmd
+        proc = ExpectProc(horizons_telnet_cmd, 15)
+    end
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
     idx = expect!(proc, ["unknown host", "Horizons> "])
