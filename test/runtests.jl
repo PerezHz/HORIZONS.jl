@@ -23,7 +23,8 @@ end
 =======
     horizons_telnet_cmd = `telnet $(HORIZONS.HORIZONS_MACHINE) $port`
     @show horizons_telnet_cmd
-    horizons_telnet_cmd_win = `cmd /c telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+    # horizons_telnet_cmd_win = `cmd /c telnet $(HORIZONS.HORIZONS_MACHINE) $port`
+    horizons_telnet_cmd_win = `cmd /c C:\\Windows\\system32\\telnet.exe $(HORIZONS.HORIZONS_MACHINE) $port`
     @show horizons_telnet_cmd_win
     if is_windows()
         proc = ExpectProc(horizons_telnet_cmd_win, 15)
