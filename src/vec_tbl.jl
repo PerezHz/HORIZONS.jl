@@ -302,15 +302,26 @@ function vec_tbl_csv(OBJECT_NAME::String, START_TIME::DateOrDateTime,
 
     # get everything within SOE and EOE
     ste = output_str[mSOE.offset+7:mEOE.offset-3]
-    # turn into 2-dim array
-    arr_all = readdlm(IOBuffer(ste), ',')
-    arr = view(arr_all, :, 1:(indices(arr_all)[2].stop-1))
-    arr[:,2] = strip.( arr[:,2] )
+    ste = replace(ste, ",\r\n", "\r\n") #get rid of comma at end of line
+    ste = ste[1:end-1] #get rid of comma at end of string
 
-    # get table labels
-    hdr = convert(Array{String,2}, strip.( readdlm( IOBuffer( match(r"JDTDB.*,\r\n", output_str).match ), ',' )[:,1:end-1] ));
+    # get and process table labels
+    hdr_raw = match(r"JDTDB.*,\r\n", output_str).match
+    hdr_raw = replace(hdr_raw, "Calendar Date (TDB)", "Calendar_Date_TDB") #format calendar date string
+    hdr_raw = replace(hdr_raw, ",\r\n", "\r\n") #get rid of comma at end of line
+
+    #string in CSV format with BOTH headers and data
+    csv_str = hdr_raw*ste
+
+    #convert data string into array
+    arr = readdlm(IOBuffer(ste), ',')
+    arr[:,2] = strip.( arr[:,2] ) #get rid of whitespaces
+
+    # convert labels string into array
+    hdr = convert(Array{String,2}, strip.(  readdlm( IOBuffer( hdr_raw ), ',' )  ));
     # vcat into common 2-dim array
-    table = vcat(hdr, arr)
+    tbl = vcat(hdr, arr)
 
-    return table
+    #return labels and data as 2-dim array (table) and CSV-formatted string
+    return tbl, csv_str
 end

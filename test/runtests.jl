@@ -24,7 +24,7 @@ end
     @test idx == 2
 end
 
-@testset "Vector table generation" begin
+@testset "Vector table generation: vec_tbl" begin
     dt0 = Dates.DateTime(2029,4,13)
     dtmax = Dates.Date(2029,4,14)
     δt = Dates.Hour(1)
@@ -58,15 +58,16 @@ end
     @test size(apophistable) == (26, 11)
 end
 
-@testset "Vector table generation: csv to Array{Any,2}" begin
+@testset "Vector table generation with CSV format: vec_tbl_csv" begin
     dt0 = Dates.Date(1950,1,1)
     dtmax = Dates.DateTime(1959, 12, 31, 11, 59, 59, 999)
     δt = Dates.Year(1)
-    earth_tbl = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
+    earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (11, 8)
     dtmax = Dates.DateTime(1960, 1, 1, 0, 0, 0, 1)
-    earth_tbl = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
+    earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (12, 8)
+    #NOTE: the second object returned by vec_tbl_csv may be used to produce a DataFrame
 end
