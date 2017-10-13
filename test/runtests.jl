@@ -1,6 +1,6 @@
 # This file is part of the HORIZONS.jl package
 # The HORIZONS.jl package is licensed under the MIT "Expat" License
-# Copyright (c) 2017: Jorge Perez.
+# Copyright (c) 2017: Jorge Pérez.
 
 using HORIZONS, Expect
 
@@ -30,10 +30,16 @@ end
     @test idx == 2
 end
 
-@testset "Test for erroneous arguments" begin
+@testset "Test for `ArgumentError`s" begin
     @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Dates.Year(1))
     @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Dates.Year(1); CENTER="nomatch")
     @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Dates.Year(1); VEC_TABLE = 1, CENTER="mars")
+    dt0 = Dates.Date(2000); dtmax = Dates.Date(2015); δt = Dates.Year(1)
+    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
+    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
+    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
+    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
+    @test_throws ArgumentError  vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
 end
 
 @testset "Vector table generation: vec_tbl" begin
@@ -70,7 +76,7 @@ end
     @test size(apophistable) == (26, 11)
 end
 
-@testset "Vector table generation and save to file" begin
+@testset "Vector table generation and write output to file" begin
     dt0 = Dates.Date(1836)
     dtmax = Dates.Date(1994)
     δt = Dates.Year(5)
@@ -104,7 +110,8 @@ end
     dt0 = Dates.Date(2000)
     dtmax = Dates.Date(2015)
     δt = Dates.Year(1)
-    _1950da_tbl, _1950da_csv_str = vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa");
+    _1950da_tbl, _1950da_csv_str = vec_tbl_csv("1950 DA", dt0, dtmax, δt;
+        VEC_TABLE = "2xa", REF_PLANE="F", CENTER="coord", COORD_TYPE="C", SITE_COORD="1,45,45")
     @test typeof(_1950da_tbl) == Array{Any,2}
     @test size(_1950da_tbl) == (17, 20)
     labels_2xa = ["JDTDB" "Calendar_Date_TDB" "X" "Y" "Z" "VX" "VY" "VZ" "X_s" "Y_s" "Z_s" "VX_s" "VY_s" "VZ_s" "A_s" "C_s" "N_s" "VA_s" "VC_s" "VN_s"]

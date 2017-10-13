@@ -1,12 +1,12 @@
 # This file is part of the HORIZONS.jl package
 # The HORIZONS.jl package is licensed under the MIT "Expat" License
-# Copyright (c) 2017: Jorge Perez.
+# Copyright (c) 2017: Jorge Pérez.
 
 #The following methods implement some functionality from JPL's Horizons telnet interface
 #For more detailed info about JPL HORIZONS system, visit http://ssd.jpl.nasa.gov/?horizons
 
 # The following code is based on the vec_tbl script, as was retrieved from:
-# ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/vec_tbl.inp
+# ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/vec_tbl
 # Date retrieved: Jul 19, 2017
 # Credit: Jon D. Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
@@ -105,7 +105,8 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     # and sending object look-up from command-line 
     const idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
-        throw("This system cannot find $HORIZONS_MACHINE")
+        warn("This system cannot find $HORIZONS_MACHINE")
+        close(proc)
     elseif idx == 2
         println(proc, "PAGE")
     end
@@ -170,19 +171,21 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         end
     elseif idx == 5
         println(proc, COORD_TYPE)
-        idx = expect!(proc, [r".*Unknown.*: $", r".*Enter c or g.*: $", r".*Specify.*: $"])
+        idx = expect!(proc, [r".*Unknown.*: $"s, r".*Enter c or g.*: $"s, r".*Specify.*: $"])
         if idx == 1
             println(proc, "X")
             throw(ArgumentError("Unrecognized user-input coordinate: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 2
+            println(proc, "X")
             throw(ArgumentError("Undefined or bad coordinate type: COORD_TYPE = $COORD_TYPE"))
         elseif idx == 3
             println(proc, SITE_COORD)
-            idx = expect!(proc, [r".*Cannot read.*: $", r".*Specify.*: $", r".*Reference plane.*: $"])
+            idx = expect!(proc, [r".*Cannot read.*: $"s, r".*Specify.*: $"s, r".*Reference plane.*: $"])
             if idx == 1
                 println(proc, "X")
-                throw(ArgumentError("Unrecognized site coordinate-triplet: SITE_COORD=$SITE_COORD"))
+                throw(ArgumentError("Cannot read coordinate triplet: SITE_COORD=$SITE_COORD"))
             elseif idx == 2
+                println(proc, "X")
                 throw(ArgumentError("Undefined site coordinate triplet: SITE_COORD = $SITE_COORD"))
             elseif idx == 3
                 println(proc, REF_PLANE)
