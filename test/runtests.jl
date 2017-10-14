@@ -30,7 +30,7 @@ end
     @test idx == 2
 end
 
-@testset "Test for `ArgumentError`s" begin
+@testset "Test for erroneous arguments" begin
     @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Dates.Year(1))
     @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Dates.Year(1); CENTER="nomatch")
     @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Dates.Year(1); VEC_TABLE = 1, CENTER="mars")
@@ -47,6 +47,8 @@ end
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "bad-stop-time", δt)
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "1 w")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "bad-step_size")
+    @test_throws MethodError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
+    @test_throws TypeError vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
 end
 
 @testset "Vector table generation: vec_tbl" begin
@@ -81,6 +83,30 @@ end
 
     @test typeof(apophistable) == Array{Any,2}
     @test size(apophistable) == (26, 11)
+
+    dt0 = Dates.Date(2000); dtmax = Dates.Date(2015); δt = Dates.Year(1);
+
+    #test case VEC_LABELS=true
+    out_str = vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=true)
+    @test isa(out_str, String)
+    @test contains(out_str, "\$\$SOE")
+    @test contains(out_str, "\$\$EOE")
+    @test ismatch(r"\$\$SOE.*\$\$EOE"s, out_str)
+    @test ismatch(r"JDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR", out_str)
+    @test ismatch(r"\*+\r\nJDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR\r\n\*+", out_str)
+    @test ismatch(r"\*+\r\n\$\$SOE\r\n.*\r\n\$\$EOE\r\n\*+"s, out_str)
+    @test ismatch(r"\$\$SOE\r\n[0-9]+.[0-9]+ = A.D. [0-9]{4}-[A-Z][a-z]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{4} TDB \r\n X = ", out_str)
+
+    #test case VEC_LABELS=false
+    out_str = vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=false)
+    @test isa(out_str, String)
+    @test contains(out_str, "\$\$SOE")
+    @test contains(out_str, "\$\$EOE")
+    @test ismatch(r"\$\$SOE.*\$\$EOE"s, out_str)
+    @test ismatch(r"JDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR", out_str)
+    @test ismatch(r"\*+\r\nJDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR\r\n\*+", out_str)
+    @test ismatch(r"\*+\r\n\$\$SOE\r\n.*\r\n\$\$EOE\r\n\*+"s, out_str)
+    @test ismatch(r"\$\$SOE\r\n[0-9]+.[0-9]+ = A.D. [0-9]{4}-[A-Z][a-z]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{4} TDB \r\n +[0-9]+.[0-9]+E[+,-][0-9]+ +[0-9]+.[0-9]+E[+,-][0-9]+", out_str)
 end
 
 @testset "Vector table generation and write output to file" begin

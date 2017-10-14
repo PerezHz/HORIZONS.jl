@@ -280,7 +280,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     # Pick out ftp file name
     result = expect!(proc, r"File name   : (.*)\r\r\n   File type")
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
-    # ftp_name of name of file at FTP server
+    # name of file at FTP server
     const ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
 
     # Close telnet connection
