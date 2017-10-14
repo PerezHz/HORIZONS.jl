@@ -7,7 +7,7 @@ using Expect, FTPClient
 
 VERSION ≥ v"0.7.0-DEV.2004" && using DelimitedFiles
 
-export horizons, vec_tbl, vec_tbl_csv
+export horizons, vec_tbl, vec_tbl_csv, HORIZONS_MACHINE
 
 const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
 const HORIZONS_FTP_DIR = "pub/ssd"
