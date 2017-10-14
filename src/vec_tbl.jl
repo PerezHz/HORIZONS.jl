@@ -158,8 +158,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         println(proc, "X")
         throw(ArgumentError("Cannot find CENTER = $CENTER"))
     elseif idx == 2
-        println(proc, "X")
-        throw(ArgumentError("Non-unique CENTER = $CENTER (multiple matches); idx == $idx"))
+        # currently unable to reproduce this case on HORIZONS v4.10
+        # println(proc, "X")
+        # throw(ArgumentError("Non-unique CENTER = $CENTER (multiple matches); idx == $idx"))
     elseif idx == 3
         println(proc, "X")
         throw(ArgumentError("Non-unique CENTER = $CENTER (multiple matches); idx == $idx"))
@@ -208,8 +209,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     # Handle start date error or STOP date
     idx = expect!(proc, [r".*Cannot interpret.*: $", r".*No ephemeris.*: $"s, r".*Ending.*: $"])
     if idx == 1
-        println(proc, "X")
-        throw(ArgumentError("Error in date format: START_TIME = $START_TIME_str\nSee Horizons documentation for accepted formats."))
+        # this case is handled more "julianly" by argument typing and Base.Dates
+        # println(proc, "X")
+        # throw(ArgumentError("Error in date format: START_TIME = $START_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
         throw(ArgumentError("START_TIME = $START_TIME_str prior to available ephemeris"))
@@ -220,8 +222,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     # Handle stop date error or get step size
     idx = expect!(proc, [r".*Cannot interpret.*", r".*No ephemeris.*"s, r".*Output interval.*: $"])
     if idx == 1
-        println(proc, "X")
-        throw(ArgumentError("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
+        # this case is handled more "julianly" by argument typing and Base.Dates
+        # println(proc, "X")
+        # throw(ArgumentError("Error in date format: STOP_TIME = $STOP_TIME_str\nSee Horizons documentation for accepted formats."))
     elseif idx == 2
         println(proc, "X")
         throw(ArgumentError("STOP_TIME = $STOP_TIME_str date beyond available ephemeris."))
@@ -245,8 +248,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     while true
         idx = expect!(proc, [r"(Cannot interpret.*\r)", r".*frame.*].*: $", r".*Corrections.*].*: $", r".*units.*].*: $", r".*CSV.*].*: $", r".*Label.*].*: $", r".*delta-T.*].*: $", r".*table type.*].*: $", r".*Select.*: $", r".*].*: $"])
         if idx == 1
-            println(proc, "X")
-            throw(ArgumentError("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
+            # this case is handled automatically by never accepting table defaults
+            # println(proc, "X")
+            # throw(ArgumentError("Error in $proc.match, $proc.before. \nSee Horizons documentation for acceptable values."))
         elseif idx == 2
             println(proc, REF_SYSTEM)
         elseif idx == 3
@@ -264,7 +268,8 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         elseif idx == 9
             break # Done w/default override
         elseif idx == 10
-            println(proc, "") # Skip unknown (new?) prompt
+            # currently unable to reproduce this case on HORIZONS v4.10
+            # println(proc, "") # Skip unknown (new?) prompt
         end 
     end
     # expect!(proc, r".*Select.*: $")
