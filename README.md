@@ -21,7 +21,7 @@ from the Julia REPL via [`Pkg.clone`](https://docs.julialang.org/en/release-0.4/
 
 ## Usage examples
 
-The `horizons()` function is a shortcut to call the HORIZONS `telnet` interface from the Julia REPL:
+The `horizons()` function is a shortcut to the HORIZONS `telnet` interface prompt from the Julia REPL:
 
 ```julia
 julia> using HORIZONS
