@@ -26,7 +26,7 @@ The `horizons()` function is a shortcut to the HORIZONS `telnet` interface promp
 ```julia
 julia> using HORIZONS
 
-julia> horizons() # get Horizons prompt within Julia
+julia> horizons() # get Horizons prompt from the Julia REPL
 Trying 128.149.23.134...
 Connected to ssd.jpl.nasa.gov.
 Escape character is '^]'.
