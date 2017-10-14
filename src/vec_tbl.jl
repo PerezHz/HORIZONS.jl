@@ -133,8 +133,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
             throw(ArgumentError("Cancelled -- unique object not found: $OBJECT_NAME\nObject not matched to database OR multiple matches found."))
         end
     elseif idx == 2
-        println(proc, "x")
-        throw(ArgumentError("No such object record found: $OBJECT_NAME"))
+        # currently unable to reproduce this case on HORIZONS v4.10
+        # println(proc, "x")
+        # throw(ArgumentError("No such object record found: $OBJECT_NAME"))
     elseif idx == 3
         println(proc, "E")
     end
@@ -267,9 +268,9 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
             println(proc, "$VEC_TABLE")
         elseif idx == 9
             break # Done w/default override
-        elseif idx == 10
-            # currently unable to reproduce this case on HORIZONS v4.10
-            # println(proc, "") # Skip unknown (new?) prompt
+        # elseif idx == 10
+        #     # currently unable to reproduce this case on HORIZONS v4.10
+        #     # println(proc, "") # Skip unknown (new?) prompt
         end 
     end
     # expect!(proc, r".*Select.*: $")
