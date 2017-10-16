@@ -16,8 +16,8 @@ Comments, suggestions, and improvements are welcome and appreciated.
 
 ## Installation
 
-Currently, `HORIZONS.jl` is an unregistered Julia package. It may be installed
-from the Julia REPL via [`Pkg.clone`](https://docs.julialang.org/en/release-0.4/manual/packages/#installing-unregistered-packages).
+`HORIZONS.jl` is a registered Julia package and may be installed
+from the Julia REPL doing `Pkg.add("HORIZONS")`.
 
 ## Usage examples
 
