@@ -148,7 +148,8 @@ mydataframe = readtable(IOBuffer(str))
 Then, `mydataframe` is a 16×8 `DataFrame`:
 
 ```
-16×8 DataFrames.DataFrame
+# mydataframe:
+# 16×8 DataFrames.DataFrame
 │ Row │ JDTDB     │ Calendar_Date_TDB                │ X          │ Y          │ Z          │ VX      │ VY       │ VZ       │
 ├─────┼───────────┼──────────────────────────────────┼────────────┼────────────┼────────────┼─────────┼──────────┼──────────┤
 │ 1   │ 2.45154e6 │ "A.D. 2000-Jan-01 00:00:00.0000" │ 3.49475e8  │ 2.10629e7  │ 5.71688e7  │ 25.2192 │ 15.1321  │ 9.42222  │
