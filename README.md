@@ -88,7 +88,7 @@ from the `vec_tbl` call, then they will take default values:
 vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, δt)
 ```
 
-More details about default values of keyword arguments are available in the 
+More details about default values of keyword arguments are available in the
 `vec_tbl` docstrings.
 
 If the output file is not specified, then `vec_tbl` returns the output as a
@@ -169,7 +169,7 @@ Then, `mydataframe` is a 16×8 `DataFrame`:
 │ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
 ```
 
-NOTE: Currently, `HORIZONS.jl` only supports the `vec_tbl` script. There is work
+NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) script. There is work
 in progress in order to support other HORIZONS scripts such as `smb_spk`,
 `osc_tbl`, `obs_tbl_ele`, etc.
 
