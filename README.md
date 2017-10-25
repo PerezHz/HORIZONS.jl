@@ -126,7 +126,52 @@ julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local fi
 julia>
 ```
 
-Currently, `HORIZONS.jl` only supports the `vec_tbl` script. There is work in progress in order to support other HORIZONS scripts such as `smb_spk`, `osc_tbl`, `obs_tbl_ele`, etc.
+Additionally, the `vec_tbl_csv` function returns HORIZONS output both as an
+`Array{Any,2}` and a CSV-formatted `String`, which
+can in turn be used to construct a `DataFrame` (requires
+[DataFrames.jl](https://github.com/JuliaData/DataFrames.jl) to be installed):
+
+```julia
+using HORIZONS, DataFrames
+
+dt0 = Dates.Date(2000)
+dtmax = Dates.Date(2015)
+δt = Dates.Year(1)
+
+#tbl is an Array{Any,2}; str is a String with CSV format
+tbl, str = vec_tbl_csv("1950 DA", dt0, dtmax, δt;
+    VEC_TABLE = "2", REF_PLANE="F", CENTER="coord", COORD_TYPE="C", SITE_COORD="1,45,45");
+
+mydataframe = readtable(IOBuffer(str))
+```
+
+Then, `mydataframe` is a 16×8 `DataFrame`:
+
+```
+16×8 DataFrames.DataFrame
+│ Row │ JDTDB     │ Calendar_Date_TDB                │ X          │ Y          │ Z          │ VX      │ VY       │ VZ       │
+├─────┼───────────┼──────────────────────────────────┼────────────┼────────────┼────────────┼─────────┼──────────┼──────────┤
+│ 1   │ 2.45154e6 │ "A.D. 2000-Jan-01 00:00:00.0000" │ 3.49475e8  │ 2.10629e7  │ 5.71688e7  │ 25.2192 │ 15.1321  │ 9.42222  │
+│ 2   │ 2.45191e6 │ "A.D. 2001-Jan-01 00:00:00.0000" │ -6.98285e7 │ 2.58022e7  │ 5.45238e7  │ 14.9524 │ -12.6021 │ -10.6881 │
+│ 3   │ 2.45228e6 │ "A.D. 2002-Jan-01 00:00:00.0000" │ 3.61348e8  │ -5.69666e7 │ 1.54172e6  │ 31.3711 │ 17.5209  │ 11.1536  │
+│ 4   │ 2.45264e6 │ "A.D. 2003-Jan-01 00:00:00.0000" │ 4.38864e7  │ 1.05596e8  │ 1.13413e8  │ 12.2543 │ -1.86915 │ -2.97705 │
+│ 5   │ 2.45301e6 │ "A.D. 2004-Jan-01 00:00:00.0000" │ 3.22054e8  │ -1.46042e8 │ -6.27119e7 │ 39.9381 │ 18.0432  │ 11.7154  │
+│ 6   │ 2.45337e6 │ "A.D. 2005-Jan-01 00:00:00.0000" │ 1.58117e8  │ 1.26817e8  │ 1.30187e8  │ 14.1172 │ 5.18222  │ 2.03615  │
+│ 7   │ 2.45374e6 │ "A.D. 2006-Jan-01 00:00:00.0000" │ 2.16183e8  │ -2.27991e8 │ -1.22995e8 │ 52.494  │ 15.0644  │ 9.69931  │
+│ 8   │ 2.4541e6  │ "A.D. 2007-Jan-01 00:00:00.0000" │ 2.52251e8  │ 1.08971e8  │ 1.18844e8  │ 17.5583 │ 9.77493  │ 5.43963  │
+│ 9   │ 2.45447e6 │ "A.D. 2008-Jan-01 00:00:00.0000" │ 7.88944e6  │ -2.43067e8 │ -1.36722e8 │ 65.0567 │ -6.41305 │ -5.42335 │
+│ 10  │ 2.45483e6 │ "A.D. 2009-Jan-01 00:00:00.0000" │ 3.21987e8  │ 6.3783e7   │ 8.74408e7  │ 21.7692 │ 13.586   │ 8.1631   │
+│ 11  │ 2.4552e6  │ "A.D. 2010-Jan-01 00:00:00.0000" │ -1.15663e8 │ -7.63649e7 │ -1.92427e7 │ 27.1975 │ -22.6347 │ -17.6561 │
+│ 12  │ 2.45556e6 │ "A.D. 2011-Jan-01 00:00:00.0000" │ 3.57936e8  │ -3.91115e6 │ 3.95854e7  │ 27.1418 │ 16.0684  │ 10.0908  │
+│ 13  │ 2.45593e6 │ "A.D. 2012-Jan-01 00:00:00.0000" │ -3.42864e7 │ 6.17015e7  │ 8.08374e7  │ 13.0119 │ -8.54587 │ -7.70992 │
+│ 14  │ 2.45629e6 │ "A.D. 2013-Jan-01 00:00:00.0000" │ 3.55506e8  │ -8.52031e7 │ -1.86717e7 │ 33.8279 │ 18.0591  │ 11.5473  │
+│ 15  │ 2.45666e6 │ "A.D. 2014-Jan-01 00:00:00.0000" │ 8.32588e7  │ 1.17897e8  │ 1.22693e8  │ 12.6344 │ 0.803698 │ -1.08723 │
+│ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
+```
+
+NOTE: Currently, `HORIZONS.jl` only supports the `vec_tbl` script. There is work
+in progress in order to support other HORIZONS scripts such as `smb_spk`,
+`osc_tbl`, `obs_tbl_ele`, etc.
 
 ## License
 
