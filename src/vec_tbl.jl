@@ -68,8 +68,8 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
-    # ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
-    ftp = FTP("ftp://anonymous:$EMAIL_ADDR@ssd.jpl.nasa.gov")
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    # ftp = FTP("ftp://anonymous:$EMAIL_ADDR@ssd.jpl.nasa.gov")
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
         file = download(ftp, ftp_name, ftp_name)
