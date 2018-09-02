@@ -14,7 +14,7 @@ const HORIZONS_FTP_DIR = "pub/ssd"
 const HORIZONS_DATE_FORMAT = "yyyy-u-dd HH:MM:SS.sss"
 const ObjectName = Union{Int, String}
 const StartStopTime = Union{DateTime, Date, String}
-const StepSize = Union{Dates.Period, Int, String}
+const StepSize = Union{Period, Int, String}
 const VecTable = Union{Int, String}
 
 """

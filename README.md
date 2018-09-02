@@ -67,11 +67,11 @@ Horizons>
 
 ```julia
 # date variables for start and stop times
-t_start = Dates.DateTime(2029,4,13)
-t_stop = Dates.Date(2029,4,14)
+t_start = DateTime(2029,4,13)
+t_stop = Date(2029,4,14)
 
-# step size (allowed types: Dates.Period, Int, String)
-δt = Dates.Hour(1) # 1 hour step size
+# step size (allowed types: Period, Int, String)
+δt = Hour(1) # 1 hour step size
 
 # generate tables and save output to Apophis.txt in current directory:
 vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, δt; CENTER="@ssb", REF_PLANE="FRAME", OUT_UNITS=2, CSV_FORMAT=true, VEC_TABLE=2)
@@ -134,9 +134,9 @@ can in turn be used to construct a `DataFrame` (requires
 ```julia
 using HORIZONS, DataFrames
 
-dt0 = Dates.Date(2000)
-dtmax = Dates.Date(2015)
-δt = Dates.Year(1)
+dt0 = Date(2000)
+dtmax = Date(2015)
+δt = Year(1)
 
 #tbl is an Array{Any,2}; str is a String with CSV format
 tbl, str = vec_tbl_csv("1950 DA", dt0, dtmax, δt;

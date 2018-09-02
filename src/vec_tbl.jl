@@ -52,7 +52,7 @@ The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCR
 function vec_tbl(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         STOP_TIME::StartStopTime, STEP_SIZE::StepSize; kwargs...)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     return output_str
 
@@ -64,7 +64,7 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
         kwargs...)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
@@ -82,28 +82,28 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     end
 end
 
-function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
-        STOP_TIME::Dates.DateTime, STEP_SIZE::StepSize; timeout::Int=15,
+function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
+        STOP_TIME::DateTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
 
-    # Convert start and stop time from `Dates.DateTime`s to `String`s
-    const OBJECT_NAME_str = string(OBJECT_NAME)
-    const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
-    const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
-    const STEP_SIZE_str = string(STEP_SIZE)
+    # Convert start and stop time from `DateTime`s to `String`s
+    OBJECT_NAME_str = string(OBJECT_NAME)
+    START_TIME_str = format(START_TIME, HORIZONS_DATE_FORMAT)
+    STOP_TIME_str = format(STOP_TIME, HORIZONS_DATE_FORMAT)
+    STEP_SIZE_str = string(STEP_SIZE)
 
-    const start_flag = 0
+    start_flag = 0
     
     # Connect to Horizons 
-    const proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
+    proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
-    const idx = expect!(proc, ["unknown host", "Horizons> "])
+    idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         warn("This system cannot find $HORIZONS_MACHINE")
         close(proc)
@@ -277,7 +277,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
 
     # println(proc.before)
     # @show typeof(proc.before)
-    const output_str = proc.before
+    output_str = proc.before
 
     # Osculating element table output has been generated. Now sitting at 
     # post-output prompt. Initiate FTP file transfer.
@@ -287,7 +287,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     result = expect!(proc, r"File name   : (.*)\r\r\n   File type")
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
     # name of file at FTP server
-    const ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
+    ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
 
     # Close telnet connection
     # println(proc, "exit")
@@ -304,8 +304,8 @@ function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         VEC_TABLE::VecTable=3)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME),
-        Dates.DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME),
+        DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
         VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,

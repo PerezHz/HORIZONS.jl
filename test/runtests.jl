@@ -23,10 +23,10 @@ end
 end
 
 @testset "Test for erroneous arguments" begin
-    @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Dates.Year(1))
-    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Dates.Year(1); CENTER="nomatch")
-    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Dates.Year(1); VEC_TABLE = 1, CENTER="mars")
-    dt0 = Dates.Date(2000); dtmax = Dates.Date(2015); δt = Dates.Year(1)
+    @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Year(1))
+    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
+    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
+    dt0 = Date(2000); dtmax = Date(2015); δt = Year(1)
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
@@ -44,9 +44,9 @@ end
 end
 
 @testset "Vector table generation: vec_tbl" begin
-    dt0 = Dates.DateTime(2029,4,13)
-    dtmax = Dates.Date(2029,4,14)
-    δt = Dates.Hour(1)
+    dt0 = DateTime(2029,4,13)
+    dtmax = Date(2029,4,14)
+    δt = Hour(1)
     apophisraw = vec_tbl("Apophis", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isa(apophisraw, String)
     @test contains(apophisraw, "\$\$SOE")
@@ -76,7 +76,7 @@ end
     @test typeof(apophistable) == Array{Any,2}
     @test size(apophistable) == (26, 11)
 
-    dt0 = Dates.Date(2000); dtmax = Dates.Date(2015); δt = Dates.Year(1);
+    dt0 = Date(2000); dtmax = Date(2015); δt = Year(1);
 
     #test case VEC_LABELS=true
     out_str = vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=true)
@@ -102,9 +102,9 @@ end
 end
 
 @testset "Vector table generation and write output to file" begin
-    dt0 = Dates.Date(1836)
-    dtmax = Dates.Date(1994)
-    δt = Dates.Year(5)
+    dt0 = Date(1836)
+    dtmax = Date(1994)
+    δt = Year(5)
     # 900033 corresponds to last Halley's apparition
     file_name = vec_tbl("900033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isfile(file_name)
@@ -115,14 +115,14 @@ end
 end
 
 @testset "Vector table generation with CSV format: vec_tbl_csv" begin
-    dt0 = Dates.Date(1950,1,1)
-    dtmax = Dates.DateTime(1959, 12, 31, 11, 59, 59, 999)
-    δt = Dates.Year(1)
+    dt0 = Date(1950,1,1)
+    dtmax = DateTime(1959, 12, 31, 11, 59, 59, 999)
+    δt = Year(1)
     # 399 corresponds to Earth
     earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (11, 8)
-    dtmax = Dates.DateTime(1960, 1, 1, 0, 0, 0, 1)
+    dtmax = DateTime(1960, 1, 1, 0, 0, 0, 1)
     earth_tbl, earth_csv_str = vec_tbl_csv("399", dt0, dtmax, δt; VEC_TABLE = 2)
     @test typeof(earth_tbl) == Array{Any,2}
     @test size(earth_tbl) == (12, 8)
@@ -132,9 +132,9 @@ end
     @test earth_tbl == earth_tbl2
     @test earth_csv_str == earth_csv_str2
     # generate table with uncertainties for asteroid 1950 DA
-    dt0 = Dates.Date(2000)
-    dtmax = Dates.Date(2015)
-    δt = Dates.Year(1)
+    dt0 = Date(2000)
+    dtmax = Date(2015)
+    δt = Year(1)
     _1950da_tbl, _1950da_csv_str = vec_tbl_csv("1950 DA", dt0, dtmax, δt;
         VEC_TABLE = "2xa", REF_PLANE="F", CENTER="coord", COORD_TYPE="C", SITE_COORD="1,45,45")
     @test typeof(_1950da_tbl) == Array{Any,2}
