@@ -2,13 +2,8 @@
 # The HORIZONS.jl package is licensed under the MIT "Expat" License
 # Copyright (c) 2017: Jorge Pérez.
 
+using Test, Dates
 using HORIZONS, Expect
-
-if VERSION < v"0.7.0-DEV.2004"
-    using Base.Test
-else
-    using Test
-end
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, 15)
@@ -24,8 +19,8 @@ end
 
 @testset "Test for erroneous arguments" begin
     @test_throws UndefVarError vec_tbl_csv("erroneous-input", Date(2000), Date(2010), Year(1))
-    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
-    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
+    @test_throws UndefVarError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
+    @test_throws UndefVarError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
     dt0 = Date(2000); dtmax = Date(2015); δt = Year(1)
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
     @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
