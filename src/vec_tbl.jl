@@ -61,14 +61,15 @@ end
 
 function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
+        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe_at_your_domain_name",
         kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    # ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    ftp = FTP("ftp://anonymous:$EMAIL_ADDR@ssd.jpl.nasa.gov")
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
         file = download(ftp, ftp_name, ftp_name)
