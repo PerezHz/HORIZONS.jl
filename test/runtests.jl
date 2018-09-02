@@ -23,7 +23,7 @@ end
 end
 
 @testset "Test for erroneous arguments" begin
-    @test_throws ArgumentError vec_tbl_csv("@#", Date(2000), Date(2010), Year(1))
+    @test_throws UndefVarError vec_tbl_csv("erroneous-input", Date(2000), Date(2010), Year(1))
     @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
     @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
     dt0 = Date(2000); dtmax = Date(2015); δt = Year(1)
