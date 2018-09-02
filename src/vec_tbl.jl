@@ -318,12 +318,12 @@ function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
 
     # get everything within SOE and EOE
     ste = output_str[mSOE.offset+7:mEOE.offset-1]
-    ste = replace(ste, ",\r\n", "\r\n") #get rid of comma at end of line
+    ste = replace(ste, ",\r\n" => "\r\n") #get rid of comma at end of line
 
     # get and process table labels
     hdr_raw = match(r"JDTDB.*,\r\n", output_str).match
-    hdr_raw = replace(hdr_raw, "Calendar Date (TDB)", "Calendar_Date_TDB") #format calendar date string
-    hdr_raw = replace(hdr_raw, ",\r\n", "\r\n") #get rid of comma at end of line
+    hdr_raw = replace(hdr_raw, "Calendar Date (TDB)" => "Calendar_Date_TDB") #format calendar date string
+    hdr_raw = replace(hdr_raw, ",\r\n" => "\r\n") #get rid of comma at end of line
 
     #string in CSV format with BOTH headers and data
     csv_str = hdr_raw*ste
