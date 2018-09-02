@@ -78,11 +78,11 @@ end
     @test isa(out_str, String)
     @test occursin("\$\$SOE", out_str)
     @test occursin("\$\$EOE", out_str)
-    @test ismatch(r"\$\$SOE.*\$\$EOE"s, out_str)
-    @test ismatch(r"JDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR", out_str)
-    @test ismatch(r"\*+\r\nJDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR\r\n\*+", out_str)
-    @test ismatch(r"\*+\r\n\$\$SOE\r\n.*\r\n\$\$EOE\r\n\*+"s, out_str)
-    @test ismatch(r"\$\$SOE\r\n[0-9]+.[0-9]+ = A.D. [0-9]{4}-[A-Z][a-z]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{4} TDB \r\n X = ", out_str)
+    @test occursin(r"\$\$SOE.*\$\$EOE"s, out_str)
+    @test occursin(r"JDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR", out_str)
+    @test occursin(r"\*+\r\nJDTDB\r\n.*X.*Y.*Z\r\n.*VX.*VY.*VZ\r\n.*LT.*RG.*RR\r\n\*+", out_str)
+    @test occursin(r"\*+\r\n\$\$SOE\r\n.*\r\n\$\$EOE\r\n\*+"s, out_str)
+    @test occursin(r"\$\$SOE\r\n[0-9]+.[0-9]+ = A.D. [0-9]{4}-[A-Z][a-z]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{4} TDB \r\n X = ", out_str)
 
     #test case VEC_LABELS=false
     out_str = vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=false, CENTER="Paris", REF_PLANE="E")
