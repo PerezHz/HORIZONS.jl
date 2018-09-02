@@ -44,10 +44,10 @@ end
     δt = Hour(1)
     apophisraw = vec_tbl("Apophis", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isa(apophisraw, String)
-    @test contains(apophisraw, "\$\$SOE")
-    @test contains(apophisraw, "\$\$EOE")
-    @test ismatch(r"\$\$SOE", apophisraw)
-    @test ismatch(r"\$\$EOE", apophisraw)
+    @test occursin("\$\$SOE", apophisraw)
+    @test occursin("\$\$EOE", apophisraw)
+    @test occursin(r"\$\$SOE", apophisraw)
+    @test occursin(r"\$\$EOE", apophisraw)
     mSOE = match(r"\$\$SOE", apophisraw)
     mEOE = match(r"\$\$EOE", apophisraw)
     @test mSOE.offsets == Int64[]
