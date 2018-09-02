@@ -92,8 +92,8 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
 
     # Convert start and stop time from `DateTime`s to `String`s
     OBJECT_NAME_str = string(OBJECT_NAME)
-    START_TIME_str = format(START_TIME, HORIZONS_DATE_FORMAT)
-    STOP_TIME_str = format(STOP_TIME, HORIZONS_DATE_FORMAT)
+    START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
+    STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
     STEP_SIZE_str = string(STEP_SIZE)
 
     start_flag = 0
