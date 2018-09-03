@@ -1,4 +1,4 @@
-julia 0.7
+julia 0.7 1.0
 
-Expect 0.2.3
-FTPClient v0.5.0
+Expect v0.2.3 v0.3.0
+FTPClient v0.5.0 v0.6.0
