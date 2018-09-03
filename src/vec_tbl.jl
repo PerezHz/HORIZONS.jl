@@ -91,19 +91,19 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
 
     # Convert start and stop time from `Dates.DateTime`s to `String`s
-    const OBJECT_NAME_str = string(OBJECT_NAME)
-    const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
-    const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
-    const STEP_SIZE_str = string(STEP_SIZE)
+    OBJECT_NAME_str = string(OBJECT_NAME)
+    START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
+    STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
+    STEP_SIZE_str = string(STEP_SIZE)
 
-    const start_flag = 0
+    start_flag = 0
     
     # Connect to Horizons 
-    const proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
+    proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
     # and sending object look-up from command-line 
-    const idx = expect!(proc, ["unknown host", "Horizons> "])
+    idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         warn("This system cannot find $HORIZONS_MACHINE")
         close(proc)
@@ -277,7 +277,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
 
     # println(proc.before)
     # @show typeof(proc.before)
-    const output_str = proc.before
+    output_str = proc.before
 
     # Osculating element table output has been generated. Now sitting at 
     # post-output prompt. Initiate FTP file transfer.
@@ -287,7 +287,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     result = expect!(proc, r"File name   : (.*)\r\r\n   File type")
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
     # name of file at FTP server
-    const ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
+    ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
 
     # Close telnet connection
     # println(proc, "exit")
