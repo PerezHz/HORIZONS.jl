@@ -3,9 +3,9 @@
 
 module HORIZONS
 
-using Expect, FTPClient, Dates
+using Expect, FTPClient
 
-VERSION ≥ v"0.7.0-DEV.2004" && using DelimitedFiles
+using DelimitedFiles, Dates
 
 export horizons, vec_tbl, vec_tbl_csv, HORIZONS_MACHINE
 
