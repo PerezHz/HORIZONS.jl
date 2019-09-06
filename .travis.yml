@@ -11,6 +11,12 @@ julia:
 notifications:
   email: false
 
+addons:
+  apt:
+    packages: telnet
+  homebrew:
+    packages: telnet
+
 git:
   depth: 99999999
 
