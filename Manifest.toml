@@ -23,10 +23,10 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[Expect]]
 deps = ["Printf"]
-git-tree-sha1 = "a1e4a5b14ca0928da8339167b81f1b746c3dfacc"
+git-tree-sha1 = "d3977ee58d9898266743006b6fe36535414ef5cd"
 repo-rev = "jp/julia1.0"
 repo-url = "https://github.com/PerezHz/Expect.jl.git"
-uuid = "e89069d2-d039-11e9-2b56-0f1b8cba53da"
+uuid = "6a31a4e8-6e70-5a2d-b005-bc2d500d80a5"
 version = "0.1.0"
 
 [[FTPClient]]
