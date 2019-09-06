@@ -9,7 +9,7 @@ using HORIZONS, Expect
     proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, 15)
     @show proc.proc
     # Get main prompt and proceed, turning off paging, specifying I/O model,
-    # and sending object look-up from command-line 
+    # and sending object look-up from command-line
     idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         throw("This system cannot find $HORIZONS_MACHINE")
@@ -101,11 +101,11 @@ end
     dtmax = Date(1994)
     δt = Year(5)
     # 900033 corresponds to last Halley's apparition
-    file_name = vec_tbl("900033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
+    file_name = vec_tbl("90000033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isfile(file_name)
     @test isfile("Halley.txt")
     @test file_name == "Halley.txt"
-    file_name = vec_tbl("900033", "", dt0, dtmax, δt; CSV_FORMAT=true);
+    file_name = vec_tbl("90000033", "", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isfile(file_name)
 end
 
