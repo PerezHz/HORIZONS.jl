@@ -100,7 +100,7 @@ end
     dt0 = Date(1836)
     dtmax = Date(1994)
     δt = Year(5)
-    # 900033 corresponds to last Halley's apparition
+    # 90000033 corresponds to last Halley's apparition
     file_name = vec_tbl("90000033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
     @test isfile(file_name)
     @test isfile("Halley.txt")

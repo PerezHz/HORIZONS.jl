@@ -69,7 +69,6 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
-    # ftp = FTP("ftp://anonymous:$EMAIL_ADDR@ssd.jpl.nasa.gov")
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
         file = download(ftp, ftp_name, ftp_name)
@@ -98,12 +97,12 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
     STEP_SIZE_str = string(STEP_SIZE)
 
     start_flag = 0
-    
-    # Connect to Horizons 
+
+    # Connect to Horizons
     proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
-    # and sending object look-up from command-line 
+    # and sending object look-up from command-line
     idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         warn("This system cannot find $HORIZONS_MACHINE")
@@ -122,7 +121,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
         println(proc, OBJECT_NAME_str)
     end
 
-    # Handle object look-up confirmation 
+    # Handle object look-up confirmation
     idx = expect!(proc, [r".*Continue.*: $", r".*such object record.*", r".*Select.*<cr>: $"])
     if idx == 1
         println(proc, "yes")
@@ -272,7 +271,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
         # elseif idx == 10
         #     # currently unable to reproduce this case on HORIZONS v4.10
         #     # println(proc, "") # Skip unknown (new?) prompt
-        end 
+        end
     end
     # expect!(proc, r".*Select.*: $")
 
@@ -280,7 +279,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
     # @show typeof(proc.before)
     output_str = proc.before
 
-    # Osculating element table output has been generated. Now sitting at 
+    # Osculating element table output has been generated. Now sitting at
     # post-output prompt. Initiate FTP file transfer.
     println(proc, "F")
 
