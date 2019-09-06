@@ -23,10 +23,6 @@ matrix:
  allow_failures:
  - julia: nightly
 
-script:
- - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
- - julia --project --check-bounds=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("HORIZONS"); Pkg.test("HORIZONS"; coverage=true)'
-
 after_success:
   - julia -e 'using Pkg'
   # push coverage results to Coveralls
