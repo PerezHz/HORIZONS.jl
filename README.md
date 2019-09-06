@@ -19,9 +19,15 @@ Comments, suggestions, and improvements are welcome and appreciated.
 `HORIZONS.jl` is a registered Julia package and may be installed
 from the Julia REPL doing `Pkg.add("HORIZONS")`.
 
+## Dependencies
+
+Connection to the HORIZONS machine is done via the `telnet` command line
+utility, which should be locally installed and enabled.
+
 ## Usage examples
 
-The `horizons()` function is a shortcut to the HORIZONS `telnet` interface prompt from the Julia REPL:
+The `horizons()` function is a shortcut to the HORIZONS `telnet` interface
+prompt from the Julia REPL:
 
 ```julia
 julia> using HORIZONS
