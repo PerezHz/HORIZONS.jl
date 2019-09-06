@@ -1,0 +1,19 @@
+name = "HORIZONS"
+uuid = "5a3ac768-beb4-554a-9c98-3342fe3377f5"
+repo = "https://github.com/PerezHz/HORIZONS.jl.git"
+version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Expect = "6a31a4e8-6e70-5a2d-b005-bc2d500d80a5"
+FTPClient = "01fcc997-4f28-56b8-8a06-30002c134abb"
+
+[compat]
+julia = "≥ 1.0.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

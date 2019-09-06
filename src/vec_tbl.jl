@@ -52,7 +52,7 @@ The original script vec_tbl, written by Jon D. Giorgini, may be found at src/SCR
 function vec_tbl(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         STOP_TIME::StartStopTime, STEP_SIZE::StepSize; kwargs...)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     return output_str
 
@@ -61,10 +61,10 @@ end
 
 function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
+        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe_at_your_domain_name",
         kwargs...)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME), Dates.DateTime(STOP_TIME), STEP_SIZE; kwargs...)
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
@@ -82,28 +82,28 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     end
 end
 
-function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
-        STOP_TIME::Dates.DateTime, STEP_SIZE::StepSize; timeout::Int=15,
+function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
+        STOP_TIME::DateTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
         REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
 
-    # Convert start and stop time from `Dates.DateTime`s to `String`s
-    const OBJECT_NAME_str = string(OBJECT_NAME)
-    const START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
-    const STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
-    const STEP_SIZE_str = string(STEP_SIZE)
+    # Convert start and stop time from `DateTime`s to `String`s
+    OBJECT_NAME_str = string(OBJECT_NAME)
+    START_TIME_str = Dates.format(START_TIME, HORIZONS_DATE_FORMAT)
+    STOP_TIME_str = Dates.format(STOP_TIME, HORIZONS_DATE_FORMAT)
+    STEP_SIZE_str = string(STEP_SIZE)
 
-    const start_flag = 0
-    
-    # Connect to Horizons 
-    const proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
+    start_flag = 0
+
+    # Connect to Horizons
+    proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, timeout)
 
     # Get main prompt and proceed, turning off paging, specifying I/O model,
-    # and sending object look-up from command-line 
-    const idx = expect!(proc, ["unknown host", "Horizons> "])
+    # and sending object look-up from command-line
+    idx = expect!(proc, ["unknown host", "Horizons> "])
     if idx == 1
         warn("This system cannot find $HORIZONS_MACHINE")
         close(proc)
@@ -121,7 +121,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         println(proc, OBJECT_NAME_str)
     end
 
-    # Handle object look-up confirmation 
+    # Handle object look-up confirmation
     idx = expect!(proc, [r".*Continue.*: $", r".*such object record.*", r".*Select.*<cr>: $"])
     if idx == 1
         println(proc, "yes")
@@ -271,15 +271,15 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
         # elseif idx == 10
         #     # currently unable to reproduce this case on HORIZONS v4.10
         #     # println(proc, "") # Skip unknown (new?) prompt
-        end 
+        end
     end
     # expect!(proc, r".*Select.*: $")
 
     # println(proc.before)
     # @show typeof(proc.before)
-    const output_str = proc.before
+    output_str = proc.before
 
-    # Osculating element table output has been generated. Now sitting at 
+    # Osculating element table output has been generated. Now sitting at
     # post-output prompt. Initiate FTP file transfer.
     println(proc, "F")
 
@@ -287,7 +287,7 @@ function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::Dates.DateTime,
     result = expect!(proc, r"File name   : (.*)\r\r\n   File type")
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
     # name of file at FTP server
-    const ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
+    ftp_name = strip(proc_match[1]) #quit possible trailing whitespaces
 
     # Close telnet connection
     # println(proc, "exit")
@@ -304,8 +304,8 @@ function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         VEC_TABLE::VecTable=3)
 
-    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, Dates.DateTime(START_TIME),
-        Dates.DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
+    output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME),
+        DateTime(STOP_TIME), STEP_SIZE; timeout=timeout,
         EMAIL_ADDR=EMAIL_ADDR, CENTER=CENTER, REF_PLANE=REF_PLANE,
         COORD_TYPE=COORD_TYPE, SITE_COORD=SITE_COORD, REF_SYSTEM=REF_SYSTEM,
         VEC_CORR=VEC_CORR, VEC_DELTA_T=VEC_DELTA_T, OUT_UNITS=OUT_UNITS,
@@ -317,12 +317,12 @@ function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
 
     # get everything within SOE and EOE
     ste = output_str[mSOE.offset+7:mEOE.offset-1]
-    ste = replace(ste, ",\r\n", "\r\n") #get rid of comma at end of line
+    ste = replace(ste, ",\r\n" => "\r\n") #get rid of comma at end of line
 
     # get and process table labels
     hdr_raw = match(r"JDTDB.*,\r\n", output_str).match
-    hdr_raw = replace(hdr_raw, "Calendar Date (TDB)", "Calendar_Date_TDB") #format calendar date string
-    hdr_raw = replace(hdr_raw, ",\r\n", "\r\n") #get rid of comma at end of line
+    hdr_raw = replace(hdr_raw, "Calendar Date (TDB)" => "Calendar_Date_TDB") #format calendar date string
+    hdr_raw = replace(hdr_raw, ",\r\n" => "\r\n") #get rid of comma at end of line
 
     #string in CSV format with BOTH headers and data
     csv_str = hdr_raw*ste

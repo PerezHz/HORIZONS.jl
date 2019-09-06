@@ -48,18 +48,19 @@ Escape character is '^]'.
   ======================================================================
 
      ___    _____     ___
-    /_ /|  /____/ \  /_ /|       Horizons On-line Ephemeris System v4.10
+    /_ /|  /____/ \  /_ /|       Horizons On-line Ephemeris System v4.62
     | | | |  __ \ /| | | |       Solar System Dynamics Group
  ___| | | | |__) |/  | | |__     Jet Propulsion Laboratory
 /___| | | |  ___/    | |/__ /|   Pasadena, CA, USA
 |_____|/  |_|/       |_____|/
- 
+
  Establishing connection, stand-by ...
 
-JPL Horizons, version 4.10
-Type `?' for brief intro, `?!' for more details
-System news updated September 29, 2017
- 
+JPL Horizons, version 4.62
+Type '?' for brief help, '?!' for details,
+'-' for previous prompt, 'x' to exit
+System news updated September 2, 2019
+
 Horizons>
 ```
 
@@ -67,11 +68,11 @@ Horizons>
 
 ```julia
 # date variables for start and stop times
-t_start = Dates.DateTime(2029,4,13)
-t_stop = Dates.Date(2029,4,14)
+t_start = DateTime(2029,4,13)
+t_stop = Date(2029,4,14)
 
-# step size (allowed types: Dates.Period, Int, String)
-δt = Dates.Hour(1) # 1 hour step size
+# step size (allowed types: Period, Int, String)
+δt = Hour(1) # 1 hour step size
 
 # generate tables and save output to Apophis.txt in current directory:
 vec_tbl("Apophis", "Apophis.txt", t_start, t_stop, δt; CENTER="@ssb", REF_PLANE="FRAME", OUT_UNITS=2, CSV_FORMAT=true, VEC_TABLE=2)
@@ -108,17 +109,17 @@ Julia's broadcasting allows the user to get many vector tables at once:
 ```julia
 julia> using HORIZONS
 
-julia> IDs = string.([99942, 900033])
+julia> IDs = string.([99942, 90000033])
 2-element Array{String,1}:
- "99942" 
- "900033"
+ "99942"
+ "90000033"
 
 julia> local_files = string.(IDs,".txt")
 2-element Array{String,1}:
- "99942.txt" 
- "900033.txt"
+ "99942.txt"
+ "90000033.txt"
 
-julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local files 99942.txt and 900033.txt in current folder
+julia> vec_tbl.(IDs, local_files, t_start, t_stop, δt) #save output to local files 99942.txt and 90000033.txt in current folder
 2-element Array{Void,1}:
  nothing
  nothing
@@ -134,9 +135,9 @@ can in turn be used to construct a `DataFrame` (requires
 ```julia
 using HORIZONS, DataFrames
 
-dt0 = Dates.Date(2000)
-dtmax = Dates.Date(2015)
-δt = Dates.Year(1)
+dt0 = Date(2000)
+dtmax = Date(2015)
+δt = Year(1)
 
 #tbl is an Array{Any,2}; str is a String with CSV format
 tbl, str = vec_tbl_csv("1950 DA", dt0, dtmax, δt;
