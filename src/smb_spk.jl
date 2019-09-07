@@ -11,6 +11,13 @@
 # Credit: Jon D. Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
 
+function smb_spk(flag::String, small_body::ObjectName, start_time::StartStopTime,
+        stop_time::StartStopTime, email::String="joe@your.domain.name",
+        file_name::String=""; timeout::Int=60)
+
+    smb_spk(flag, small_body, DateTime(start_time), DateTime(stop_time), email, file_name; timeout=timeout)
+end
+
 function smb_spk(flag::String, small_body::ObjectName,
         start_time::DateTime, stop_time::DateTime,
         email::String="joe@your.domain.name", file_name::String="";
