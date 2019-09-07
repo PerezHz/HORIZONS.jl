@@ -163,14 +163,16 @@ function smb_spk(flag::String, small_body::ObjectName,
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email)
     cd(ftp, HORIZONS_FTP_DIR)
     if file_name == ""
-        file = download(ftp, ftp_name, local_file)
+        io = download(ftp, ftp_name)
+        write(local_file, io)
         close(ftp)
         ftp_cleanup()
+        return ftp_name, local_file
     else
-        file = download(ftp, ftp_name, file_name)
+        io = download(ftp, ftp_name)
+        write(file_name, io)
         close(ftp)
         ftp_cleanup()
+        return ftp_name, file_name
     end
-
-    nothing
 end

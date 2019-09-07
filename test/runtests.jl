@@ -132,7 +132,7 @@ end
 end
 
 ### Temporarily disabling these tests due to problems with FTP in travis
-@testset "Vector table generation and write output to file" begin
+@testset "Vector table generation and write output to file: vec_tbl" begin
     dt0 = Date(1836)
     dtmax = Date(1994)
     δt = Year(5)
@@ -146,7 +146,7 @@ end
 end
 
 ### Temporarily disabling these tests due to problems with FTP in travis
-@testset "Generation of small-bodies binary SPK files: smb_spk" begin
+@testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
     @test isfile("2099942.bsp")
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")

@@ -73,12 +73,14 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email)
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
-        file = download(ftp, ftp_name, ftp_name)
+        io = download(ftp, ftp_name)
+        write(ftp_name, io)
         close(ftp)
         ftp_cleanup()
         return ftp_name
     else
-        file = download(ftp, ftp_name, local_file)
+        io = download(ftp, ftp_name)
+        write(local_file, io)
         close(ftp)
         return local_file
     end
