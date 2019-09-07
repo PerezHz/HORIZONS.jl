@@ -151,7 +151,7 @@ function smb_spk(flag::String, small_body::ObjectName,
     # Pick out FTP file name
     idx = expect!(proc, [r"File name   : (.*)\r\r\n   File type"], timeout=15)
     proc_match = match(r"File name   : (.*)\r\r\n   File type", proc.match)
-    ftp_name = proc_match[1]
+    ftp_name = strip(proc_match[1])
 
     # Close telnet connection
     close(proc)
@@ -163,11 +163,11 @@ function smb_spk(flag::String, small_body::ObjectName,
     ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email)
     cd(ftp, HORIZONS_FTP_DIR)
     if file_name == ""
-        file = download(ftp, strip(ftp_name), local_file)
+        file = download(ftp, ftp_name, local_file)
         close(ftp)
         ftp_cleanup()
     else
-        file = download(ftp, strip(ftp_name), file_name)
+        file = download(ftp, ftp_name, file_name)
         close(ftp)
         ftp_cleanup()
     end
