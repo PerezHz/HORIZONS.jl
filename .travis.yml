@@ -19,6 +19,10 @@ git:
   depth: 99999999
 
 addons:
+  apt:
+    packages:
+    - telnet
+    update: true
   homebrew:
     packages:
     - telnet
