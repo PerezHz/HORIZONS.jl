@@ -96,28 +96,6 @@ end
     @test occursin(r"\$\$SOE\r\n[0-9]+.[0-9]+ = A.D. [0-9]{4}-[A-Z][a-z]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{4} TDB \r\n +[0-9]+.[0-9]+E[+,-][0-9]+ +[0-9]+.[0-9]+E[+,-][0-9]+", out_str)
 end
 
-# ### Temporarily disabling these tests due to problems with FTP in travis
-# @testset "Vector table generation and write output to file" begin
-#     dt0 = Date(1836)
-#     dtmax = Date(1994)
-#     δt = Year(5)
-#     # 90000033 corresponds to last Halley's apparition
-#     file_name = vec_tbl("90000033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
-#     @test isfile(file_name)
-#     @test isfile("Halley.txt")
-#     @test file_name == "Halley.txt"
-#     file_name = vec_tbl("90000033", "", dt0, dtmax, δt; CSV_FORMAT=true);
-#     @test isfile(file_name)
-# end
-
-# ### Temporarily disabling these tests due to problems with FTP in travis
-# @testset "Generation of small-bodies binary SPK files: smb_spk" begin
-#     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
-#     @test isfile("2099942.bsp")
-#     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
-#     @test isfile("mybinaryspk.apophis")
-# end
-
 @testset "Vector table generation with CSV format: vec_tbl_csv" begin
     dt0 = Date(1950,1,1)
     dtmax = DateTime(1959, 12, 31, 11, 59, 59, 999)
@@ -151,4 +129,26 @@ end
     # e.g.:
     # using DataFrames
     # mydataframe = readtable(IOBuffer(ea_csv_str))
+end
+
+### Temporarily disabling these tests due to problems with FTP in travis
+@testset "Vector table generation and write output to file" begin
+    dt0 = Date(1836)
+    dtmax = Date(1994)
+    δt = Year(5)
+    # 90000033 corresponds to last Halley's apparition
+    file_name = vec_tbl("90000033", "Halley.txt", dt0, dtmax, δt; CSV_FORMAT=true);
+    @test isfile(file_name)
+    @test isfile("Halley.txt")
+    @test file_name == "Halley.txt"
+    file_name = vec_tbl("90000033", "", dt0, dtmax, δt; CSV_FORMAT=true);
+    @test isfile(file_name)
+end
+
+### Temporarily disabling these tests due to problems with FTP in travis
+@testset "Generation of small-bodies binary SPK files: smb_spk" begin
+    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
+    @test isfile("2099942.bsp")
+    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
+    @test isfile("mybinaryspk.apophis")
 end
