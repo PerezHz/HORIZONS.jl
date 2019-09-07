@@ -110,12 +110,13 @@ end
 #     @test isfile(file_name)
 # end
 
-@testset "Generation of small-bodies binary SPK files: smb_spk" begin
-    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
-    @test isfile("2099942.bsp")
-    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
-    @test isfile("mybinaryspk.apophis")
-end
+# ### Temporarily disabling these tests due to problems with FTP in travis
+# @testset "Generation of small-bodies binary SPK files: smb_spk" begin
+#     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
+#     @test isfile("2099942.bsp")
+#     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
+#     @test isfile("mybinaryspk.apophis")
+# end
 
 @testset "Vector table generation with CSV format: vec_tbl_csv" begin
     dt0 = Date(1950,1,1)

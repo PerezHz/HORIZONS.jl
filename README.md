@@ -177,9 +177,21 @@ Then, `mydataframe` is a 16×8 `DataFrame`:
 │ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
 ```
 
-NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) script. There is work
-in progress in order to support other HORIZONS scripts such as `smb_spk`,
-`osc_tbl`, `obs_tbl_ele`, etc.
+__NEW!__ `HORIZONS.jl` now supports the `smb_spk` script, which allows
+generation and download of binary SPK files for Solar System small-bodies!
+```julia
+julia> using HORIZONS, Dates
+
+julia> smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13)) # generate a binary SPK file for asteroid 99942 Apophis covering from 2021 to 2029
+
+julia> isfile("2099942.bsp") # check that the binary SPK was generated correctly
+true
+```
+These binary SPK files may then be read using e.g. [`SPICE.jl`](https://github.com/JuliaAstro/SPICE.jl), or any other SPK ephemeris file reader!
+
+NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) and [`smb_spk`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/smb_spk) scripts. There is work
+in progress in order to support other HORIZONS scripts such as `osc_tbl`,
+`obs_tbl_ele`, etc.
 
 ## License
 
