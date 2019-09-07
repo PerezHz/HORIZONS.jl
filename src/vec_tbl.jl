@@ -29,7 +29,7 @@ specified one at a time on the script's command-line.
 The current keyword arguments are:
 
     + `timeout=15`
-    + `EMAIL_ADDR = "your@domain.name"`
+    + `EMAIL_ADDR = "joe@your.domain.name"`
     + `CENTER = "@ssb"`
     + `REF_PLANE = "ECLIP"`
     + `COORD_TYPE = "G"`
@@ -61,7 +61,7 @@ end
 
 function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe_at_your_domain_name",
+        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
         kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
