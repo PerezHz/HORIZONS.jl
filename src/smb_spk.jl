@@ -13,15 +13,15 @@
 
 function smb_spk(flag::String, small_body::ObjectName, start_time::StartStopTime,
         stop_time::StartStopTime, email::String="joe@your.domain.name",
-        file_name::String=""; timeout::Int=60)
+        file_name::String=""; ftp_verbose::Bool=false, timeout::Int=60)
 
-    smb_spk(flag, small_body, DateTime(start_time), DateTime(stop_time), email, file_name; timeout=timeout)
+    smb_spk(flag, small_body, DateTime(start_time), DateTime(stop_time), email, file_name; timeout=timeout, ftp_verbose=ftp_verbose)
 end
 
 function smb_spk(flag::String, small_body::ObjectName,
         start_time::DateTime, stop_time::DateTime,
         email::String="joe@your.domain.name", file_name::String="";
-        timeout::Int=60)
+        ftp_verbose::Bool=false, timeout::Int=60)
 
     # TODO: handle spk_ID_override (see smb_spk Expect script)
 
@@ -167,7 +167,7 @@ function smb_spk(flag::String, small_body::ObjectName,
     ftp_init()
     # workaround `@` in email address
     ftp_email = replace(email, "@" => "_at_")
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=true)
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=ftp_verbose)
     cd(ftp, HORIZONS_FTP_DIR)
     if file_name == ""
         io = download(ftp, ftp_name, local_file)

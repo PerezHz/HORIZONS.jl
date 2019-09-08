@@ -62,7 +62,7 @@ end
 function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
         STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
-        kwargs...)
+        ftp_verbose::Bool=false, kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
@@ -70,7 +70,7 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     ftp_init()
     # workaround `@` in email address
     ftp_email = replace(EMAIL_ADDR, "@" => "_at_")
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=true)
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=ftp_verbose)
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
         io = download(ftp, ftp_name, ftp_name)
