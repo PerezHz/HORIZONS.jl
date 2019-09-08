@@ -70,7 +70,7 @@ function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
     ftp_init()
     # workaround `@` in email address
     ftp_email = replace(EMAIL_ADDR, "@" => "_at_")
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email)
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=true)
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
         io = download(ftp, ftp_name, ftp_name)

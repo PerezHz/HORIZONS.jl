@@ -167,7 +167,7 @@ function smb_spk(flag::String, small_body::ObjectName,
     ftp_init()
     # workaround `@` in email address
     ftp_email = replace(email, "@" => "_at_")
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email)
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=true)
     cd(ftp, HORIZONS_FTP_DIR)
     if file_name == ""
         io = download(ftp, ftp_name, local_file)
