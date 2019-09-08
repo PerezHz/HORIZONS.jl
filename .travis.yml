@@ -1,6 +1,5 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
-sudo: false
 
 os:
   - linux
@@ -14,6 +13,8 @@ julia:
 
 notifications:
   email: false
+
+sudo: false
 
 git:
   depth: 99999999
