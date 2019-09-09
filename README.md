@@ -24,9 +24,9 @@ from the Julia REPL doing `Pkg.add("HORIZONS")`.
 Connection to the HORIZONS machine is done via the `telnet` command line
 utility, which should be locally installed and enabled. File downloading is done via `ftp`.
 
-## New features
+## New features (v0.1.0+)
 
-`HORIZONS.jl` now supports generation and downloading of binary SPK files for Solar System small-bodies via `smb_spk`!
+`HORIZONS.jl` `v0.1.0` supports Julia 1.0. New developments (`master` branch) will target Julia 1.1+. The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`, for the generation and downloading of binary SPK files for Solar System small-bodies!
 ```julia
 julia> using HORIZONS, Dates
 
