@@ -29,7 +29,7 @@ specified one at a time on the script's command-line.
 The current keyword arguments are:
 
     + `timeout=15`
-    + `EMAIL_ADDR = "your@domain.name"`
+    + `EMAIL_ADDR = "joe@your.domain.name"`
     + `CENTER = "@ssb"`
     + `REF_PLANE = "ECLIP"`
     + `COORD_TYPE = "G"`
@@ -61,22 +61,24 @@ end
 
 function vec_tbl(OBJECT_NAME::ObjectName, local_file::String,
         START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe_at_your_domain_name",
-        kwargs...)
+        STEP_SIZE::StepSize; EMAIL_ADDR::String="joe@your.domain.name",
+        ftp_verbose::Bool=false, kwargs...)
 
     output_str, ftp_name = get_vec_tbl(OBJECT_NAME, DateTime(START_TIME), DateTime(STOP_TIME), STEP_SIZE; kwargs...)
 
     # Retrieve file by anonymous FTP and save to file `local_file`
     ftp_init()
-    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=EMAIL_ADDR)
+    # workaround `@` in email address
+    ftp_email = replace(EMAIL_ADDR, "@" => "_at_")
+    ftp = FTP(hostname=HORIZONS_MACHINE, username="anonymous", password=ftp_email, verbose=ftp_verbose)
     cd(ftp, HORIZONS_FTP_DIR)
     if local_file == ""
-        file = download(ftp, ftp_name, ftp_name)
+        io = download(ftp, ftp_name, ftp_name)
         close(ftp)
         ftp_cleanup()
         return ftp_name
     else
-        file = download(ftp, ftp_name, local_file)
+        io = download(ftp, ftp_name, local_file)
         close(ftp)
         return local_file
     end

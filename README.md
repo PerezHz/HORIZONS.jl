@@ -19,9 +19,40 @@ Comments, suggestions, and improvements are welcome and appreciated.
 `HORIZONS.jl` is a registered Julia package and may be installed
 from the Julia REPL doing `Pkg.add("HORIZONS")`.
 
+## External dependencies
+
+Connection to the HORIZONS machine is done via the `telnet` command line
+utility, which should be locally installed and enabled. File downloading is done via `ftp`.
+
+## New features
+
+`HORIZONS.jl` now supports generation and downloading of binary SPK files for Solar System small-bodies via `smb_spk`!
+```julia
+julia> using HORIZONS, Dates
+
+julia> smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13)) # generate a binary SPK file for asteroid 99942 Apophis covering from 2021 to 2029
+
+julia> isfile("2099942.bsp") # check that the binary SPK was generated correctly
+true
+```
+These binary SPK files may then be read using e.g. [`SPICE.jl`](https://github.com/JuliaAstro/SPICE.jl):
+
+```julia
+julia> using SPICE, Dates
+
+julia> furnsh("2099942.bsp")
+
+julia> et = 86400*(datetime2julian(DateTime(2024,3,1)) - 2.451545e6)
+2.754864e8
+
+julia> pv = spkgeo(2099942, et, "J2000", 0)
+([-1.44108e8, 7.62993e7, 2.47256e7, -12.326, -20.8835, -8.08506], 550.128205298441)
+```
+
 ## Usage examples
 
-The `horizons()` function is a shortcut to the HORIZONS `telnet` interface prompt from the Julia REPL:
+The `horizons()` function is a shortcut to the HORIZONS `telnet` interface
+prompt from the Julia REPL:
 
 ```julia
 julia> using HORIZONS
@@ -171,9 +202,9 @@ Then, `mydataframe` is a 16×8 `DataFrame`:
 │ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
 ```
 
-NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) script. There is work
-in progress in order to support other HORIZONS scripts such as `smb_spk`,
-`osc_tbl`, `obs_tbl_ele`, etc.
+NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) and [`smb_spk`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/smb_spk) scripts. There is work
+in progress in order to support other HORIZONS scripts such as `osc_tbl`,
+`obs_tbl_ele`, etc.
 
 ## License
 
