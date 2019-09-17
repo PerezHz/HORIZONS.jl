@@ -26,7 +26,9 @@ utility, which should be locally installed and enabled. File downloading is done
 
 ## New features (v0.1.0+)
 
-`HORIZONS.jl` `≥v0.1.0` supports Julia 1.0. New developments (`master` branch) will target Julia 1.1+. The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`, for the generation and downloading of binary SPK files for Solar System small-bodies!
+`HORIZONS.jl` `≥v0.1.0` supports Julia 1.0. The `smb_spk` script has been
+translated from Tcl/Expect to the Julia function `smb_spk` (`v0.1.2+`), for the
+generation and downloading of binary SPK files for Solar System small-bodies!
 ```julia
 julia> using HORIZONS, Dates
 
