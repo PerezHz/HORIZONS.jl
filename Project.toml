@@ -13,7 +13,8 @@ FTPClient = "01fcc997-4f28-56b8-8a06-30002c134abb"
 julia = "≥ 1.1.0"
 
 [extras]
+Expect = "6a31a4e8-6e70-5a2d-b005-bc2d500d80a5"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "Expect"]
