@@ -1,1 +1,0 @@
-Sys.isunix() && run(`make`)
