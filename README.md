@@ -48,6 +48,7 @@ julia> et = 86400*(datetime2julian(DateTime(2024,3,1)) - 2.451545e6)
 julia> pv = spkgeo(2099942, et, "J2000", 0)
 ([-1.44108e8, 7.62993e7, 2.47256e7, -12.326, -20.8835, -8.08506], 550.128205298441)
 ```
+
 ## Usage examples
 
 The `horizons()` function is a shortcut to the HORIZONS `telnet` interface prompt from the Julia REPL:
