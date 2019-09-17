@@ -132,7 +132,7 @@ end
 end
 
 # ###Tests disabled temporarily; please report any issues with FTP downloading
-# ###@testset "Vector table generation and write output to file" begin
+# @testset "Vector table generation and write output to file" begin
 #     dt0 = Date(1836)
 #     dtmax = Date(1994)
 #     δt = Year(5)
