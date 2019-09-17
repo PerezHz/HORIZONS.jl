@@ -3,9 +3,7 @@
 
 module HORIZONS
 
-include("Expect.jl")
-
-using .Expect, FTPClient
+using Expect, FTPClient
 
 using DelimitedFiles, Dates
 

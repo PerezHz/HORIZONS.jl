@@ -3,7 +3,7 @@
 # Copyright (c) 2017: Jorge Pérez.
 
 using Test, Dates, DelimitedFiles
-using HORIZONS, HORIZONS.Expect
+using HORIZONS, Expect
 
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, 15)
