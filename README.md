@@ -17,8 +17,37 @@ Comments, suggestions, and improvements are welcome and appreciated.
 ## Installation
 
 `HORIZONS.jl` is a registered Julia package and may be installed
-from the Julia REPL doing `Pkg.add("HORIZONS")`.
+from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`.
 
+## External dependencies
+
+Connection to the HORIZONS machine is done via the `telnet` command line
+utility, which should be locally installed and enabled. File downloading is done via `ftp`.
+
+## New features (v0.1.0+)
+
+`HORIZONS.jl` `≥v0.1.0` supports Julia 1.0. New developments (`master` branch) will target Julia 1.1+. The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`, for the generation and downloading of binary SPK files for Solar System small-bodies!
+```julia
+julia> using HORIZONS, Dates
+
+julia> smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13)) # generate a binary SPK file for asteroid 99942 Apophis covering from 2021 to 2029
+
+julia> isfile("2099942.bsp") # check that the binary SPK was generated correctly
+true
+```
+These binary SPK files may then be read using e.g. [`SPICE.jl`](https://github.com/JuliaAstro/SPICE.jl):
+
+```julia
+julia> using SPICE, Dates
+
+julia> furnsh("2099942.bsp")
+
+julia> et = 86400*(datetime2julian(DateTime(2024,3,1)) - 2.451545e6)
+2.754864e8
+
+julia> pv = spkgeo(2099942, et, "J2000", 0)
+([-1.44108e8, 7.62993e7, 2.47256e7, -12.326, -20.8835, -8.08506], 550.128205298441)
+```
 ## Usage examples
 
 The `horizons()` function is a shortcut to the HORIZONS `telnet` interface prompt from the Julia REPL:
