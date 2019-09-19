@@ -17,7 +17,7 @@ Comments, suggestions, and improvements are welcome and appreciated.
 ## Installation
 
 `HORIZONS.jl` is a registered Julia package and may be installed
-from the Julia REPL doing `Pkg.add("HORIZONS")`.
+from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`.
 
 ## External dependencies
 
@@ -26,7 +26,10 @@ utility, which should be locally installed and enabled. File downloading is done
 
 ## New features (v0.1.0+)
 
-`HORIZONS.jl` `v0.1.0` supports Julia 1.0. New developments (`master` branch) will target Julia 1.1+. The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`, for the generation and downloading of binary SPK files for Solar System small-bodies!
+`HORIZONS.jl` `v0.1.2` supports Julia 1.0. There is work in progress in the
+`master` branch in order to support Julia 1.1-1.3 as well. The `smb_spk` script
+has been translated from Tcl/Expect to the Julia function `smb_spk`, for the
+generation and downloading of binary SPK files for Solar System small-bodies!
 ```julia
 julia> using HORIZONS, Dates
 
@@ -95,7 +98,8 @@ System news updated September 2, 2019
 Horizons>
 ```
 
-`HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for designated objects and save the output into a file:
+`HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for
+designated objects and save the output into a file:
 
 ```julia
 # date variables for start and stop times
@@ -202,9 +206,11 @@ Then, `mydataframe` is a 16×8 `DataFrame`:
 │ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
 ```
 
-NOTE: Currently, `HORIZONS.jl` only supports the [`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl) and [`smb_spk`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/smb_spk) scripts. There is work
-in progress in order to support other HORIZONS scripts such as `osc_tbl`,
-`obs_tbl_ele`, etc.
+NOTE: Currently, `HORIZONS.jl` only supports the
+[`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl)
+and [`smb_spk`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/smb_spk)
+scripts. There is work in progress in order to support other HORIZONS scripts
+such as `osc_tbl`, `obs_tbl_ele`, etc.
 
 ## License
 
@@ -234,7 +240,7 @@ The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of 
   - The NAIF group  (SPICELIB) (esp. Chuck Acton, Bill Taber, Nat Bachman)
 
 Translation from the original `expect` scripts to Julia was done using the
-[Expect.jl](https://github.com/wavexx/Expect.jl) package.
+[Expect.jl](https://gitlab.com/wavexx/Expect.jl) package.
 
 ## References
 
