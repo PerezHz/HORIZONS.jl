@@ -151,8 +151,10 @@ end
 @testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
     @test isfile("2099942.bsp")
+    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis", ftp_verbose=true)
     @test isfile("mybinaryspk.apophis")
+    smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp")
     smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp", ftp_verbose=true)
     @test isfile("2099942_.bsp")
 end
