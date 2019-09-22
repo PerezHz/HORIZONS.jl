@@ -9,7 +9,7 @@ An interface to NASA-JPL's [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system
 
 ## Author
 
-- [Jorge A. Pérez](https://www.linkedin.com/in/perezhz),
+- [Jorge A. Pérez-Hernández](https://www.linkedin.com/in/perezhz),
 Instituto de Ciencias Físicas, Universidad Nacional Autónoma de México (UNAM)
 
 Comments, suggestions, and improvements are welcome and appreciated.
@@ -17,19 +17,17 @@ Comments, suggestions, and improvements are welcome and appreciated.
 ## Installation
 
 `HORIZONS.jl` is a registered Julia package and may be installed
-from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`.
+from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`. Current stable
+release is `v0.2.0`, which is compatible with Julia 1.0-1.3.
 
 ## External dependencies
 
 Connection to the HORIZONS machine is done via the `telnet` command line
 utility, which should be locally installed and enabled. File downloading is done via `ftp`.
 
-## New features (v0.1.0+)
+## New features (v0.2.0)
 
-`HORIZONS.jl` `v0.1.2` supports Julia 1.0. There is work in progress in the
-`master` branch in order to support Julia 1.1-1.3 as well. The `smb_spk` script
-has been translated from Tcl/Expect to the Julia function `smb_spk`, for the
-generation and downloading of binary SPK files for Solar System small-bodies!
+The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`. This function automates generation and downloading of Solar System small-bodies binary SPK files from HORIZONS.
 ```julia
 julia> using HORIZONS, Dates
 

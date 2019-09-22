@@ -34,6 +34,7 @@ addons:
 matrix:
   allow_failures:
   - julia: nightly
+  - os: linux
 
 after_success:
   # push coverage results to Coveralls
