@@ -31,7 +31,7 @@ The current keyword arguments are:
     + `timeout=15`
     + `EMAIL_ADDR = "joe@your.domain.name"`
     + `CENTER = "@ssb"`
-    + `REF_PLANE = "ECLIP"`
+    + `REF_PLANE = "FRAME"`
     + `COORD_TYPE = "G"`
     + `SITE_COORD = "0,0,0"`
     + `REF_SYSTEM = "J2000"`
@@ -87,7 +87,7 @@ end
 function get_vec_tbl(OBJECT_NAME::ObjectName, START_TIME::DateTime,
         STOP_TIME::DateTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
-        REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
+        REF_PLANE::String="FRAME", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         CSV_FORMAT::Bool=false, VEC_LABELS::Bool=false, VEC_TABLE::VecTable=3)
@@ -301,7 +301,7 @@ end
 function vec_tbl_csv(OBJECT_NAME::ObjectName, START_TIME::StartStopTime,
         STOP_TIME::StartStopTime, STEP_SIZE::StepSize; timeout::Int=15,
         EMAIL_ADDR::String="joe@your.domain.name", CENTER::String="@ssb",
-        REF_PLANE::String="ECLIP", COORD_TYPE::String="G",
+        REF_PLANE::String="FRAME", COORD_TYPE::String="G",
         SITE_COORD::String="0,0,0", REF_SYSTEM::String="J2000",
         VEC_CORR::Int=1, VEC_DELTA_T::Bool=false, OUT_UNITS::Int=1,
         VEC_TABLE::VecTable=3)
