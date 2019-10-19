@@ -17,27 +17,6 @@ using HORIZONS, Expect
     @test idx == 2
 end
 
-@testset "Test for erroneous arguments" begin
-    @test_throws ArgumentError vec_tbl_csv("erroneous-input", Date(2000), Date(2010), Year(1))
-    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
-    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
-    dt0 = Date(2000); dtmax = Date(2015); δt = Year(1)
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; REF_PLANE="T", VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="10,1,1")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", "1400-1-1", dtmax, δt)
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", "bad-start-time", dtmax, δt)
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "3500-2-1", δt)
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "bad-stop-time", δt)
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "1 w")
-    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "bad-step_size")
-    @test_throws MethodError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
-    @test_throws TypeError vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
-end
-
 @testset "Vector table generation: vec_tbl" begin
     dt0 = DateTime(2029,4,13)
     dtmax = Date(2029,4,14)
@@ -157,4 +136,25 @@ end
     smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp")
     smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp", ftp_verbose=true)
     @test isfile("2099942_.bsp")
+end
+
+@testset "Test for erroneous arguments" begin
+    @test_throws ArgumentError vec_tbl_csv("erroneous-input", Date(2000), Date(2010), Year(1))
+    @test_throws ArgumentError vec_tbl_csv(99942, Date(2000), Date(2010), Year(1); CENTER="nomatch")
+    @test_throws ArgumentError vec_tbl_csv(499, Date(2009), Date(2010), Year(1); VEC_TABLE = 1, CENTER="mars")
+    dt0 = Date(2000); dtmax = Date(2015); δt = Year(1)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="w")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="%")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="a,b,c")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, δt; REF_PLANE="T", VEC_TABLE = "2xa", CENTER="coord", COORD_TYPE="c", SITE_COORD="10,1,1")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", "1400-1-1", dtmax, δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", "bad-start-time", dtmax, δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "3500-2-1", δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, "bad-stop-time", δt)
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "1 w")
+    @test_throws ArgumentError vec_tbl_csv("1950 DA", dt0, dtmax, "bad-step_size")
+    @test_throws TypeError vec_tbl_csv("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
+    @test_throws TypeError vec_tbl("1950 DA", dt0, dtmax, δt; VEC_LABELS=0)
 end
