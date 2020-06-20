@@ -7,7 +7,8 @@ using Expect, FTPClient
 
 using DelimitedFiles, Dates
 
-export HORIZONS_MACHINE, horizons, vec_tbl, vec_tbl_csv, smb_spk
+export HORIZONS_MACHINE, horizons, vec_tbl, vec_tbl_csv,
+    smb_spk, smb_spk_ele
 
 const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
 const HORIZONS_FTP_DIR = "pub/ssd/"
@@ -36,5 +37,6 @@ end
 
 include("vec_tbl.jl")
 include("smb_spk.jl")
+include("smb_spk_ele.jl")
 
 end # module
