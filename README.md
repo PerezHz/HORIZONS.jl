@@ -4,7 +4,7 @@
 
 [![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg?branch=master)](https://coveralls.io/github/PerezHz/HORIZONS.jl?branch=master)
 
-An interface to NASA-JPL's [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system in
+An interface to NASA-JPL [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system in
 [Julia](http://julialang.org).
 
 ## Author
@@ -18,37 +18,12 @@ Comments, suggestions, and improvements are welcome and appreciated.
 
 `HORIZONS.jl` is a registered Julia package and may be installed
 from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`. Current stable
-release is `v0.2.0`, which is compatible with Julia 1.0-1.3.
+release is `v0.3.0`, which is compatible with Julia 1.0-1.3.
 
 ## External dependencies
 
 Connection to the HORIZONS machine is done via the `telnet` command line
 utility, which should be locally installed and enabled. File downloading is done via `ftp`.
-
-## New features (v0.2.0)
-
-The `smb_spk` script has been translated from Tcl/Expect to the Julia function `smb_spk`. This function automates generation and downloading of Solar System small-bodies binary SPK files from HORIZONS.
-```julia
-julia> using HORIZONS, Dates
-
-julia> smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13)) # generate a binary SPK file for asteroid 99942 Apophis covering from 2021 to 2029
-
-julia> isfile("2099942.bsp") # check that the binary SPK was generated correctly
-true
-```
-These binary SPK files may then be read using e.g. [`SPICE.jl`](https://github.com/JuliaAstro/SPICE.jl):
-
-```julia
-julia> using SPICE, Dates
-
-julia> furnsh("2099942.bsp")
-
-julia> et = 86400*(datetime2julian(DateTime(2024,3,1)) - 2.451545e6)
-2.754864e8
-
-julia> pv = spkgeo(2099942, et, "J2000", 0)
-([-1.44108e8, 7.62993e7, 2.47256e7, -12.326, -20.8835, -8.08506], 550.128205298441)
-```
 
 ## Usage examples
 
@@ -59,42 +34,67 @@ prompt from the Julia REPL:
 julia> using HORIZONS
 
 julia> horizons() # get Horizons prompt from the Julia REPL
-Trying 128.149.23.134...
-Connected to ssd.jpl.nasa.gov.
-Escape character is '^]'.
-
-  ======================================================================
-  |                     Jet Propulsion Laboratory                      |
-  |                                                                    |
-  |                  * * *    W A R N I N G   * * *                    |
-  |                                                                    |
-  |                          Property of the                           |
-  |                      UNITED STATES GOVERNMENT                      |
-  |                                                                    |
-  |    This computer is funded by the United States Government and     |
-  | operated by the California Institute of Technology in support of   |
-  | ongoing U.S. Government programs and activities.  If you are not   |
-  | authorized to access this system, disconnect now.  Users of this   |
-  | system have no expectation of privacy. By continuing, you consent  |
-  |     to your keystrokes and data content being monitored.           |
-  ======================================================================
-
-     ___    _____     ___
-    /_ /|  /____/ \  /_ /|       Horizons On-line Ephemeris System v4.62
-    | | | |  __ \ /| | | |       Solar System Dynamics Group
- ___| | | | |__) |/  | | |__     Jet Propulsion Laboratory
-/___| | | |  ___/    | |/__ /|   Pasadena, CA, USA
-|_____|/  |_|/       |_____|/
-
- Establishing connection, stand-by ...
-
-JPL Horizons, version 4.62
+JPL Horizons, version 4.70
 Type '?' for brief help, '?!' for details,
 '-' for previous prompt, 'x' to exit
-System news updated September 2, 2019
+System news updated June 08, 2020
 
 Horizons>
 ```
+
+`HORIZONS.jl` also has Julia functions which for some of the scripts authored by
+Jon D. Giorgini for automated generation of small-body binary SPK files and tables.
+These scripts were originally written in `expect`, and can be found at the
+JPL's Solar System Dynamics group ftp server `ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
+Below, we describe the functions `smb_spk`, `smb_spk_ele` and `vec_tbl`.
+
+### `smb_spk`
+
+The `smb_spk` function automates generation and downloading of Solar System
+small-bodies binary SPK files from HORIZONS:
+```julia
+using HORIZONS, Dates
+
+# generate a binary SPK file for asteroid 99942 Apophis covering from 2021 to 2029
+ftp_name, local_file = smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13))
+
+isfile(local_file) # check that the binary SPK file `local_file` exists
+```
+Binary SPK files (i.e., extension `.bsp`) can be read using e.g.
+[`SPICE.jl`](https://github.com/JuliaAstro/SPICE.jl):
+```julia
+# import Pkg; Pkg.add("SPICE") # uncomment this line to add `SPICE.jl` to current environment
+using SPICE, Dates
+furnsh(local_file)
+et = 86400*(datetime2julian(DateTime(2024,3,1)) - 2.451545e6)
+pv = spkgeo(2099942, et, "J2000", 0)
+```
+
+### `smb_spk_ele`
+
+`HORIZONS.jl` function `smb_spk_ele` generates `.bsp` binary SPK files for
+small-bodies from a set of osculating orbital elements at a given epoch:
+```julia
+using HORIZONS, Dates
+
+epoch = 2449526.5 # Osculating elements epoch, in Barycentric Dynamical Time (TDB)
+ec = 0.6570220840219289 # Orbital eccentricity
+qr = 0.5559654280797371 # Perihelion distance
+tp = 2449448.890787227 # Julian date of perihelion passage
+om = 78.10766874391773 # Longitude of ascending node
+w = 77.40198125423228 # Argument of perihelion
+inc = 24.4225258251465 # Inclination
+
+start_time = DateTime(2021,Jan,1)
+stop_time = DateTime(2022,Jan,1)
+
+# generate a binary SPK file for asteroid 1990 MU at `epoch`
+ftp_name, local_file = smb_spk_ele("b", "1990 MU", start_time, stop_time, epoch, ec, qr, tp, om, w, inc)
+
+isfile(local_file) # check that the binary SPK was downloaded
+```
+
+### `vec_tbl`
 
 `HORIZONS.jl` function `vec_tbl` allows the user to generate vector tables for
 designated objects and save the output into a file:
@@ -204,22 +204,11 @@ Then, `mydataframe` is a 16×8 `DataFrame`:
 │ 16  │ 2.45702e6 │ "A.D. 2015-Jan-01 00:00:00.0000" │ 2.96116e8  │ -1.75053e8 │ -8.37231e7 │ 43.4907 │ 17.7757  │ 11.5517  │
 ```
 
-NOTE: Currently, `HORIZONS.jl` only supports the
-[`vec_tbl`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/vec_tbl)
-and [`smb_spk`](https://github.com/PerezHz/HORIZONS.jl/blob/master/src/SCRIPTS/smb_spk)
-scripts. There is work in progress in order to support other HORIZONS scripts
-such as `osc_tbl`, `obs_tbl_ele`, etc.
-
 ## License
 
 `HORIZONS.jl` is licensed under the [MIT "Expat" license](./LICENSE.md).
 
 ## Acknowledgments
-
-`HORIZONS.jl` is based on the scripts authored by Jon D. Giorgini for automated
-generation of tables, which may be
-found at the JPL's Solar System Dynamics group ftp server
-`ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
 
 The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several people at JPL:
 
