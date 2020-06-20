@@ -128,14 +128,25 @@ end
 ### CI is failing currently for these test in Linux due to ftp issues on travis
 ### For more details, see https://blog.travis-ci.com/2018-07-23-the-tale-of-ftp-at-travis-ci
 @testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
-    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
-    @test isfile("2099942.bsp")
+    ftp_name, local_file = smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
+    @test isfile(local_file)
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
     smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis", ftp_verbose=true)
     @test isfile("mybinaryspk.apophis")
     smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp")
     smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp", ftp_verbose=true)
     @test isfile("2099942_.bsp")
+end
+
+@testset "Generation and file download of small-bodies binary SPK files: smb_spk_ele" begin
+    elements_str = "EPOCH=2449526.5 EC=.6570220840219289 QR=.5559654280797371 TP=2449448.890787227 OM=78.10766874391773 W=77.40198125423228 IN=24.4225258251465"
+    smb_spk_ele("b", "1990 MU", DateTime(2021,Jan,1), DateTime(2022,Jan,1), elements_str, "joe@your.domain.name", "1990mu.bsp")
+    @test isfile("1990mu.bsp")
+    elements_str = "EPOCH= 2454733.5 EC=.1911952942528226 QR=.7460724385331012 TP=2454894.912507658200 OM=204.4460284242489 W=126.401880836064 IN=3.331369228495799"
+    ftp_name, local_file = smb_spk_ele("b", "99942", DateTime(2021,Jan,1), DateTime(2022,Jan,1), elements_str, "joe@your.domain.name")
+    @test isfile(local_file)
+    ftp_name, local_file = smb_spk_ele("b", "99942", DateTime(2021,Jan,1), DateTime(2022,Jan,1), elements_str, "joe@your.domain.name", ftp_verbose=true)
+    @test isfile(local_file)
 end
 
 @testset "Test for erroneous arguments" begin
