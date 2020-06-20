@@ -18,7 +18,7 @@ Comments, suggestions, and improvements are welcome and appreciated.
 
 `HORIZONS.jl` is a registered Julia package and may be installed
 from the Julia REPL doing `import Pkg; Pkg.add("HORIZONS")`. Current stable
-release is `v0.3.0`, which is compatible with Julia 1.0-1.3.
+release is `v0.3.0`, which is compatible with Julia 1.0, 1.3 and 1.4.
 
 ## External dependencies
 
