@@ -1,7 +1,7 @@
 name = "HORIZONS"
 uuid = "5a3ac768-beb4-554a-9c98-3342fe3377f5"
 repo = "https://github.com/PerezHz/HORIZONS.jl.git"
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
