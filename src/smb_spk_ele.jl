@@ -20,6 +20,16 @@ function smb_spk_ele(flag::String, small_body::ObjectName, start_time::StartStop
     smb_spk_ele(flag, small_body, DateTime(start_time), DateTime(stop_time), elements, email, file_name; timeout=timeout, ftp_verbose=ftp_verbose)
 end
 
+function smb_spk_ele(flag::String, small_body::ObjectName, start_time::StartStopTime,
+        stop_time::StartStopTime, epoch::T, ec::T, qr::T, tp::T, om::T, w::T, inc::T,
+        email::String="joe@your.domain.name", file_name::String="";
+        ftp_verbose::Bool=false, timeout::Int=60) where {T<:Real}
+
+    elements = "EPOCH= $epoch EC=$ec QR=$qr TP=$tp OM=$om W=$w IN=$inc"
+
+    smb_spk_ele(flag, small_body, DateTime(start_time), DateTime(stop_time), elements, email, file_name; timeout=timeout, ftp_verbose=ftp_verbose)
+end
+
 function smb_spk_ele(flag::String, small_body::ObjectName,
         start_time::DateTime, stop_time::DateTime, elements::String,
         email::String="joe@your.domain.name", file_name::String="";

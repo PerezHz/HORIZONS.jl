@@ -145,6 +145,15 @@ end
     elements_str = "EPOCH= 2454733.5 EC=.1911952942528226 QR=.7460724385331012 TP=2454894.912507658200 OM=204.4460284242489 W=126.401880836064 IN=3.331369228495799"
     ftp_name, local_file = smb_spk_ele("b", "99942", DateTime(2021,Jan,1), DateTime(2022,Jan,1), elements_str, "joe@your.domain.name")
     @test isfile(local_file)
+    epoch = 2454733.5
+    ec = 0.1911952942528226
+    qr = 0.7460724385331012
+    tp = 2454894.912507658200
+    om = 204.4460284242489
+    w = 126.401880836064
+    inc = 3.331369228495799
+    ftp_name, local_file = smb_spk_ele("b", "99942", DateTime(2021,Jan,1), DateTime(2022,Jan,1), epoch, ec, qr, tp, om, w, inc, "joe@your.domain.name")
+    @test isfile(local_file)
     ftp_name, local_file = smb_spk_ele("b", "99942", DateTime(2021,Jan,1), DateTime(2022,Jan,1), elements_str, "joe@your.domain.name", ftp_verbose=true)
     @test isfile(local_file)
 end
