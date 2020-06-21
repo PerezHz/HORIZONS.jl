@@ -15,8 +15,6 @@ julia:
 notifications:
   email: false
 
-sudo: false
-
 addons:
   apt:
     packages:
@@ -26,6 +24,9 @@ addons:
     packages:
     - telnet
     update: true
+
+before_install:
+  - if [ $TRAVIS_OS_NAME = windows ]; then choco install telnet -y; fi
 
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
