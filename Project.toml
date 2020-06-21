@@ -11,7 +11,7 @@ FTPClient = "01fcc997-4f28-56b8-8a06-30002c134abb"
 
 [compat]
 Expect = "0.3.1"
-FTPClient = "1.2.0"
+FTPClient = "1.1.0"
 julia = "1"
 
 [extras]
