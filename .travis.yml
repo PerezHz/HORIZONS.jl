@@ -4,6 +4,7 @@ language: julia
 os:
   - linux
   - osx
+  - windows
 
 julia:
   - 1.0
@@ -16,15 +17,16 @@ notifications:
 
 sudo: false
 
-git:
-  depth: 99999999
-
 addons:
   apt:
     packages:
     - telnet
     update: true
   homebrew:
+    packages:
+    - telnet
+    update: true
+  choco:
     packages:
     - telnet
     update: true
