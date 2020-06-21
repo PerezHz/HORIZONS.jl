@@ -5,6 +5,8 @@
 using Test, Dates, DelimitedFiles
 using HORIZONS, Expect
 
+import Pkg; Pkg.build("Expect"); Pkg.test("Expect")
+
 @testset "Test connection to HORIZONS machine using Expect.jl" begin
     proc = ExpectProc(`telnet $HORIZONS_MACHINE 6775`, 15)
     @show proc.proc
