@@ -26,10 +26,6 @@ addons:
     packages:
     - telnet
     update: true
-  choco:
-    packages:
-    - telnet
-    update: true
 
 ## uncomment the following lines to allow failures on nightly julia
 ## (tests will run but not make your overall status red)
@@ -37,6 +33,7 @@ matrix:
   allow_failures:
   - julia: nightly
   - os: linux
+  - os: windows
 
 after_success:
   # push coverage results to Coveralls
