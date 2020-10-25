@@ -13,9 +13,9 @@
 
 function smb_spk(flag::String, small_body::ObjectName, start_time::StartStopTime,
         stop_time::StartStopTime, email::String="joe@your.domain.name",
-        file_name::String=""; ftp_verbose::Bool=false, timeout::Int=60)
+        file_name::String=""; kwargs...)
 
-    smb_spk(flag, small_body, DateTime(start_time), DateTime(stop_time), email, file_name; timeout=timeout, ftp_verbose=ftp_verbose)
+    smb_spk(flag, small_body, DateTime(start_time), DateTime(stop_time), email, file_name; kwargs...)
 end
 
 function smb_spk(flag::String, small_body::ObjectName,
