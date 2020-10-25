@@ -11,8 +11,6 @@
 # Credit: Jon D. Giorgini, NASA-JPL
 # Jon.D.Giorgini@jpl.nasa.gov
 
-# TODO: add method with each element as a separate argument in function call
-
 function smb_spk_ele(flag::String, small_body::ObjectName, start_time::StartStopTime,
         stop_time::StartStopTime, elements::String, email::String="joe@your.domain.name",
         file_name::String=""; kwargs...)
