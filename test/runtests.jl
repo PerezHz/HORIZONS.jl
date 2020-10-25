@@ -129,15 +129,17 @@ end
 
 ### CI is failing currently for these test in Linux due to ftp issues on travis
 ### For more details, see https://blog.travis-ci.com/2018-07-23-the-tale-of-ftp-at-travis-ci
-@testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
-    ftp_name, local_file = smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
-    @test isfile(local_file)
-    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
-    smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis", ftp_verbose=true)
-    @test isfile("mybinaryspk.apophis")
-    smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp")
-    smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp", ftp_verbose=true)
-    @test isfile("2099942_.bsp")
+if !Sys.islinux()
+    @testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
+        ftp_name, local_file = smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name")
+        @test isfile(local_file)
+        smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis")
+        smb_spk("b", "DES= 2099942;", DateTime(2021,Jan,1), DateTime(2029,Apr,13), "joe@your.domain.name", "mybinaryspk.apophis", ftp_verbose=true)
+        @test isfile("mybinaryspk.apophis")
+        smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp")
+        smb_spk("b", "DES= 2099942;", "2021-1-1", "2029-4-13T21:46:07.999", "joe@your.domain.name", "2099942_.bsp", ftp_verbose=true)
+        @test isfile("2099942_.bsp")
+    end
 end
 
 @testset "Generation and file download of small-bodies binary SPK files: smb_spk_ele" begin
