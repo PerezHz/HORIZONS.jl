@@ -3,3 +3,6 @@
 *.jl.mem
 /deps/libexjl.so
 .vscode/
+*.bsp
+*.tls
+Manifest.toml

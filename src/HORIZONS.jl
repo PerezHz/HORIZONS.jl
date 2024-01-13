@@ -3,11 +3,9 @@
 
 module HORIZONS
 
-using Expect, FTPClient
+using Expect, FTPClient, HTTP, JSON, Base64, DelimitedFiles, Dates
 
-using DelimitedFiles, Dates
-
-export HORIZONS_MACHINE, horizons, vec_tbl, vec_tbl_csv,
+export HORIZONS_MACHINE, API, horizons, vec_tbl, vec_tbl_csv,
     smb_spk, smb_spk_ele
 
 const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
@@ -38,5 +36,6 @@ end
 include("vec_tbl.jl")
 include("smb_spk.jl")
 include("smb_spk_ele.jl")
+include("horizons_api.jl")
 
 end # module
