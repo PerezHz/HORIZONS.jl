@@ -182,13 +182,12 @@ officially connected with NASA, JPL, or any of its subsidiaries or its affiliate
 ## Acknowledgments
 
 JAPH is thankful to Dr. Jon Giorgini for his helpful comments and feedback towards
-the first release of this Julia interface to the HORIZONS system. Thanks to Yuri
+the first release of this Julia interface to the HORIZONS system, and to Yuri
 D'Elia for their help with the telnet interface via
-[Expect.jl](https://gitlab.com/wavexx/Expect.jl). Special thanks to Luis Eduardo
-Ramírez Montoya ([@LuEdRaMo](https://github.com/LuEdRaMo)) for the implementation of the
-JPL APIs via HTTP. The
-[HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several people
-at JPL:
+[Expect.jl](https://gitlab.com/wavexx/Expect.jl). Special thanks to LERM 
+([@LuEdRaMo](https://github.com/LuEdRaMo)) for the implementation of the JPL APIs via HTTP.
+The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several
+people at JPL:
 
 * Design/implementation :
   - Jon Giorgini
