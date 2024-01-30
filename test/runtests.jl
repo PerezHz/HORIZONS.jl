@@ -46,13 +46,23 @@ end
 end
 
 @testset "Vector table generation: vec_tbl" begin
-    # Generate tables and save output to Apophis.dat
+    # Generate tables and save output to Apophis.txt
     t_start = DateTime(2029, 4, 13)
     t_stop = Date(2029, 4, 14)
     δt = Hour(1)
-    local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.dat", CENTER = "@ssb",
+    local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.txt", CENTER = "@ssb",
                          REF_PLANE = "FRAME", OUT_UNITS = "AU-D", CSV_FORMAT = true, VEC_TABLE = 2)
+
     @test isfile(local_file)
+
+    apophisvt = vec_tbl("Apophis;", t_start, t_stop, δt; CENTER = "@ssb", REF_PLANE = "FRAME",
+                        OUT_UNITS = "AU-D", CSV_FORMAT = true, VEC_TABLE = 2)
+
+    x = readlines(local_file)
+    y = split(apophisvt, "\n")[1:end-1]
+
+    @test x == y
+
     rm(local_file)
 end
 

@@ -170,32 +170,15 @@ function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::
     return filename
 end
 
-# Find name in vector table response
-function vect_tbl_fname(text::String, FILENAME::String)
-    # FILENAME is not empty
-    !isempty(FILENAME) && return FILENAME
-    # Search object's name in text
-    m = match(HORIZONS_NAME_REGEX, text)
-    if isnothing(m)
-        return "unknown.txt"
-    elseif !isempty(m[1])
-        return replace(strip(m[1]), " " => "") * ".txt"
-    elseif !isempty(m[3])
-        return replace(strip(m[3]), " " => "") * ".txt"
-    else
-        return replace(strip(m[2]), " " => "") * ".txt"
-    end
-end
-
 @doc raw"""
     vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
             STEP_SIZE::StepSize; FILENAME::String = "", kwargs...) -> String
 
-Save to `FILENAME` the vector table of Solar System Small Body `COMMAND` from `START_TIME` 
-to `STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty, deduce the object's name from
-the table. Return the local file name. For more information see [1], in particular 
-the **Common Parameters** and **SPK File Parameters** sections; for a list of keyword
-arguments see the **Ephemeris-Specific Parameters** section.
+Generate vector table of Solar System Small Body `COMMAND` from `START_TIME` 
+to `STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty, return the output as
+a `String`; otherwise, save the table to the corresponding file. For more information
+see [1], in particular the **Common Parameters** and **SPK File Parameters** sections;
+for a list of keyword arguments see the **Ephemeris-Specific Parameters** section.
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -211,11 +194,11 @@ t_stop = Date(2029,4,14)
 
 δt = Hour(1) # 1 hour step size
 
-# Generate tables and save output to Apophis.dat in current directory:
+# Generate tables and save output to Apophis.txt in current directory:
 
-julia> local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.dat", CENTER = "@ssb",
+julia> local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.txt", CENTER = "@ssb",
                             REF_PLANE = "FRAME", OUT_UNITS = "AU-D", CSV_FORMAT = true, VEC_TABLE = 2)
-"Apophis.dat"
+"Apophis.txt"
 
 julia> isfile(local_file)
 true
@@ -265,14 +248,16 @@ function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
         "VEC_TABLE" => vec_table_str
     )
     iszero(code) && return ""
-    # Filename
-    filename = vect_tbl_fname(text, FILENAME)
     # Parse JSON
     dict = jsonparse(text)
-    # Save file
-    open(filename, "w") do file
-        write(file, dict["result"])
+    # Return table as String
+    if isempty(FILENAME)
+        return dict["result"]
+    # Save table to FILENAME
+    else
+        open(FILENAME, "w") do file
+            write(file, dict["result"])
+        end
+        return FILENAME
     end
-    
-    return filename
 end
