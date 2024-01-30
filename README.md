@@ -130,7 +130,7 @@ More details about default values of keyword arguments are available in the
 `vec_tbl` docstrings.
 
 If the output file is not specified, then `vec_tbl` returns the output as a
-string, which may be then used for further processing within Julia:
+`String`, which may be then used for further processing within Julia:
 
 ```julia
 δt = "2 hours" # 2 hour step size
@@ -143,10 +143,10 @@ apophisvt = vec_tbl("Apophis", t_start, t_stop, δt)
 
 ### Small-Body DataBase API
 
-`HORIZONS.jl` function `sbdb` fetchs data for a specific small-body in JPL's Small-Body DataBase (SBDB) and returns the output as a `Dict{String, Any}`
+`HORIZONS.jl` function `sbdb` fetchs data for a specific small-body in JPL's Small-Body DataBase (SBDB) and returns the output as a `Dict{String, Any}`:
 
 ```julia
-# Fetch data of asteeroid 433 Eros
+# Fetch data of asteroid 433 Eros
 sbdb("sstr" => "Eros")
 
 # Fetch data of asteroid 99942 Apophis, including close-approach information
@@ -155,7 +155,7 @@ sbdb("sstr" => "Apophis", "ca-data" => "true")
 
 ### Small-Body Radar Astrometry API
 
-`HORIZONS.jl` function `sbradar` searches for radar astrometry of asteroids/commets and returns the output as a `Dict{String, Any}`
+`HORIZONS.jl` function `sbradar` searches for radar astrometry of asteroids/commets and returns the output as a `Dict{String, Any}`:
 
 ```julia
 # Search Apophis' radar astrometry
