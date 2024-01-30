@@ -9,7 +9,7 @@ An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and oth
 
 ## Authors
 
-- [Jorge A. Pérez-Hernández](https://www.linkedin.com/in/perezhz),
+- [Jorge A. Pérez-Hernández](https://github.com/PerezHz),
 Instituto de Ciencias Físicas, Universidad Nacional Autónoma de México (UNAM)
 - [Luis Eduardo Ramírez Montoya](https://github.com/LuEdRaMo),
 Facultad de Ciencias, Universidad Nacional Autónoma de México (UNAM)
