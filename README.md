@@ -2,7 +2,7 @@
 
 [![Build status](https://github.com/PerezHz/HORIZONS.jl/workflows/CI/badge.svg)](https://github.com/PerezHz/HORIZONS.jl/actions)
 
-[![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg?branch=master)](https://coveralls.io/github/PerezHz/HORIZONS.jl?branch=master)
+[![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg?branch=main)](https://coveralls.io/github/PerezHz/HORIZONS.jl?branch=main)
 
 An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and other Solar System Dynamics [APIs](https://ssd.jpl.nasa.gov/api.html) in
 [Julia](http://julialang.org).
