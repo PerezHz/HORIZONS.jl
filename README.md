@@ -4,25 +4,27 @@
 
 [![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg?branch=master)](https://coveralls.io/github/PerezHz/HORIZONS.jl?branch=master)
 
-An interface to JPL Solar System Dynamics [APIs](https://ssd.jpl.nasa.gov/api.html) in
+An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and other Solar System Dynamics [APIs](https://ssd.jpl.nasa.gov/api.html) in
 [Julia](http://julialang.org).
 
-## Author
+## Authors
 
 - [Jorge A. Pérez-Hernández](https://www.linkedin.com/in/perezhz),
 Instituto de Ciencias Físicas, Universidad Nacional Autónoma de México (UNAM)
+- [Luis Eduardo Ramírez Montoya](https://github.com/LuEdRaMo),
+Facultad de Ciencias, Universidad Nacional Autónoma de México (UNAM)
 
 Comments, suggestions, and improvements are welcome and appreciated.
 
 ## Installation
 
 `HORIZONS.jl` is a registered Julia package and may be installed
-from the Julia REPL doing 
+from the Julia REPL doing
 ```
 ] add HORIZONS
 ```
 Current stable
-release is `v0.4.0`, which is compatible with Julia >= 1.6.
+release is `v0.4.1`, which is compatible with Julia >= 1.6.
 
 ## Usage examples
 
@@ -42,7 +44,8 @@ System news updated June 08, 2020
 
 Horizons>
 ```
-To run this function, the `telnet` command line utility should be locally installed and enabled.
+To run this function, the `telnet` command line utility should be locally installed and
+enabled.
 
 
 
@@ -143,7 +146,8 @@ apophisvt = vec_tbl("Apophis", t_start, t_stop, δt)
 
 ### Small-Body DataBase API
 
-`HORIZONS.jl` function `sbdb` fetchs data for a specific small-body in JPL's Small-Body DataBase (SBDB) and returns the output as a `Dict{String, Any}`:
+`HORIZONS.jl` function `sbdb` fetchs data for a specific small-body in JPL's Small-Body
+DataBase (SBDB) and returns the output as a `Dict{String, Any}`:
 
 ```julia
 # Fetch data of asteroid 433 Eros
@@ -155,12 +159,13 @@ sbdb("sstr" => "Apophis", "ca-data" => "true")
 
 ### Small-Body Radar Astrometry API
 
-`HORIZONS.jl` function `sbradar` searches for radar astrometry of asteroids/commets and returns the output as a `Dict{String, Any}`:
+`HORIZONS.jl` function `sbradar` searches for radar astrometry of asteroids/commets and
+returns the output as a `Dict{String, Any}`:
 
 ```julia
 # Search Apophis' radar astrometry
 sbradar("spk" => "20099942")
-  
+
 # Add observer information
 sbradar("spk" => "20099942", "observer" => "true")
 ```
@@ -169,9 +174,21 @@ sbradar("spk" => "20099942", "observer" => "true")
 
 `HORIZONS.jl` is licensed under the [MIT "Expat" license](./LICENSE.md).
 
+## Disclaimer
+
+This software package is not affiliated, associated, authorized, endorsed by, or in any way
+officially connected with NASA, JPL, or any of its subsidiaries or its affiliates.
+
 ## Acknowledgments
 
-The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several people at JPL:
+JAPH is thankful to Dr. Jon Giorgini for his helpful comments and feedback towards
+the first release of this Julia interface to the HORIZONS system. Thanks to Yuri
+D'Elia for their help with the telnet interface via
+[Expect.jl](https://gitlab.com/wavexx/Expect.jl). Special thanks to Luis Eduardo
+Ramírez Montoya ([@LuEdRaMo](https://github.com/LuEdRaMo)) for the implementation of the
+JPL APIs via HTTP. The
+[HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several people
+at JPL:
 
 * Design/implementation :
   - Jon Giorgini

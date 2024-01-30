@@ -17,7 +17,7 @@ const HORIZONS_NAME_REGEX = Regex(string(
     smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime) -> String
 
 Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIME` and
-`STOP_TIME`. Return the local SPK file name. For more information see [1], in particular 
+`STOP_TIME`. Return the local SPK file name. For more information see [1], in particular
 the **Common Parameters** and **SPK File Parameters** sections.
 
 !!! reference
@@ -32,7 +32,7 @@ julia> local_file = smb_spk("DES = 20099942;", DateTime(2021,Jan,1), DateTime(20
 
 # Check that the binary SPK file `local_file` exists
 
-julia> isfile(local_file) 
+julia> isfile(local_file)
 true
 ```
 """
@@ -44,8 +44,8 @@ function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
-        "COMMAND" => command_str,    
-        "EPHEM_TYPE" => "SPK", 
+        "COMMAND" => command_str,
+        "EPHEM_TYPE" => "SPK",
         "START_TIME" => start_time_str,
         "STOP_TIME" => stop_time_str,
         "OBJ_DATA" => "NO"
@@ -73,7 +73,7 @@ function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
 end
 
 @doc raw"""
-    smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime, 
+    smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
                 EPOCH::T, EC::T, QR::T, TP::T, OM::T, W::T, INC::T) where {T <: Real} -> String
 
 Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIME` and
@@ -85,7 +85,7 @@ Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIM
 - `OM` [deg]: Longitude of ascending node wrt ecliptic
 - `W` [deg]: Argument of perihelion wrt ecliptic
 - `IN` [deg]: Inclination wrt ecliptic
-Return the local SPK file name. For more information see [1], in particular 
+Return the local SPK file name. For more information see [1], in particular
 the **Common Parameters**, **User-specified Heliocentric Ecliptic Osculating Elements**
 and **SPK File Parameters** sections.
 
@@ -114,11 +114,11 @@ julia> local_file = smb_spk_ele("1990 MU", start_time, stop_time, epoch, ec, qr,
 
 # Check that the binary SPK was downloaded
 
-julia> isfile(local_file) 
+julia> isfile(local_file)
 true
 ```
 """
-function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime, 
+function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
                      EPOCH::T, EC::T, QR::T, TP::T, OM::T, W::T, INC::T) where {T <: Real}
 
     # Convert http parameters to String
@@ -134,9 +134,9 @@ function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::
     inc_str = jplstr(INC)
     # HTTP response code and text
     code, text = jplapi(
-        HORIZONS_API_URL, 
-        "COMMAND" => command_str,    
-        "EPHEM_TYPE" => "SPK", 
+        HORIZONS_API_URL,
+        "COMMAND" => command_str,
+        "EPHEM_TYPE" => "SPK",
         "START_TIME" => start_time_str,
         "STOP_TIME" => stop_time_str,
         "OBJ_DATA" => "NO",
@@ -174,7 +174,7 @@ end
     vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
             STEP_SIZE::StepSize; FILENAME::String = "", kwargs...) -> String
 
-Generate vector table of Solar System Small Body `COMMAND` from `START_TIME` 
+Generate vector table of Solar System Small Body `COMMAND` from `START_TIME`
 to `STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty, return the output as
 a `String`; otherwise, save the table to the corresponding file. For more information
 see [1], in particular the **Common Parameters** and **SPK File Parameters** sections;
@@ -230,8 +230,8 @@ function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
-        "COMMAND" => command_str,    
-        "EPHEM_TYPE" => "VECTORS", 
+        "COMMAND" => command_str,
+        "EPHEM_TYPE" => "VECTORS",
         "START_TIME" => start_time_str,
         "STOP_TIME" => stop_time_str,
         "STEP_SIZE" => step_size_str,

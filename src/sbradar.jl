@@ -40,6 +40,6 @@ function sbradar(params::Pair{String, String}...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
     dict = jsonparse(text)
-    
+
     return dict
 end

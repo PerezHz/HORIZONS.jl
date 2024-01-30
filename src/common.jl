@@ -1,7 +1,7 @@
 # The HORIZONS.jl package is licensed under the MIT "Expat" License:
 # Copyright (c) 2017: Jorge Pérez.
 
-# For a list of accepted date formats see: 
+# For a list of accepted date formats see:
 # https://ssd.jpl.nasa.gov/horizons/manual.html#time
 const JPL_DATE_FORMAT = "yyyy-mm-dd HH:MM:SS.sss"
 
@@ -71,7 +71,7 @@ function jplurl(url::String, params::Pair{String, String}...)
 end
 
 # Handle response code and convert response body to String
-# See the section HTTP Response Codes in 
+# See the section HTTP Response Codes in
 # https://ssd-api.jpl.nasa.gov/doc/horizons.html
 function responsecode(resp::Response)
     # Response code
@@ -79,7 +79,7 @@ function responsecode(resp::Response)
     # Convert response body to String
     text = String(resp.body)
     # OK (200): normal successful result
-    if code == 200 
+    if code == 200
         return 200, text
     end
     # Parse JSON
@@ -111,7 +111,7 @@ function jplapi(url::String, params::Pair{String, String}...)
     # HTTP URL
     url = jplurl(url, params...)
     # HTTP response
-    resp = HTTP.get(url; status_exception = false) 
+    resp = HTTP.get(url; status_exception = false)
     # Response code and text
     code, text = responsecode(resp)
 

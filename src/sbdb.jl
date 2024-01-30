@@ -8,7 +8,7 @@ const SBDB_API_URL = "https://ssd-api.jpl.nasa.gov/sbdb.api"
     sbdb(COMMAND::Pair{String, String}, [params::Pair{String, String}...]) -> Dict{String, Any}
 
 Search in JPL's Small-Body DataBase. `COMMAND` must be one of the following query parameters:
-`sstr`, `spk`, or `des`; `params` are any other (optional) parameters. For instance, see the 
+`sstr`, `spk`, or `des`; `params` are any other (optional) parameters. For instance, see the
 **Query Parameters** section in [1].
 
 !!! references
@@ -16,7 +16,7 @@ Search in JPL's Small-Body DataBase. `COMMAND` must be one of the following quer
 
 # Examples
 ```julia-repl
-# Search 433 Eros in three different ways 
+# Search 433 Eros in three different ways
 
 julia> sbdb("sstr" => "Eros")
 Dict{String, Any} with 3 entries:
@@ -52,6 +52,6 @@ function sbdb(COMMAND::Pair{String, String}, params::Pair{String, String}...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
     dict = jsonparse(text)
-    
+
     return dict
 end

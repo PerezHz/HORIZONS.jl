@@ -30,7 +30,7 @@ end
                              epoch, ec, qr, tp, om, w, inc)
     @test isfile(local_file)
     rm(local_file)
-    
+
     # Generate a binary SPK file for asteroid 1990 MU from its osculating elements
     epoch = 2449526.5
     ec = 0.6570220840219289
@@ -41,7 +41,7 @@ end
     inc = 24.4225258251465
     local_file = smb_spk_ele("1990 MU", DateTime(2021, Jan, 1), DateTime(2022, Jan, 1),
                              epoch, ec, qr, tp, om, w, inc)
-    @test isfile(local_file) 
+    @test isfile(local_file)
     rm(local_file)
 end
 
@@ -70,11 +70,11 @@ end
 end
 
 @testset "Small-Body DataBase API" begin
-    # Search 433 Eros in three different ways 
+    # Search 433 Eros in three different ways
     eros_1 = sbdb("sstr" => "Eros")
     eros_2 = sbdb("spk" => "2000433")
     eros_3 = sbdb("des" => "433")
-    
+
     @test eros_1 == eros_2 == eros_3
     @test isa(eros_1, Dict{String, Any})
     @test isa(eros_1["orbit"], Dict{String, Any})
@@ -105,7 +105,7 @@ end
     @test all(first.(apophis_1["data"]) .== "99942")
     @test apophis_1["signature"]["source"] == "NASA/JPL Small-Body Radar Astrometry API"
     @test VersionNumber(apophis_1["signature"]["version"]) ≥ v"1"
-  
+
     # Add observer information
     apophis_2 = sbradar("spk" => "20099942", "observer" => "true")
     @test isa(apophis_2, Dict{String, Any})
