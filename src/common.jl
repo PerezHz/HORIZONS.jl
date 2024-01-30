@@ -39,6 +39,18 @@ jplstr(s::Union{T, Period}) where {T <: Real} = jplstr(string(s))
 jplstr(s::Union{Date, DateTime}) = jplstr(Dates.format(DateTime(s), JPL_DATE_FORMAT))
 jplstr(s::Bool) = jplstr(yesornostring(s))
 
+if VERSION < v"1.7"
+    function jplurlencoding(s::String)
+        res = s
+        for pair in JPL_URL_ENCODING
+            res = replace(res, pair)
+        end
+        return res
+    end
+else
+    jplurlencoding(s::String) = replace(s, JPL_URL_ENCODING...)
+end
+
 # Assemble URL for HTTP.get from a JPL API
 function jplurl(url::String, params::Pair{String, String}...)
     # HTTP URL
@@ -48,9 +60,9 @@ function jplurl(url::String, params::Pair{String, String}...)
     # Add parameters to url
     for i in eachindex(params)
         s[i+2] = string(
-            params[i].first, 
-            "=", 
-            replace(params[i].second, JPL_URL_ENCODING...),
+            params[i].first,
+            "=",
+            jplurlencoding(params[i].second),
             i == length(params) ? "" : "&"
         )
     end
