@@ -87,6 +87,11 @@ end
     @test isa(apophis_1["data"], Vector{Any})
     @test isa(apophis_1["count"], String)
     @test length(apophis_1["data"]) == parse(Int, apophis_1["count"])
+    @test apophis_1["fields"] == ["des", "epoch", "value", "sigma", "units",
+                                  "freq", "rcvr", "xmit", "bp"]
+    @test all(first.(apophis_1["data"]) .== "99942")
+    @test apophis_1["signature"]["source"] == "NASA/JPL Small-Body Radar Astrometry API"
+    @test VersionNumber(apophis_1["signature"]["version"]) ≥ v"1"
   
     # Add observer information
     apophis_2 = sbradar("spk" => "20099942", "observer" => "true")
@@ -96,8 +101,12 @@ end
     @test isa(apophis_2["data"], Vector{Any})
     @test isa(apophis_2["count"], String)
     @test length(apophis_2["data"]) == parse(Int, apophis_2["count"])
+    @test apophis_2["fields"] == ["des", "epoch", "value", "sigma", "units",
+                                  "freq", "rcvr", "xmit", "bp", "observer"]
+    @test all(first.(apophis_2["data"]) .== "99942")
+    @test apophis_2["signature"]["source"] == "NASA/JPL Small-Body Radar Astrometry API"
+    @test VersionNumber(apophis_2["signature"]["version"]) ≥ v"1"
 
-    @test apophis_1["fields"] == apophis_2["fields"][1:end-1]
     @test apophis_1["signature"] == apophis_2["signature"]
     @test all(map((x, y) -> x == y[1:end-1], apophis_1["data"], apophis_2["data"]))
     @test apophis_1["count"] == apophis_2["count"]
