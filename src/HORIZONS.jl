@@ -3,40 +3,38 @@
 
 module HORIZONS
 
-using Expect, FTPClient
+using HTTP, JSON, Base64, Dates
+using HTTP: Messages.Response
 
-using DelimitedFiles, Dates
+export horizons, smb_spk, smb_spk_ele, vec_tbl, sbdb, sbradar
 
-export HORIZONS_MACHINE, horizons, vec_tbl, vec_tbl_csv,
-    smb_spk, smb_spk_ele
+@doc raw"""
+    horizons()
 
-const HORIZONS_MACHINE = "ssd.jpl.nasa.gov"
-const HORIZONS_FTP_DIR = "pub/ssd/"
-const HORIZONS_DATE_FORMAT = "yyyy-u-dd HH:MM:SS.sss"
-const ObjectName = Union{Int, String}
-const StartStopTime = Union{DateTime, Date, String}
-const StepSize = Union{Period, Int, String}
-const VecTable = Union{Int, String}
-
-"""
-`horizons()`
-
-Connect to JPL HORIZONS telnet interface
+Connect to JPL HORIZONS `telnet` interface
 
 `telnet horizons.jpl.nasa.gov 6775`
 
+!!! warning
+    To run this function, the `telnet` command line utility should be locally installed and enabled.
 """
-function horizons()
-run(ignorestatus(`telnet horizons.jpl.nasa.gov 6775`))
+horizons() = run(ignorestatus(`telnet horizons.jpl.nasa.gov 6775`))
+
+include("common.jl")
+include("horizonsapi.jl")
+include("sbdb.jl")
+include("sbradar.jl")
+
+function __init__()
+
+    # Breaking change warning added in v0.4.0; to be deleted in next minor version (v0.5.0)
+    @warn("""\n
+        # Breaking change
+        Starting from v0.4.0 HORIZONS.jl connects to JPL via a HTTP API.
+        Previous versions used the telnet command line utility as an external dependency.
+    """)
+
 end
 
-#auxiliary function which translates a ::Bool to a "YES" or "NO" string
-function yesornostring(yesorno::Bool)
-    yesorno ? "YES" : "NO"
-end
-
-include("vec_tbl.jl")
-include("smb_spk.jl")
-include("smb_spk_ele.jl")
 
 end # module
