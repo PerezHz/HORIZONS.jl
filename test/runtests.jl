@@ -61,7 +61,10 @@ end
     x = readlines(local_file)
     y = split(apophisvt, "\n")[1:end-1]
 
-    @test x == y
+    @test length(x) == length(y)
+    lx = length(x)
+    inds = setdiff(1:lx,[2, 35]) # Avoid lines 2 and 35, since they have time of retrieval
+    @test x[inds] == y[inds]
 
     rm(local_file)
 end
