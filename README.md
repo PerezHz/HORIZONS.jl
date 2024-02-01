@@ -9,7 +9,7 @@ An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and oth
 
 ## Authors
 
-- [Jorge A. Pérez-Hernández](https://github.com/PerezHz),
+- [Jorge A. Pérez Hernández](https://github.com/PerezHz),
 Instituto de Ciencias Físicas, Universidad Nacional Autónoma de México (UNAM)
 - [Luis Eduardo Ramírez Montoya](https://github.com/LuEdRaMo),
 Facultad de Ciencias, Universidad Nacional Autónoma de México (UNAM)
@@ -184,7 +184,7 @@ officially connected with NASA, JPL, or any of its subsidiaries or its affiliate
 JAPH is thankful to Dr. Jon Giorgini for his helpful comments and feedback towards
 the first release of this Julia interface to the HORIZONS system, and to Yuri
 D'Elia for their help with the telnet interface via
-[Expect.jl](https://gitlab.com/wavexx/Expect.jl). Special thanks to LERM 
+[Expect.jl](https://gitlab.com/wavexx/Expect.jl). Special thanks to LERM
 ([@LuEdRaMo](https://github.com/LuEdRaMo)) for the implementation of the JPL APIs via HTTP.
 The [HORIZONS](https://ssd.jpl.nasa.gov/?horizons) system itself is the work of several
 people at JPL:
