@@ -124,3 +124,29 @@ end
     @test all(map((x, y) -> x == y[1:end-1], apophis_1["data"], apophis_2["data"]))
     @test apophis_1["count"] == apophis_2["count"]
 end
+
+@testset "Observer table generation: obs_tbl" begin
+    # Generate tables and save output to Voyager1.txt
+    t_start = DateTime(2024, 4, 13)
+    t_stop = Date(2024, 4, 14)
+    δt = Hour(1)
+    local_file = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
+                         FILENAME = "Voyager1.txt", CENTER = "GBT")
+
+    @test isfile(local_file)
+
+    voyager1 = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
+                       CENTER = "GBT")
+
+    x = readlines(local_file)
+    y = split(chomp(voyager1), "\n")
+
+    @test length(x) == length(y)
+    # Find lines that differ
+    diffinds = findall(x .!= y)
+    # The only lines that should differ start with "Ephemeris / API_USER" and
+    # contain time of retrieval.
+    @test all(startswith("Ephemeris / API_USER"), y[diffinds])
+
+    rm(local_file)
+end
