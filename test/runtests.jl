@@ -168,4 +168,19 @@ end
         "uncP1", "rmsN", "dec", "vInf", "tEphem", "Vmag", "caDist"
     ])
     @test all(map(x -> keys(x) == fields, cneos["data"]))
+
+    # Get orbital elements plots of an object listed in CNEOS
+    tdes = cneos["data"][1]["objectName"]
+    neocp = scout("tdes" => tdes, "plot" => "el")
+
+    @test isa(neocp, Dict{String, Any})
+
+    fields = Set([
+        "neo1kmScore", "geocentricScore", "nObs", "rating", "signature",
+        "rate", "H_hist_fig", "qr_e_fig", "objectName", "elong", "phaScore",
+        "ieoScore", "ra", "qr_in_fig", "H", "arc", "tisserandScore", "lastRun",
+        "unc", "moid", "neoScore", "uncP1", "rmsN", "dec", "vInf", "tEphem",
+        "qr_H_fig", "Vmag", "caDist"
+    ])
+    @test keys(neocp) == fields
 end
