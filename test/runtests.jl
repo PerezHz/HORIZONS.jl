@@ -69,6 +69,32 @@ end
     rm(local_file)
 end
 
+@testset "Observer table generation: obs_tbl" begin
+    # Generate tables and save output to Voyager1.txt
+    t_start = DateTime(2024, 4, 13)
+    t_stop = Date(2024, 4, 14)
+    δt = Hour(1)
+    local_file = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
+                         FILENAME = "Voyager1.txt", CENTER = "GBT")
+
+    @test isfile(local_file)
+
+    voyager1 = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
+                       CENTER = "GBT")
+
+    x = readlines(local_file)
+    y = split(chomp(voyager1), "\n")
+
+    @test length(x) == length(y)
+    # Find lines that differ
+    diffinds = findall(x .!= y)
+    # The only lines that should differ start with "Ephemeris / API_USER" and
+    # contain time of retrieval.
+    @test all(startswith("Ephemeris / API_USER"), y[diffinds])
+
+    rm(local_file)
+end
+
 @testset "Small-Body DataBase API" begin
     # Search 433 Eros in three different ways
     eros_1 = sbdb("sstr" => "Eros")
@@ -125,28 +151,36 @@ end
     @test apophis_1["count"] == apophis_2["count"]
 end
 
-@testset "Observer table generation: obs_tbl" begin
-    # Generate tables and save output to Voyager1.txt
-    t_start = DateTime(2024, 4, 13)
-    t_stop = Date(2024, 4, 14)
-    δt = Hour(1)
-    local_file = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
-                         FILENAME = "Voyager1.txt", CENTER = "GBT")
+@testset "CNEOS Scout API" begin
+    # Get a list of all CNEOS objects
+    cneos = scout()
 
-    @test isfile(local_file)
+    @test isa(cneos, Dict{String, Any})
+    @test isa(cneos["signature"], Dict{String, Any})
+    @test isa(cneos["data"], Vector{Any})
+    @test isa(cneos["count"], String)
+    @test length(cneos["data"]) == parse(Int, cneos["count"])
 
-    voyager1 = obs_tbl("Voyager 1", t_start, t_stop, δt; CSV_FORMAT = true,
-                       CENTER = "GBT")
+    fields = Set([
+        "neo1kmScore", "geocentricScore", "nObs", "rating", "rate",
+        "objectName", "elong", "phaScore", "ieoScore", "ra", "H",
+        "arc", "tisserandScore", "lastRun", "unc", "moid", "neoScore",
+        "uncP1", "rmsN", "dec", "vInf", "tEphem", "Vmag", "caDist"
+    ])
+    @test all(map(x -> keys(x) == fields, cneos["data"]))
 
-    x = readlines(local_file)
-    y = split(chomp(voyager1), "\n")
+    # Get orbital elements plots of an object listed in CNEOS
+    tdes = cneos["data"][1]["objectName"]
+    neocp = scout("tdes" => tdes, "plot" => "el")
 
-    @test length(x) == length(y)
-    # Find lines that differ
-    diffinds = findall(x .!= y)
-    # The only lines that should differ start with "Ephemeris / API_USER" and
-    # contain time of retrieval.
-    @test all(startswith("Ephemeris / API_USER"), y[diffinds])
+    @test isa(neocp, Dict{String, Any})
 
-    rm(local_file)
+    fields = Set([
+        "neo1kmScore", "geocentricScore", "nObs", "rating", "signature",
+        "rate", "H_hist_fig", "qr_e_fig", "objectName", "elong", "phaScore",
+        "ieoScore", "ra", "qr_in_fig", "H", "arc", "tisserandScore", "lastRun",
+        "unc", "moid", "neoScore", "uncP1", "rmsN", "dec", "vInf", "tEphem",
+        "qr_H_fig", "Vmag", "caDist"
+    ])
+    @test keys(neocp) == fields
 end

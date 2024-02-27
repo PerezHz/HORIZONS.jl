@@ -7,7 +7,7 @@ module HORIZONS
 using HTTP, JSON, Base64, Dates
 using HTTP: Messages.Response
 
-export horizons, smb_spk, smb_spk_ele, vec_tbl, sbdb, sbradar, obs_tbl
+export horizons, smb_spk, smb_spk_ele, vec_tbl, obs_tbl, sbdb, sbradar, scout
 
 @doc raw"""
     horizons()
@@ -26,6 +26,7 @@ include("horizonsapi.jl")
 include("sbdb.jl")
 include("sbradar.jl")
 include("obstbl.jl")
+include("scout.jl")
 
 function __init__()
 
