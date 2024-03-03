@@ -4,15 +4,6 @@
 # JPL's Horizons API
 const HORIZONS_API_URL = "https://ssd.jpl.nasa.gov/api/horizons.api"
 
-# Vector table object name regex
-const HORIZONS_NAME_REGEX = Regex(string(
-    raw"Target body name: ",
-    raw"(?<id>[\d\s]*)?",
-    raw"(?<name>[\w\s]*)",
-    raw"\((?<des>[\d\s\w]*)\)",
-    raw"\s*\{"
-))
-
 @doc raw"""
     smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime) -> String
 
@@ -38,16 +29,13 @@ true
 """
 function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime)
     # Convert HTTP parameters to String
-    command_str = jplstr(COMMAND)
-    start_time_str = jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT))
-    stop_time_str = jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT))
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
-        "COMMAND" => command_str,
+        "COMMAND" => jplstr(COMMAND),
         "EPHEM_TYPE" => "SPK",
-        "START_TIME" => start_time_str,
-        "STOP_TIME" => stop_time_str,
+        "START_TIME" => jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT)),
+        "STOP_TIME" => jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT)),
         "OBJ_DATA" => "NO"
     )
     iszero(code) && return ""
@@ -122,31 +110,21 @@ function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::
                      EPOCH::T, EC::T, QR::T, TP::T, OM::T, W::T, INC::T) where {T <: Real}
 
     # Convert http parameters to String
-    command_str = jplstr(COMMAND)
-    start_time_str = jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT))
-    stop_time_str = jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT))
-    epoch_str = jplstr(EPOCH)
-    ec_str = jplstr(EC)
-    qr_str = jplstr(QR)
-    tp_str = jplstr(TP)
-    om_str = jplstr(OM)
-    w_str = jplstr(W)
-    inc_str = jplstr(INC)
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
-        "COMMAND" => command_str,
+        "COMMAND" => jplstr(COMMAND),
         "EPHEM_TYPE" => "SPK",
-        "START_TIME" => start_time_str,
-        "STOP_TIME" => stop_time_str,
+        "START_TIME" => jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT)),
+        "STOP_TIME" => jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT)),
         "OBJ_DATA" => "NO",
-        "EPOCH" => epoch_str,
-        "EC" => ec_str,
-        "QR" => qr_str,
-        "TP" => tp_str,
-        "OM" => om_str,
-        "W" => w_str,
-        "IN" => inc_str
+        "EPOCH" => jplstr(EPOCH),
+        "EC" => jplstr(EC),
+        "QR" => jplstr(QR),
+        "TP" => jplstr(TP),
+        "OM" => jplstr(OM),
+        "W" => jplstr(W),
+        "IN" => jplstr(INC)
     )
     iszero(code) && return ""
     # Parse JSON
@@ -211,41 +189,25 @@ function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
                  OUT_UNITS::String = "KM-S", CSV_FORMAT::Bool = false, VEC_LABELS::Bool = false,
                  VEC_TABLE::VecTable = 3)
 
-    # Convert http parameters to String
-    command_str = jplstr(COMMAND)
-    start_time_str = jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT))
-    stop_time_str = jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT))
-    step_size_str = jplstr(STEP_SIZE)
-    center_str = jplstr(CENTER)
-    ref_plane_str = jplstr(REF_PLANE)
-    coord_type_str = jplstr(COORD_TYPE)
-    site_coord_str = jplstr(SITE_COORD)
-    ref_system_str = jplstr(REF_SYSTEM)
-    vec_corr_str = jplstr(VEC_CORR)
-    vec_delta_t_str = jplstr(VEC_DELTA_T)
-    out_units_str = jplstr(OUT_UNITS)
-    csv_format_str = jplstr(CSV_FORMAT)
-    vec_labels_str = jplstr(VEC_LABELS)
-    vec_table_str = jplstr(VEC_TABLE)
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
-        "COMMAND" => command_str,
+        "COMMAND" => jplstr(COMMAND),
         "EPHEM_TYPE" => "VECTORS",
-        "START_TIME" => start_time_str,
-        "STOP_TIME" => stop_time_str,
-        "STEP_SIZE" => step_size_str,
-        "CENTER" => center_str,
-        "REF_PLANE" => ref_plane_str,
-        "COORD_TYPE" => coord_type_str,
-        "SITE_COORD" => site_coord_str,
-        "REF_SYSTEM" => ref_system_str,
-        "VEC_CORR" => vec_corr_str,
-        "VEC_DELTA_T" => vec_delta_t_str,
-        "OUT_UNITS" => out_units_str,
-        "CSV_FORMAT" => csv_format_str,
-        "VEC_LABELS" => vec_labels_str,
-        "VEC_TABLE" => vec_table_str
+        "START_TIME" => jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT)),
+        "STOP_TIME" => jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT)),
+        "STEP_SIZE" => jplstr(STEP_SIZE),
+        "CENTER" => jplstr(CENTER),
+        "REF_PLANE" => jplstr(REF_PLANE),
+        "COORD_TYPE" => jplstr(COORD_TYPE),
+        "SITE_COORD" => jplstr(SITE_COORD),
+        "REF_SYSTEM" => jplstr(REF_SYSTEM),
+        "VEC_CORR" => jplstr(VEC_CORR),
+        "VEC_DELTA_T" => jplstr(VEC_DELTA_T),
+        "OUT_UNITS" => jplstr(OUT_UNITS),
+        "CSV_FORMAT" => jplstr(CSV_FORMAT),
+        "VEC_LABELS" => jplstr(VEC_LABELS),
+        "VEC_TABLE" => jplstr(VEC_TABLE)
     )
     iszero(code) && return ""
     # Parse JSON
