@@ -108,10 +108,8 @@ end
 
 # GET request to a JPL API
 function jplapi(url::String, params::Pair{String, String}...)
-    # HTTP URL
-    url = jplurl(url, params...)
     # HTTP response
-    resp = HTTP.get(url; status_exception = false)
+    resp = HTTP.get(url; query=Dict(params), status_exception = false)
     # Response code and text
     code, text = responsecode(resp)
 
