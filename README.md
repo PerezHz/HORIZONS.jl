@@ -164,7 +164,7 @@ obs_tbl("Voyager 1", t_start, t_stop, δt; FILENAME = "Voyager1.csv", CENTER = "
 ```
 
 If the output file is not specified, then `obs_tbl` returns the output as a
-`String`, which may be then used for further processing within Julia:
+`String`, which may be then used for further processing within Julia.
 
 This table summarizes the available keyword argument names, types, default
 values, and a brief description:
