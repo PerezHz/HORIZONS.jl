@@ -2,7 +2,7 @@ name = "HORIZONS"
 uuid = "5a3ac768-beb4-554a-9c98-3342fe3377f5"
 repo = "https://github.com/PerezHz/HORIZONS.jl.git"
 authors = ["Jorge A. Pérez Hernández", "Luis Eduardo Ramírez Montoya"]
-version = "0.4.5"
+version = "0.4.6"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
