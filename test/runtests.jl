@@ -95,6 +95,31 @@ end
     rm(local_file)
 end
 
+@testset "Osculating Orbital Elements table generation: ooe_tbl" begin
+    # Generate tables and save output to JWST.txt
+    t_start = DateTime(2024, 3, 13)
+    t_stop = Date(2024, 3, 14)
+    δt = Hour(1)
+    local_file = ooe_tbl("JWST", t_start, t_stop, δt; CSV_FORMAT = true,
+                         FILENAME = "jwst.csv", CENTER = "SSB")
+
+    @test isfile(local_file)
+
+    jwst = ooe_tbl("JWST", t_start, t_stop, δt; CSV_FORMAT = true, CENTER = "SSB")
+
+    x = readlines(local_file)
+    y = split(chomp(jwst), "\n")
+
+    @test length(x) == length(y)
+    # Find lines that differ
+    diffinds = findall(x .!= y)
+    # The only lines that should differ start with "Ephemeris / API_USER" and
+    # contain time of retrieval.
+    @test all(startswith("Ephemeris / API_USER"), y[diffinds])
+
+    rm(local_file)
+end
+
 @testset "Small-Body DataBase API" begin
     # Search 433 Eros in three different ways
     eros_1 = sbdb("sstr" => "Eros")
