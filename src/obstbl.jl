@@ -7,7 +7,7 @@ with step `STEP_SIZE`. If `FILENAME` is empty, return the output as a `String`;
 otherwise, save the table to the corresponding file. For more information see
 [1], in particular the **Common Parameters** and **SPK File Parameters**
 sections; for a list of keyword arguments see the **Ephemeris-Specific
-Parameters** section.
+Parameters** section (or the extended help).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -32,6 +32,39 @@ julia> local_file = obs_tbl("Voyager 1", t_start, t_stop, δt;
 julia> isfile(local_file)
 true
 ```
+
+# Extended help
+
+This table summarizes the available keyword argument names, types, default
+values, and a brief description:
+
+| Keyword::Type                 | Default      | Description                  |
+|:------------------------------|:------------:|:-----------------------------|
+| `FILENAME::String`            | ""           | Output filename              |
+| `CENTER::String`              | "Geocentric" | Observing site               |
+| `COORD_TYPE::String`          | "GEODETIC"   | Type of user coordinates     |
+| `SITE_COORD::String`          | "0,0,0"      | User coordinates for CENTER  |
+| `QUANTITIES::String`          | "A"          | list of quantities to return |
+| `REF_SYSTEM::String`          | "ICRF"       | Astrometric reference frame  |
+| `CAL_FORMAT::String`          | "CAL"        | Type of date output          |
+| `CAL_TYPE::String`            | "MIXED"      | Type of calendar             |
+| `ANG_FORMAT::String`          | "HMS"        | RA/dec angle format          |
+| `APPARENT::String`            | "AIRLESS"    | Toggle refractive correction |
+| `TIME_DIGITS::String`         | "MINUTES"    | Output time precision        |
+| `TIME_ZONE::String`           | "+00:00"     | Local time offset from UTC   |
+| `RANGE_UNITS::String `        | "AU"         | Units for range quantities   |
+| `SUPPRESS_RANGE_RATE::Bool`   | false        | Turns off delta-dot and rdot |
+| `ELEV_CUT::Real`              | -90.0        | Elevation cutoff             |
+| `SKIP_DAYLT::Bool`            | false        | Skip when CENTER in daylight |
+| `SOLAR_ELONG::NTuple{2,Real}` | (0,180)      | Solar elongation bounds      |
+| `AIRMASS::Real`               | 38.0         | Airmass cutoff, horizon=~38  |
+| `LHA_CUTOFF::Real`            | 0.0          | Local hour angle cutoff      |
+| `ANG_RATE_CUTOFF::Real`       | 0.0          | Angular rate cutoff          |
+| `EXTRA_PREC::Bool`            | false        | Output extra precision       |
+| `R_T_S_ONLY::Bool`            | false        | Only output rise/transit/set |
+| `CSV_FORMAT::Bool`            | false        | Output in CSV format         |
+| `MAKE_EPHEM::Bool`            | true         | Generate ephemeris           |
+| `OBJ_DATA::Bool`              | true         | Include object summary       |
 """
 function obs_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
                  STEP_SIZE::StepSize; FILENAME::String = "", CENTER::String = "Geocentric",
