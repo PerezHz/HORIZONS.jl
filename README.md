@@ -54,7 +54,8 @@ Jon D. Giorgini for automated generation of small-body binary SPK files and tabl
 These scripts were originally written in `expect`, and can be found at the
 JPL's Solar System Dynamics group ftp server `ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
 Below, we describe these functions `smb_spk`, `smb_spk_ele`, and `vec_tbl`, as
-well as the *observer table* function `obs_tbl`.
+well as the *observer table* function `obs_tbl` and the *osculating orbital
+elements table* function `ooe_tbl`.
 
 #### `smb_spk`
 
