@@ -54,7 +54,8 @@ Jon D. Giorgini for automated generation of small-body binary SPK files and tabl
 These scripts were originally written in `expect`, and can be found at the
 JPL's Solar System Dynamics group ftp server `ftp://ssd.jpl.nasa.gov/pub/ssd/SCRIPTS/`.
 Below, we describe these functions `smb_spk`, `smb_spk_ele`, and `vec_tbl`, as
-well as the *observer table* function `obs_tbl`.
+well as the *observer table* function `obs_tbl` and the *osculating orbital
+elements table* function `ooe_tbl`.
 
 #### `smb_spk`
 
@@ -196,6 +197,47 @@ values, and a brief description:
 | `CSV_FORMAT::Bool`            | false        | Output in CSV format         |
 | `MAKE_EPHEM::Bool`            | true         | Generate ephemeris           |
 | `OBJ_DATA::Bool`              | true         | Include object summary       |
+
+#### `ooe_tbl`
+
+`HORIZONS.jl` function `ooe_tbl` allows the user to generate osculating orbital
+elements tables for designated objects and save the output into a file:
+
+```julia
+# Date variables for start and stop times
+t_start = DateTime(2024,4,1)
+t_start = DateTime(2024,4,2)
+
+# Get data for a single interval (two points in time)
+δt = 1
+
+# Generate osculating orbital elements table for JWST relative to the solar
+# system barycenter and save output to jwst.csv in current directory:
+ooe_tbl("JWST", t_start, t_stop, δt; FILENAME = "jwst.csv", CENTER = "SSB", CSV_FORMAT = true)
+```
+
+More details about default values of keyword arguments are available in the
+`ooe_tbl` docstrings.  NB: The HORIZONS default value for `CENTER` is
+`Geocentric`, but for objects in a heliocentric orbit you probably want to use
+`CENTER="SSB"` (i.e. solar system barycenter) instead.
+
+If the output file is not specified, then `ooe_tbl` returns the output as a
+| Keyword::Type         | Default      | Description                     |
+|:----------------------|:------------:|:--------------------------------|
+| `FILENAME::String`    | ""           | Output filename                 |
+| `CENTER::String`      | "Geocentric" | Reference body/barycenter       |
+| `REF_PLANE::String`   | "ECLIPTIC"   | Ephemeris reference plane       |
+| `COORD_TYPE::String`  | "GEODETIC"   | Type of user coordinates        |
+| `SITE_COORD::String`  | "0,0,0"      | User coordinates for CENTER     |
+| `REF_SYSTEM::String`  | "ICRF"       | Astrometric reference frame     |
+| `OUT_UNITS::String`   | "KM-S"       | Output units (KM-S, KM-D, AU-D) |
+| `CAL_TYPE::String`    | "MIXED"      | Type of calendar                |
+| `TIME_DIGITS::String` | "MINUTES"    | Output time precision           |
+| `CSV_FORMAT::Bool`    | false        | Output in CSV format            |
+| `ELM_LABELS::Bool`    | true         | Include label for each element  |
+| `TP_TYPE::String`     | "ABSOLUTE"   | Type of periapsis time (Tp) .   |
+| `MAKE_EPHEM::Bool`    | true         | Generate ephemeris              |
+| `OBJ_DATA::Bool`      | true         | Include object summary          |
 
 ### Small-Body DataBase API
 

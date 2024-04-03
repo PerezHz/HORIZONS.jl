@@ -95,6 +95,41 @@ end
     rm(local_file)
 end
 
+@testset "Osculating Orbital Elements table generation: ooe_tbl" begin
+    # Generate tables and save output to JWST.txt
+    t_start = DateTime(2023, 1, 1)
+    t_stop = Date(2023, 1, 2)
+    δt = Hour(1)
+    local_file = ooe_tbl("JWST", t_start, t_stop, δt; FILENAME = "jwst.csv",
+                         CSV_FORMAT = true, CENTER = "SSB", OUT_UNITS="AU-D")
+
+    @test isfile(local_file)
+
+    jwst = ooe_tbl("JWST", t_start, t_stop, δt;
+                   CSV_FORMAT = true, CENTER = "SSB", OUT_UNITS="AU-D")
+
+    x = readlines(local_file)
+    y = split(chomp(jwst), "\n")
+
+    @test length(x) == length(y)
+    # Find lines that differ
+    diffinds = findall(x .!= y)
+    # The only line(s) that should differ start with "Ephemeris / API_USER" and
+    # contain time of retrieval.
+    @test all(startswith("Ephemeris / API_USER"), y[diffinds])
+
+    # Test that A (semi-major axis) for t_start has expected value
+    soe = findfirst(==("\$\$SOE"), y)
+    a_fetched = parse(Float64, split(y[soe+1], ',')[12])
+    a_expected = 1.028281028256704E+00 # for 2023-01-01 (retrieved 2024-04-02)
+
+    # This test may fail if the "DEFINITIVE_EPHEMERIS" for past dates are ever
+    # updated/changed.
+    @test a_fetched ≈ a_expected
+
+    rm(local_file)
+end
+
 @testset "Small-Body DataBase API" begin
     # Search 433 Eros in three different ways
     eros_1 = sbdb("sstr" => "Eros")
