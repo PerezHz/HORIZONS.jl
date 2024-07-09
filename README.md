@@ -11,11 +11,10 @@
 An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and other Solar System Dynamics [APIs](https://ssd.jpl.nasa.gov/api.html) in
 [Julia](http://julialang.org).
 
-# Warning: breaking change
-
-**Starting from v0.4.0 HORIZONS.jl connects to JPL via a HTTP API.
-Previous versions used the telnet command line utility as an external dependency.
-This warning will be removed on the release of the next minor version (v0.5.0).**
+> [!WARNING: breaking change]
+> Starting from v0.4.0 HORIZONS.jl connects to JPL via a HTTP API.
+> Previous versions used the telnet command line utility as an external dependency.
+> This warning will be removed on the release of the next minor version (v0.5.0).
 
 ## Authors
 
