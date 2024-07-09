@@ -4,6 +4,10 @@
 
 [![codecov](https://codecov.io/gh/PerezHz/HORIZONS.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/PerezHz/HORIZONS.jl) [![Coverage Status](https://coveralls.io/repos/github/PerezHz/HORIZONS.jl/badge.svg?branch=main)](https://coveralls.io/github/PerezHz/HORIZONS.jl?branch=main)
 
+[![pkgeval](https://juliahub.com/docs/General/HORIZONS/stable/pkgeval.svg)](https://juliahub.com/ui/Packages/General/HORIZONS)
+
+[![version](https://juliahub.com/docs/General/HORIZONS/stable/version.svg)](https://juliahub.com/ui/Packages/General/HORIZONS)
+
 An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and other Solar System Dynamics [APIs](https://ssd.jpl.nasa.gov/api.html) in
 [Julia](http://julialang.org).
 
@@ -29,8 +33,6 @@ from the Julia REPL doing
 ```
 ] add HORIZONS
 ```
-Current stable
-release is `v0.4.1`, which is compatible with Julia >= 1.6.
 
 ## Usage examples
 
