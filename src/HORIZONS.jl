@@ -1,7 +1,6 @@
 # The HORIZONS.jl package is licensed under the MIT "Expat" License:
 # Copyright (c) 2017: Jorge Pérez.
 
-
 module HORIZONS
 
 using HTTP, JSON, Base64, Dates
@@ -17,7 +16,8 @@ Connect to JPL HORIZONS `telnet` interface
 `telnet horizons.jpl.nasa.gov 6775`
 
 !!! warning
-    To run this function, the `telnet` command line utility should be locally installed and enabled.
+    To run this function, the `telnet` command line utility should be locally installed and
+    enabled.
 """
 horizons() = run(ignorestatus(`telnet horizons.jpl.nasa.gov 6775`))
 

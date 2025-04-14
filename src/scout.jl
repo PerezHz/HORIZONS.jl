@@ -5,10 +5,11 @@
 const SCOUT_API_URL = "https://ssd-api.jpl.nasa.gov/scout.api"
 
 @doc raw"""
-    scout(COMMAND::Pair{String, String}, params::Pair{String, String}...)
+    scout(COMMAND::Pair{String, String}, params::Pair{String, String}...; kwargs...)
 
-Search in JPL's CNEOS Scout system. For a list of query parameters
-see the **Query Parameters** section in [1].
+Search in JPL's CNEOS Scout system. For a list of query parameters see the **Query
+Parameters** section in [1]; for a list of keyword arguments see the documentation
+of [`HTTP.request`](@ref).
 
 !!! references
     [1] https://ssd-api.jpl.nasa.gov/doc/scout.html.
@@ -38,9 +39,9 @@ Dict{String, Any} with 29 entries:
   …
 ```
 """
-function scout(params::Pair{String, String}...)
+function scout(params::Pair{String, String}...; kwargs...)
     # HTTP response code and text
-    code, text = jplapi(SCOUT_API_URL, params...)
+    code, text = jplapi(SCOUT_API_URL, params...; kwargs...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
     dict = jsonparse(text)

@@ -5,10 +5,11 @@
 const SBRADAR_API_URL = "https://ssd-api.jpl.nasa.gov/sb_radar.api"
 
 @doc raw"""
-    sbradar(params::Pair{String, String}...) -> Dict{String, Any}
+    sbradar(params::Pair{String, String}...; kwargs...) -> Dict{String, Any}
 
 Search in JPL's Small-Body Radar Astrometry DataBase. For a list of query parameters
-see the **Query Parameters** section in [1].
+see  the **Query Parameters** section in [1]; for a list of keyword arguments see the
+documentation of [`HTTP.request`](@ref).
 
 !!! references
     [1] https://ssd-api.jpl.nasa.gov/doc/sb_radar.html.
@@ -34,9 +35,9 @@ Dict{String, Any} with 4 entries:
   "count"     => "50"
 ```
 """
-function sbradar(params::Pair{String, String}...)
+function sbradar(params::Pair{String, String}...; kwargs...)
     # HTTP response code and text
-    code, text = jplapi(SBRADAR_API_URL, params...)
+    code, text = jplapi(SBRADAR_API_URL, params...; kwargs...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
     dict = jsonparse(text)

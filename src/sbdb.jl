@@ -5,11 +5,13 @@
 const SBDB_API_URL = "https://ssd-api.jpl.nasa.gov/sbdb.api"
 
 @doc raw"""
-    sbdb(COMMAND::Pair{String, String}, [params::Pair{String, String}...]) -> Dict{String, Any}
+    sbdb(COMMAND::Pair{String, String}[, params::Pair{String, String}...];
+         kwargs...) -> Dict{String, Any}
 
-Search in JPL's Small-Body DataBase. `COMMAND` must be one of the following query parameters:
-`sstr`, `spk`, or `des`; `params` are any other (optional) parameters. For instance, see the
-**Query Parameters** section in [1].
+Search in JPL's Small-Body DataBase. `COMMAND` must be one of the following query
+parameters: `sstr`, `spk`, or `des`; `params` are any other (optional) parameters.
+For instance, see the **Query Parameters** section in [1]; for a list of keyword
+arguments see the documentation of [`HTTP.request`](@ref).
 
 !!! references
     [1] https://ssd-api.jpl.nasa.gov/doc/sbdb.html.
@@ -46,9 +48,9 @@ Dict{String, Any} with 4 entries:
     "object"    => Dict{String, Any}("shortname"=>"99942 Apophis", …
 ```
 """
-function sbdb(COMMAND::Pair{String, String}, params::Pair{String, String}...)
+function sbdb(COMMAND::Pair{String, String}, params::Pair{String, String}...; kwargs...)
     # HTTP response code and text
-    code, text = jplapi(SBDB_API_URL, COMMAND, params...)
+    code, text = jplapi(SBDB_API_URL, COMMAND, params...; kwargs...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
     dict = jsonparse(text)

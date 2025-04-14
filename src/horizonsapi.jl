@@ -5,11 +5,13 @@
 const HORIZONS_API_URL = "https://ssd.jpl.nasa.gov/api/horizons.api"
 
 @doc raw"""
-    smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime) -> String
+    smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime;
+            kwargs...) -> String
 
 Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIME` and
 `STOP_TIME`. Return the local SPK file name. For more information see [1], in particular
-the **Common Parameters** and **SPK File Parameters** sections.
+the **Common Parameters** and **SPK File Parameters** sections; for a list of keyword
+arguments see the documentation of [`HTTP.request`](@ref).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -27,7 +29,8 @@ julia> isfile(local_file)
 true
 ```
 """
-function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime)
+function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime;
+                 kwargs...)
     # Convert HTTP parameters to String
     # HTTP response code and text
     code, text = jplapi(
@@ -36,7 +39,8 @@ function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
         "EPHEM_TYPE" => "SPK",
         "START_TIME" => jplstr(Dates.format(DateTime(START_TIME), JPL_DATE_FORMAT)),
         "STOP_TIME" => jplstr(Dates.format(DateTime(STOP_TIME), JPL_DATE_FORMAT)),
-        "OBJ_DATA" => "NO"
+        "OBJ_DATA" => "NO";
+        kwargs...
     )
     iszero(code) && return ""
     # Parse JSON
@@ -61,8 +65,9 @@ function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
 end
 
 @doc raw"""
-    smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-                EPOCH::T, EC::T, QR::T, TP::T, OM::T, W::T, INC::T) where {T <: Real} -> String
+    smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime,
+                STOP_TIME::StartStopTime, EPOCH::T, EC::T, QR::T,
+                TP::T, OM::T, W::T, INC::T; kwargs...) where {T <: Real} -> String
 
 Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIME` and
 `STOP_TIME` with heliocentric ecliptic osculating elements:
@@ -73,9 +78,10 @@ Generate binary SPK file of Solar System Small Body `COMMAND` between `START_TIM
 - `OM` [deg]: Longitude of ascending node wrt ecliptic
 - `W` [deg]: Argument of perihelion wrt ecliptic
 - `IN` [deg]: Inclination wrt ecliptic
-Return the local SPK file name. For more information see [1], in particular
-the **Common Parameters**, **User-specified Heliocentric Ecliptic Osculating Elements**
-and **SPK File Parameters** sections.
+Return the local SPK file name. For more information see [1], in particular the **Common
+Parameters**, **User-specified Heliocentric Ecliptic Osculating Elements** and **SPK File
+Parameters** sections; for a list of keyword arguments see the documentation of
+[`HTTP.request`](@ref).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -97,7 +103,8 @@ stop_time = DateTime(2022,Jan,1)
 
 # Generate a binary SPK file for asteroid 1990 MU at `epoch`
 
-julia> local_file = smb_spk_ele("1990 MU", start_time, stop_time, epoch, ec, qr, tp, om, w, inc)
+julia> local_file = smb_spk_ele("1990 MU", start_time, stop_time,
+                                epoch, ec, qr, tp, om, w, inc)
 "20004953.bsp"
 
 # Check that the binary SPK was downloaded
@@ -106,10 +113,11 @@ julia> isfile(local_file)
 true
 ```
 """
-function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-                     EPOCH::T, EC::T, QR::T, TP::T, OM::T, W::T, INC::T) where {T <: Real}
+function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime,
+                     STOP_TIME::StartStopTime, EPOCH::T, EC::T, QR::T,
+                     TP::T, OM::T, W::T, INC::T; kwargs...) where {T <: Real}
 
-    # Convert http parameters to String
+    # Convert HTTP parameters to String
     # HTTP response code and text
     code, text = jplapi(
         HORIZONS_API_URL,
@@ -124,7 +132,8 @@ function smb_spk_ele(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::
         "TP" => jplstr(TP),
         "OM" => jplstr(OM),
         "W" => jplstr(W),
-        "IN" => jplstr(INC)
+        "IN" => jplstr(INC);
+        kwargs...
     )
     iszero(code) && return ""
     # Parse JSON
@@ -152,11 +161,12 @@ end
     vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
             STEP_SIZE::StepSize; FILENAME::String = "", kwargs...) -> String
 
-Generate vector table of Solar System Small Body `COMMAND` from `START_TIME`
-to `STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty, return the output as
-a `String`; otherwise, save the table to the corresponding file. For more information
-see [1], in particular the **Common Parameters** and **SPK File Parameters** sections;
-for a list of keyword arguments see the **Ephemeris-Specific Parameters** section.
+Generate vector table of Solar System Small Body `COMMAND` from `START_TIME` to `STOP_TIME`
+with step `STEP_SIZE`. If `FILENAME` is empty, return the output as a `String`; otherwise,
+save the table to the corresponding file. For more information see [1], in particular the
+**Common Parameters** and **SPK File Parameters** sections; for a list of keyword arguments
+see the **Ephemeris-Specific Parameters** section, as well as the documentation of
+[`HTTP.request`](@ref).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -174,20 +184,23 @@ t_stop = Date(2029,4,14)
 
 # Generate tables and save output to Apophis.txt in current directory:
 
-julia> local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.txt", CENTER = "@ssb",
-                            REF_PLANE = "FRAME", OUT_UNITS = "AU-D", CSV_FORMAT = true, VEC_TABLE = 2)
+julia> local_file = vec_tbl("Apophis;", t_start, t_stop, δt; FILENAME = "Apophis.txt",
+                            CENTER = "@ssb", REF_PLANE = "FRAME", OUT_UNITS = "AU-D",
+                            CSV_FORMAT = true, VEC_TABLE = 2)
 "Apophis.txt"
 
 julia> isfile(local_file)
 true
 ```
 """
-function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-                 STEP_SIZE::StepSize; FILENAME::String = "", CENTER::String = "@ssb",
-                 REF_PLANE::String = "FRAME", COORD_TYPE::String = "G", SITE_COORD::String = "0,0,0",
-                 REF_SYSTEM::String = "J2000", VEC_CORR::String = "NONE", VEC_DELTA_T::Bool = false,
-                 OUT_UNITS::String = "KM-S", CSV_FORMAT::Bool = false, VEC_LABELS::Bool = false,
-                 VEC_TABLE::VecTable = 3)
+function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime,
+                 STOP_TIME::StartStopTime, STEP_SIZE::StepSize;
+                 FILENAME::String = "", CENTER::String = "@ssb",
+                 REF_PLANE::String = "FRAME", COORD_TYPE::String = "G",
+                 SITE_COORD::String = "0,0,0", REF_SYSTEM::String = "J2000",
+                 VEC_CORR::String = "NONE", VEC_DELTA_T::Bool = false,
+                 OUT_UNITS::String = "KM-S", CSV_FORMAT::Bool = false,
+                 VEC_LABELS::Bool = false, VEC_TABLE::VecTable = 3, kwargs...)
 
     # HTTP response code and text
     code, text = jplapi(
@@ -207,7 +220,8 @@ function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
         "OUT_UNITS" => jplstr(OUT_UNITS),
         "CSV_FORMAT" => jplstr(CSV_FORMAT),
         "VEC_LABELS" => jplstr(VEC_LABELS),
-        "VEC_TABLE" => jplstr(VEC_TABLE)
+        "VEC_TABLE" => jplstr(VEC_TABLE);
+        kwargs...
     )
     iszero(code) && return ""
     # Parse JSON
