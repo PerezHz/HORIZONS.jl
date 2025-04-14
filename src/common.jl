@@ -107,9 +107,9 @@ function responsecode(resp::Response)
 end
 
 # GET request to a JPL API
-function jplapi(url::String, params::Pair{String, String}...)
+function jplapi(url::String, params::Pair{String, String}...; kwargs...)
     # HTTP response
-    resp = HTTP.get(url; query=Dict(params), status_exception = false)
+    resp = HTTP.get(url; query = Dict(params), status_exception = false, kwargs...)
     # Response code and text
     code, text = responsecode(resp)
 

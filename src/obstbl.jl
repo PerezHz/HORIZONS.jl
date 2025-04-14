@@ -2,12 +2,12 @@
     obs_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
             STEP_SIZE::StepSize; FILENAME::String = "", kwargs...) -> String
 
-Generate an observer table for object `COMMAND` from `START_TIME` to `STOP_TIME`
-with step `STEP_SIZE`. If `FILENAME` is empty, return the output as a `String`;
-otherwise, save the table to the corresponding file. For more information see
-[1], in particular the **Common Parameters** and **SPK File Parameters**
-sections; for a list of keyword arguments see the **Ephemeris-Specific
-Parameters** section (or the extended help).
+Generate an observer table for object `COMMAND` from `START_TIME` to `STOP_TIME` with step
+`STEP_SIZE`. If `FILENAME` is empty, return the output as a `String`; otherwise, save the
+table to the corresponding file. For more information see [1], in particular the **Common
+Parameters** and **SPK File Parameters** sections; for a list of keyword arguments see the
+**Ephemeris-Specific Parameters** section, the extended help, as well as the documentation
+of [`HTTP.request`](@ref).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -66,16 +66,21 @@ values, and a brief description:
 | `MAKE_EPHEM::Bool`            | true         | Generate ephemeris           |
 | `OBJ_DATA::Bool`              | true         | Include object summary       |
 """
-function obs_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-                 STEP_SIZE::StepSize; FILENAME::String = "", CENTER::String = "Geocentric",
-                 COORD_TYPE::String = "GEODETIC", SITE_COORD::String = "0,0,0", QUANTITIES::String = "A",
-                 REF_SYSTEM::String = "ICRF", CAL_FORMAT::String = "CAL", CAL_TYPE::String = "MIXED",
-                 ANG_FORMAT::String = "HMS", APPARENT::String = "AIRLESS", TIME_DIGITS::String = "MINUTES",
-                 TIME_ZONE::String = "+00:00", RANGE_UNITS::String = "AU", SUPPRESS_RANGE_RATE::Bool = false,
-                 ELEV_CUT::Real = -90.0, SKIP_DAYLT::Bool = false, SOLAR_ELONG::NTuple{2,Real} = (0,180),
-                 AIRMASS::Real = 38.0, LHA_CUTOFF::Real = 0.0, ANG_RATE_CUTOFF::Real = 0.0,
-                 EXTRA_PREC::Bool = false, R_T_S_ONLY::Bool = false, CSV_FORMAT::Bool = false,
-                 MAKE_EPHEM::Bool = true, OBJ_DATA::Bool = true)
+function obs_tbl(COMMAND::ObjectName, START_TIME::StartStopTime,
+                 STOP_TIME::StartStopTime, STEP_SIZE::StepSize;
+                 FILENAME::String = "", CENTER::String = "Geocentric",
+                 COORD_TYPE::String = "GEODETIC", SITE_COORD::String = "0,0,0",
+                 QUANTITIES::String = "A", REF_SYSTEM::String = "ICRF",
+                 CAL_FORMAT::String = "CAL", CAL_TYPE::String = "MIXED",
+                 ANG_FORMAT::String = "HMS", APPARENT::String = "AIRLESS",
+                 TIME_DIGITS::String = "MINUTES", TIME_ZONE::String = "+00:00",
+                 RANGE_UNITS::String = "AU", SUPPRESS_RANGE_RATE::Bool = false,
+                 ELEV_CUT::Real = -90.0, SKIP_DAYLT::Bool = false,
+                 SOLAR_ELONG::NTuple{2,Real} = (0,180), AIRMASS::Real = 38.0,
+                 LHA_CUTOFF::Real = 0.0, ANG_RATE_CUTOFF::Real = 0.0,
+                 EXTRA_PREC::Bool = false, R_T_S_ONLY::Bool = false,
+                 CSV_FORMAT::Bool = false, MAKE_EPHEM::Bool = true,
+                 OBJ_DATA::Bool = true, kwargs...)
 
     # HTTP response code and text
     code, text = jplapi(
@@ -108,7 +113,8 @@ function obs_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
         "R_T_S_ONLY" => jplstr(R_T_S_ONLY),
         "CSV_FORMAT" => jplstr(CSV_FORMAT),
         "MAKE_EPHEM" => jplstr(MAKE_EPHEM),
-        "OBJ_DATA" => jplstr(OBJ_DATA)
+        "OBJ_DATA" => jplstr(OBJ_DATA);
+        kwargs...
     )
     iszero(code) && return ""
     # Parse JSON

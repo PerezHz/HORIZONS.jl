@@ -2,12 +2,12 @@
     ooe_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
             STEP_SIZE::StepSize; FILENAME::String = "", kwargs...) -> String
 
-Generate an osculating orbital elements table for object `COMMAND` from
-`START_TIME` to `STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty,
-return the output as a `String`; otherwise, save the table to the corresponding
-file. For more information see [1], in particular the **Common Parameters** and
-**SPK File Parameters** sections; for a list of keyword arguments see the
-**Ephemeris-Specific Parameters** section.
+Generate an osculating orbital elements table for object `COMMAND` from `START_TIME` to
+`STOP_TIME` with step `STEP_SIZE`. If `FILENAME` is empty, return the output as a `String`;
+otherwise, save the table to the corresponding file. For more information see [1], in
+particular the **Common Parameters** and **SPK File Parameters** sections; for a list of
+keyword arguments see the **Ephemeris-Specific Parameters** section, the extended help, as
+well as the documentation of [`HTTP.request`](@ref).
 
 !!! reference
     [1] https://ssd-api.jpl.nasa.gov/doc/horizons.html.
@@ -55,15 +55,15 @@ values, and a brief description:
 | `MAKE_EPHEM::Bool`    | true         | Generate ephemeris              |
 | `OBJ_DATA::Bool`      | true         | Include object summary          |
 """
-function ooe_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::StartStopTime,
-                 STEP_SIZE::StepSize; FILENAME::String = "",
-                 CENTER::String = "Geocentric", REF_PLANE::String = "ECLIPTIC",
-                 COORD_TYPE::String = "GEODETIC", SITE_COORD::String = "0,0,0",
-                 REF_SYSTEM::String = "ICRF", OUT_UNITS::String="KM-S",
-                 CAL_TYPE::String = "MIXED", TIME_DIGITS::String = "MINUTES",
-                 CSV_FORMAT::Bool = false, ELM_LABELS::Bool = true,
-                 TP_TYPE::String = "ABSOLUTE", MAKE_EPHEM::Bool = true,
-                 OBJ_DATA::Bool = true)
+function ooe_tbl(COMMAND::ObjectName, START_TIME::StartStopTime,
+                 STOP_TIME::StartStopTime, STEP_SIZE::StepSize;
+                 FILENAME::String = "", CENTER::String = "Geocentric",
+                 REF_PLANE::String = "ECLIPTIC", COORD_TYPE::String = "GEODETIC",
+                 SITE_COORD::String = "0,0,0", REF_SYSTEM::String = "ICRF",
+                 OUT_UNITS::String="KM-S", CAL_TYPE::String = "MIXED",
+                 TIME_DIGITS::String = "MINUTES", CSV_FORMAT::Bool = false,
+                 ELM_LABELS::Bool = true, TP_TYPE::String = "ABSOLUTE",
+                 MAKE_EPHEM::Bool = true, OBJ_DATA::Bool = true, kwargs...)
 
     # HTTP response code and text
     code, text = jplapi(
@@ -85,7 +85,8 @@ function ooe_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
         "ELM_LABELS" => jplstr(ELM_LABELS),
         "TP_TYPE" => jplstr(TP_TYPE),
         "MAKE_EPHEM" => jplstr(MAKE_EPHEM),
-        "OBJ_DATA" => jplstr(OBJ_DATA)
+        "OBJ_DATA" => jplstr(OBJ_DATA);
+        kwargs...
     )
     iszero(code) && return ""
     # Parse JSON
