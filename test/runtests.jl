@@ -2,7 +2,7 @@
 # The HORIZONS.jl package is licensed under the MIT "Expat" License
 # Copyright (c) 2017: Jorge Pérez.
 
-using Test, Dates
+using Test, Dates, JSON
 using HORIZONS
 
 @testset "Generation and file download of small-bodies binary SPK files: smb_spk" begin
@@ -137,17 +137,17 @@ end
     eros_3 = sbdb("des" => "433")
 
     @test eros_1 == eros_2 == eros_3
-    @test isa(eros_1, Dict{String, Any})
-    @test isa(eros_1["orbit"], Dict{String, Any})
-    @test isa(eros_1["signature"], Dict{String, Any})
-    @test isa(eros_1["object"], Dict{String, Any})
+    @test isa(eros_1, JSON.Object{String, Any})
+    @test isa(eros_1["orbit"], JSON.Object{String, Any})
+    @test isa(eros_1["signature"], JSON.Object{String, Any})
+    @test isa(eros_1["object"], JSON.Object{String, Any})
 
     # Search Apophis's close approach data
     apophis = sbdb("sstr" => "Apophis", "ca-data" => "true")
-    @test isa(apophis, Dict{String, Any})
-    @test isa(apophis["orbit"], Dict{String, Any})
-    @test isa(apophis["signature"], Dict{String, Any})
-    @test isa(apophis["object"], Dict{String, Any})
+    @test isa(apophis, JSON.Object{String, Any})
+    @test isa(apophis["orbit"], JSON.Object{String, Any})
+    @test isa(apophis["signature"], JSON.Object{String, Any})
+    @test isa(apophis["object"], JSON.Object{String, Any})
     @test isa(apophis["ca_data"], Vector{Any})
 end
 
@@ -155,9 +155,9 @@ end
     # Search Apophis' radar astrometry
     apophis_1 = sbradar("spk" => "20099942")
 
-    @test isa(apophis_1, Dict{String, Any})
+    @test isa(apophis_1, JSON.Object{String, Any})
     @test isa(apophis_1["fields"], Vector{Any})
-    @test isa(apophis_1["signature"], Dict{String, Any})
+    @test isa(apophis_1["signature"], JSON.Object{String, Any})
     @test isa(apophis_1["data"], Vector{Any})
     @test isa(apophis_1["count"], String)
     @test length(apophis_1["data"]) == parse(Int, apophis_1["count"])
@@ -169,9 +169,9 @@ end
 
     # Add observer information
     apophis_2 = sbradar("spk" => "20099942", "observer" => "true")
-    @test isa(apophis_2, Dict{String, Any})
+    @test isa(apophis_2, JSON.Object{String, Any})
     @test isa(apophis_2["fields"], Vector{Any})
-    @test isa(apophis_2["signature"], Dict{String, Any})
+    @test isa(apophis_2["signature"], JSON.Object{String, Any})
     @test isa(apophis_2["data"], Vector{Any})
     @test isa(apophis_2["count"], String)
     @test length(apophis_2["data"]) == parse(Int, apophis_2["count"])
@@ -190,8 +190,8 @@ end
     # Get a list of all CNEOS objects
     cneos = scout()
 
-    @test isa(cneos, Dict{String, Any})
-    @test isa(cneos["signature"], Dict{String, Any})
+    @test isa(cneos, JSON.Object{String, Any})
+    @test isa(cneos["signature"], JSON.Object{String, Any})
     @test isa(cneos["data"], Vector{Any})
     @test isa(cneos["count"], String)
     @test length(cneos["data"]) == parse(Int, cneos["count"])
@@ -208,7 +208,7 @@ end
     tdes = cneos["data"][1]["objectName"]
     neocp = scout("tdes" => tdes, "plot" => "el")
 
-    @test isa(neocp, Dict{String, Any})
+    @test isa(neocp, JSON.Object{String, Any})
 
     fields = Set([
         "neo1kmScore", "geocentricScore", "nObs", "rating", "signature",

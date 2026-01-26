@@ -40,7 +40,7 @@ function smb_spk(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
     )
     iszero(code) && return ""
     # Parse JSON
-    dict = jsonparse(text)
+    dict = JSON.parse(text)
     # Object ID
     if "spk_file_id" in keys(dict)
         id = dict["spk_file_id"]
@@ -211,7 +211,7 @@ function vec_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
     )
     iszero(code) && return ""
     # Parse JSON
-    dict = jsonparse(text)
+    dict = JSON.parse(text)
     # Return table as String
     if isempty(FILENAME)
         return dict["result"]

@@ -51,7 +51,7 @@ function sbdb(COMMAND::Pair{String, String}, params::Pair{String, String}...)
     code, text = jplapi(SBDB_API_URL, COMMAND, params...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
-    dict = jsonparse(text)
+    dict = JSON.parse(text)
 
     return dict
 end
