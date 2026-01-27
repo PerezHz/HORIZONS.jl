@@ -43,7 +43,7 @@ function scout(params::Pair{String, String}...)
     code, text = jplapi(SCOUT_API_URL, params...)
     iszero(code) && return Dict{String, Any}()
     # Parse JSON
-    dict = jsonparse(text)
+    dict = JSON.parse(text)
 
     return dict
 end

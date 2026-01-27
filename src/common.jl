@@ -115,18 +115,3 @@ function jplapi(url::String, params::Pair{String, String}...)
 
     return code, text
 end
-
-# JSON.parse sometimes requires 2 calls to return a Dict{String, Any}
-function jsonparse(text::String)
-    dict = JSON.parse(text)
-    if isa(dict, Dict{String, Any})
-        return dict
-    else
-        _dict_ = JSON.parse(dict)
-        if isa(_dict_, Dict{String, Any})
-            return _dict_
-        else
-            return Dict{String, Any}()
-        end
-    end
-end

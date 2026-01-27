@@ -89,7 +89,7 @@ function ooe_tbl(COMMAND::ObjectName, START_TIME::StartStopTime, STOP_TIME::Star
     )
     iszero(code) && return ""
     # Parse JSON
-    dict = jsonparse(text)
+    dict = JSON.parse(text)
     # Return table as String
     if isempty(FILENAME)
         return dict["result"]
