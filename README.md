@@ -19,7 +19,7 @@ An interface to JPL [HORIZONS](https://ssd.jpl.nasa.gov/horizons) system and oth
 ## Authors
 
 - [Jorge A. Pérez Hernández](https://github.com/PerezHz),
-Instituto de Ciencias Físicas, Universidad Nacional Autónoma de México (UNAM)
+Minor Planet Center, Center for Astrophysics | Harvard & Smithsonian
 - [Luis Eduardo Ramírez Montoya](https://github.com/LuEdRaMo),
 Facultad de Ciencias, Universidad Nacional Autónoma de México (UNAM)
 
