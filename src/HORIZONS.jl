@@ -5,7 +5,7 @@
 module HORIZONS
 
 using HTTP, JSON, Base64, Dates
-using HTTP: Messages.Response
+using HTTP: Response
 
 export horizons, smb_spk, smb_spk_ele, vec_tbl, obs_tbl, sbdb, sbradar, scout, ooe_tbl
 
